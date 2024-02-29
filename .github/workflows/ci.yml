@@ -5,13 +5,9 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'web/**'
   push:
     branches:
       - main
-    paths:
-      - 'web/**'
 
 jobs:
 
