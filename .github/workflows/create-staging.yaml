@@ -7,45 +7,12 @@ on:
       - main
   workflow_dispatch:
 
-#permissions:
-#  id-token: write
-#  contents: read
-
 jobs:
   create_staging:
     name: 'Create staging environment'
     runs-on: ubuntu-latest
     
     steps:
-
-    ### Pre-existing steps from original file: ###
-    
-    #- name: 'Checkout repository'
-    #  uses: actions/checkout@v2
-
-    #- name: 'Configure AWS Credentials'
-    #  uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
-    #  with:
-    #    role-to-assume: arn:aws:iam::730880032795:role/OIDC_Link--EB-deployment
-    #    role-session-name: ElasticBeanstalkDeployment
-    #    aws-region: eu-west-2
-
-    #- name: 'Deploy changes'
-    #  run: |
-    #    brew install awsebcli
-    #    eb deploy
-
-    ### New steps I've made: ###
-
-    #I created this to install the AWS CLI, but it's actually installled by default!
-    #- name: 'Install AWS CLI'
-    #  run: |
-    #    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    #    unzip awscliv2.zip
-    #    sudo ./aws/install
-    #    #To check that the CLI install worked:
-    #    aws --version
-
     - name: 'Install Terraform'
       run: |
         wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
