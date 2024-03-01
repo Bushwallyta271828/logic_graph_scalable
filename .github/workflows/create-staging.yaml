@@ -2,6 +2,9 @@ name: 'Staging Environment Creation'
 
 # This workflow is triggered manually
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 #permissions:
