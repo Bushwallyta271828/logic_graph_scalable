@@ -13,7 +13,6 @@ on:
 
 jobs:
   create_staging:
-    environment: staging
     name: 'Create staging environment'
     runs-on: ubuntu-latest
     
