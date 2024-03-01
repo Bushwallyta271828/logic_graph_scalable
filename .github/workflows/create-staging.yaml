@@ -17,16 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+    ### Pre-existing steps from original file: ###
+    
     #- name: 'Checkout repository'
     #  uses: actions/checkout@v2
-
-    - name: 'Install AWS CLI'
-      run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
-        #To check that the CLI install worked:
-        aws --version
 
     #- name: 'Configure AWS Credentials'
     #  uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
@@ -39,3 +34,20 @@ jobs:
     #  run: |
     #    brew install awsebcli
     #    eb deploy
+
+    ### New steps I've made: ###
+
+    #I created this to install the AWS CLI, but it's actually installled by default!
+    #- name: 'Install AWS CLI'
+    #  run: |
+    #    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    #    unzip awscliv2.zip
+    #    sudo ./aws/install
+    #    #To check that the CLI install worked:
+    #    aws --version
+
+    - name: 'Install Terraform 0.15.x+'
+      run: |
+        wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        sudo apt update && sudo apt install terraform
