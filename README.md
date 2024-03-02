@@ -1,1 +1,1 @@
-This repository should support the website logicgraph.dev. 
+This repository should support the website [logicgraph.dev](https://logicgraph.dev/). 
