@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      name: 'Print Hi'
-      run: |
-        echo Hello
-        echo World
+      - name: 'Print Hi'
+        run: |
+          echo Hello
+          echo World
