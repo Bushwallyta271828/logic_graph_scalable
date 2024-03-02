@@ -1,0 +1,25 @@
+name: 'Force Check'
+
+### The purpose of creating this job and forcing
+### a status check on it before merging is to prevent
+### the pull request from appearing ready to merge
+### before the workflows have started up.
+
+on:
+  push:
+    branches:
+      'main'
+  pull_request:
+    branches:
+      'main'
+  workflow_dispatch:
+
+jobs:
+  boilerplate:
+    name: 'Boilerplate Check'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Echo Command'
+        run: |
+          echo "Check Passed"
