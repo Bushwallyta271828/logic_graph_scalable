@@ -23,7 +23,5 @@ jobs:
           cd deployable
           docker build -t lightsail-hello-world .
 
-      - name: 'TEST see files'
-        run: |
-          cd deployable
-          ls -a
+      - name: 'TEST is docker making an image'
+        run: docker images
