@@ -1,0 +1,23 @@
+name: 'Deploy'
+
+on:
+  push:
+    branches:
+      'main'
+  pull_request:
+    branches:
+      'main'
+  workflow_dispatch:
+
+jobs:
+  deploy-job:
+    name: 'Deploy Job'
+    runs-on: ubuntu-latest
+
+    steps:
+
+      #BUG: need to actually check out the repository, maybe install docker (idk), and cd into the correct directory.
+    
+      - name: 'Build Container Image'
+        run: |
+          docker build -t lightsail-hello-world .
