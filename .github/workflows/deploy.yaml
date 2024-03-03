@@ -36,3 +36,6 @@ jobs:
           docker tag lightsail-hello-world:latest ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:${{ github.sha }}
           docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
           docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:${{ github.sha }}
+
+      - name: 'Push Tutorial Container'
+        run: aws lightsail push-container-image --service-name hello-world --label hello-world --image sebsto/lightsail-hello-world:v3
