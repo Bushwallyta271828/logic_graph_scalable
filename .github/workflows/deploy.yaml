@@ -23,15 +23,14 @@ jobs:
           cd deployable
           docker build -t lightsail-hello-world .
 
-      #- name: 'Login to GitHub Container Registry'
-      #  uses: docker/login-action@v3
-      #  with:
-      #    registry: ghcr.io
-      #    username: ${{ github.actor }}
-      #    password: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Push to GitHub Container Registry'
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker tag lightsail-hello-world:latest ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
           docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
