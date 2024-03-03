@@ -1,0 +1,24 @@
+name: 'Deploy'
+
+on:
+  push:
+    branches:
+      'main'
+  pull_request:
+    branches:
+      'main'
+  workflow_dispatch:
+
+jobs:
+  deploy-job:
+    name: 'Deploy Job'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+    
+      - name: 'Build Container Image'
+        run: |
+          cd deployable
+          docker build -t lightsail-hello-world .
