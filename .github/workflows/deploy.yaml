@@ -24,4 +24,6 @@ jobs:
           docker build -t lightsail-hello-world .
 
       - name: 'TEST see files'
-        run: ls -a
+        run: |
+          cd deployable
+          ls -a
