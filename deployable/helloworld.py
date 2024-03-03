@@ -1,3 +1,5 @@
+print("HELLO! Are we getting this far?")
+
 from flask import Flask, request
 from flask_restful import Resource, Api
 
