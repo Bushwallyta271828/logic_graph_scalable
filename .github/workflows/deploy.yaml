@@ -32,7 +32,7 @@ jobs:
 
       - name: 'Push to GitHub Container Registry'
         run: |
-          docker tag lightsail-hello-world:latest ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
+          #docker tag lightsail-hello-world:latest ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
           docker tag lightsail-hello-world:latest ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
+          #docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
           docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:${{ github.sha }}
