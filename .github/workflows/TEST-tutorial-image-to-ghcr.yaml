@@ -1,0 +1,44 @@
+name: 'Deploy'
+
+### This file exists to copy the Docker Hub image for
+### sebsto/lightsail-hello-world and to push it to 
+### my GitHub Container Registry. This is to troubleshoot
+### the AWS Lightsail manual deployment system, since I know
+### that the tutorial image works while my images don't seem to.
+
+on:
+  push:
+    branches:
+      'main'
+  pull_request:
+    branches:
+      'main'
+  workflow_dispatch:
+
+jobs:
+  deploy-job:
+    name: 'Deploy Job'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+    
+      - name: 'Build Container Image'
+        run: |
+          cd deployable
+          docker build -t lightsail-hello-world:latest .
+
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Push to GitHub Container Registry'
+        run: |
+          docker tag lightsail-hello-world:latest ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
+          docker tag lightsail-hello-world:latest ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:latest
+          docker push ghcr.io/${{ github.repository_owner }}/lightsail-hello-world:${{ github.sha }}
