@@ -7,6 +7,12 @@ name: 'Copy Tutorial Image'
 ### that the tutorial image works while my images don't seem to.
 
 on:
+  push:
+    branches:
+      'main'
+  pull_request:
+    branches:
+      'main'
   workflow_dispatch:
 
 jobs:
