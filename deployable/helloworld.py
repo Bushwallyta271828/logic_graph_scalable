@@ -18,29 +18,21 @@ import psycopg2
 # Forming the connection string
 connection_str = f"dbname='{DATABASE_NAME}' user='{DATABASE_USER}' password='{DATABASE_PASSWORD}' host='{DATABASE_HOST}' port='{DATABASE_PORT}'"
 
-# Establishing the connection
-try:
-    conn = psycopg2.connect(connection_str)
-    cursor = conn.cursor()
+conn = psycopg2.connect(connection_str)
+cursor = conn.cursor()
     
-    # Example query
-    cursor.execute("SELECT version();")
-    record = cursor.fetchone()
-    print("You are connected to - ", record,"\n")
+# Example query
+cursor.execute("SELECT version();")
+record = cursor.fetchone()
+print("You are connected to - ", record,"\n")
 
-except (Exception, psycopg2.Error) as error:
-    print("Error while connecting to PostgreSQL", error)
-
-finally:
-    # Closing database connection.
-    if (conn):
-        cursor.close()
-        conn.close()
-        print("PostgreSQL connection is closed")
+cursor.close()
+conn.close()
+print("PostgreSQL connection is closed")
 
 class Greeting (Resource):
    def get(self):
-      return { "message" : "Hello Flask API World!!" }
+      return { "message" : "You were connected to " + str(record)}
 api.add_resource(Greeting, '/') # Route_1
 
 if __name__ == '__main__':
