@@ -1,7 +1,18 @@
 services:
+  proxy:
+    build:
+      context: ./proxy
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - 80:8000
+    volumes:
+      - static-data:/vol/static
+  
   app:
     build:
-      context: .
+      context: ./app
     restart: always
     volumes:
       - static-data:/vol/web
@@ -14,7 +25,7 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
       - db
-
+  
   db:
     image: postgres:16-alpine
     restart: always
@@ -24,17 +35,6 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
-
-  proxy:
-    build:
-      context: ./proxy
-    restart: always
-    depends_on:
-      - app
-    ports:
-      - 80:8000
-    volumes:
-      - static-data:/vol/static
 
 volumes:
   postgres-data:
