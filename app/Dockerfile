@@ -2,11 +2,8 @@ FROM python:3.12-alpine3.19
 
 ENV PYTHONUNBUFFERED 1
 
-COPY ./requirements.txt /requirements.txt
-COPY ./app /app
-COPY ./scripts /scripts
+COPY . /
 
-WORKDIR /app
 EXPOSE 8000
 
 RUN python -m venv /py && \
