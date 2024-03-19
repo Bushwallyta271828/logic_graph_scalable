@@ -2,7 +2,7 @@ This repository should support the website [logicgraph.dev](https://logicgraph.d
 
 Credit to the tutorial [here](https://www.youtube.com/watch?v=mScd-Pc_pX0) for helping me set up this Django project.
 
-To set up:
+To deploy to AWS Lightsail:
 * Create an AWS Lightsail instance.
 * Create a postgres database in AWS Lightsail.
 * Copy-and-paste the compose.yaml file into the server.
