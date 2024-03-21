@@ -20,8 +20,8 @@ jobs:
     
       - name: 'Build Container Images'
         run: |
-          docker build -f app/Dockerfile -t logic-graph-scalable-app:latest app/
-          docker build -f proxy/Dockerfile -t logic-graph-scalable-proxy:latest proxy/
+          docker build -f frontend/Dockerfile -t logic-graph-scalable-frontend:latest frontend/
+          docker build -f backend/Dockerfile -t logic-graph-scalable-backend:latest backend/
 
       - name: 'Login to GitHub Container Registry'
         uses: docker/login-action@v3
@@ -32,11 +32,11 @@ jobs:
 
       - name: 'Push to GitHub Container Registry'
         run: |
-          docker tag logic-graph-scalable-app:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-app:latest
-          docker tag logic-graph-scalable-proxy:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-proxy:latest
-          docker tag logic-graph-scalable-app:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-app:${{ github.sha }}
-          docker tag logic-graph-scalable-proxy:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-proxy:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-app:latest
-          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-proxy:latest
-          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-app:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-proxy:${{ github.sha }}
+          docker tag logic-graph-scalable-frontend:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-frontend:latest
+          docker tag logic-graph-scalable-backend:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-backend:latest
+          docker tag logic-graph-scalable-frontend:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-frontend:${{ github.sha }}
+          docker tag logic-graph-scalable-backend:latest ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-backend:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-frontend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-backend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-frontend:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/logic-graph-scalable-backend:${{ github.sha }}
