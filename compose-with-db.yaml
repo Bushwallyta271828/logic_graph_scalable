@@ -4,15 +4,15 @@ services:
       context: ./proxy
     restart: always
     depends_on:
-      - app
+      - backend
     ports:
       - 80:8000
     volumes:
       - static-data:/vol/static
   
-  app:
+  backend:
     build:
-      context: ./app
+      context: ./backend
     restart: always
     volumes:
       - static-data:/vol/web
