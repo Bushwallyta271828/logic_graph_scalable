@@ -1,19 +1,15 @@
 services:
-  proxy:
-    image: ${PROXY_IMAGE}
+  frontend:
+    image: ${FRONTEND_IMAGE}
     restart: always
     depends_on:
-      - app
+      - backend
     ports:
       - 80:8000
-    volumes:
-      - static-data:/vol/static
   
-  app:
-    image: ${APP_IMAGE}
+  backend:
+    image: ${BACKEND_IMAGE}
     restart: always
-    volumes:
-      - static-data:/vol/web
     environment:
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
@@ -21,6 +17,3 @@ services:
       - DB_PASS=${DB_PASS}
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-  
-volumes:
-  static-data:
