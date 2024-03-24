@@ -1,5 +1,3 @@
-"use server";
-
 export default async function Claimbox() {
   let responseText = ''; // Initialize variable to store raw response text
 
