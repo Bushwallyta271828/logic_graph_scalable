@@ -3,6 +3,8 @@ services:
     build:
       context: ./frontend
     restart: always
+    environment:
+      - API_LOCATION="http://backend:9000/api"
     depends_on:
       - backend
     ports:
