@@ -1,3 +1,4 @@
+"use server";
 //export default async function Claimbox() {
 //  try{
 //    const data = await fetch(process.env.API_LOCATION || 'http://localhost:3000');
@@ -14,13 +15,15 @@ export default async function Claimbox() {
   let jsonData = null; // Initialize variable to store parsed data
   
   try {
-    const response = await fetch(process.env.API_LOCATION || 'http://localhost:3000');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
+    const response = await fetch('http://backend/api', { cache: 'no-store' });
     jsonData = await response.json(); // Parse JSON data
   } catch (error) {
-    return <div>Error loading data</div>; // Render error message
+    const errorMessage = (error as Error).message;
+    return (
+      <>
+        <div>Error loading data: {errorMessage}</div>
+      </>
+    );
   }
 
   return (
