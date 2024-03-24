@@ -36,7 +36,7 @@ export default async function Claimbox() {
   let jsonParseError = ''; // Initialize variable to store JSON parse error message
 
   try {
-    const response = await fetch('http://backend/', { cache: 'no-store' });
+    const response = await fetch('http://backend', { cache: 'no-store' });
     responseText = await response.text(); // Get the raw response text
 
     // Attempt to parse JSON to handle it if you want
