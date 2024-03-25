@@ -3,6 +3,8 @@ services:
     build:
       context: ./frontend
     restart: always
+    environment:
+      - BACKEND_ADDRESS=http://backend:80/
     depends_on:
       - backend
     ports:
