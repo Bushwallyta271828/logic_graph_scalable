@@ -22,5 +22,9 @@ RUN npm run build
 # Expose the port on which the application will run (default is 3000)
 EXPOSE 3000
 
+RUN chmod -R +x /scripts
+
+ENV PATH="/scripts:$PATH"
+
 # Start the Next.js application
-CMD ["npm", "start"]
+CMD ["run.sh"]
