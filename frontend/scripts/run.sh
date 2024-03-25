@@ -2,6 +2,6 @@
 
 set -e
 
-env > /.env.local
+env > .env.local
 
 npm start
