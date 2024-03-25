@@ -7,6 +7,9 @@ WORKDIR /src/app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+# Disable Next.js default telemetry
+RUN npx next telemetry disable
+
 # Install dependencies
 RUN npm ci
 
