@@ -2,15 +2,19 @@ services:
   frontend:
     image: ${FRONTEND_IMAGE}
     restart: always
+    environment:
+      - BACKEND_ADDRESS=http://backend:9000/
+      - FRONTEND_PORT=3000
     depends_on:
       - backend
     ports:
       - 80:3000
-  
+
   backend:
     image: ${BACKEND_IMAGE}
     restart: always
     environment:
+      - BACKEND_PORT=9000
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
