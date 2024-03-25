@@ -13,7 +13,9 @@ RUN npm run build
 
 EXPOSE 3000
 
-RUN chmod -R +x ../../scripts
+COPY ../../scripts ./scripts
+
+RUN chmod -R +x /scripts
 
 ENV PATH="/scripts:$PATH"
 
