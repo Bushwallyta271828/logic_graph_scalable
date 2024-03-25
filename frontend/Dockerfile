@@ -11,8 +11,6 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 3000
-
 COPY ../../scripts ./scripts
 
 RUN chmod -R +x ./scripts
