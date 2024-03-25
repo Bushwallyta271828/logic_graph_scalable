@@ -7,6 +7,6 @@ export default async function CallAPI() {
       return fetch(process.env.BACKEND_ADDRESS, { cache: 'no-store' });
     }
   } catch {
-    return null;
+    return new Response('Unable to fetch');
   }
 }
