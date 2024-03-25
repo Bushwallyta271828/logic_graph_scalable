@@ -3,6 +3,9 @@ services:
     build:
       context: ./frontend
     restart: always
+    command: sh -c "echo $$BACKEND_ADDRESS > /.env.local && exec original-command"
+    environment:
+      - BACKEND_ADDRESS='http://backend:80/'
     depends_on:
       - backend
     ports:
