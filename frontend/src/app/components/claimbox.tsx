@@ -2,7 +2,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import CallAPI from "@/app/_lib/callapi";
 
 export default async function Claimbox() {
-  const responseText = await CallAPI().text();
+  const responseText = await (await CallAPI()).text();
 
   return (
     <div>
