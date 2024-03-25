@@ -15,7 +15,7 @@ EXPOSE 3000
 
 COPY ../../scripts ./scripts
 
-RUN chmod -R +x /scripts
+RUN chmod -R +x ./scripts
 
 ENV PATH="/scripts:$PATH"
 
