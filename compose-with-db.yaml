@@ -1,22 +1,22 @@
 services:
-  proxy:
+  frontend:
     build:
-      context: ./proxy
+      context: ./frontend
     restart: always
-    depends_on:
-      - app
-    ports:
-      - 80:8000
-    volumes:
-      - static-data:/vol/static
-  
-  app:
-    build:
-      context: ./app
-    restart: always
-    volumes:
-      - static-data:/vol/web
     environment:
+      - BACKEND_ADDRESS=http://backend:9000/
+      - FRONTEND_PORT=3000
+    depends_on:
+      - backend
+    ports:
+      - 80:3000
+  
+  backend:
+    build:
+      context: ./backend
+    restart: always
+    environment:
+      - BACKEND_PORT=9000
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -38,4 +38,3 @@ services:
 
 volumes:
   postgres-data:
-  static-data:

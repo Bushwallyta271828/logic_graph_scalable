@@ -1,26 +1,23 @@
 services:
-  proxy:
-    image: ${PROXY_IMAGE}
+  frontend:
+    image: ${FRONTEND_IMAGE}
     restart: always
-    depends_on:
-      - app
-    ports:
-      - 80:8000
-    volumes:
-      - static-data:/vol/static
-  
-  app:
-    image: ${APP_IMAGE}
-    restart: always
-    volumes:
-      - static-data:/vol/web
     environment:
+      - BACKEND_ADDRESS=http://backend:9000/
+      - FRONTEND_PORT=3000
+    depends_on:
+      - backend
+    ports:
+      - 80:3000
+
+  backend:
+    image: ${BACKEND_IMAGE}
+    restart: always
+    environment:
+      - BACKEND_PORT=9000
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-  
-volumes:
-  static-data:

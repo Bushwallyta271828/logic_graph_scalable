@@ -20,3 +20,5 @@ To restart a stopped instance:
 * Start the instance.
 * Update the .env file's ALLOWED_HOSTS to reflect the new public IP address.
 * Run "sudo docker compose up".
+
+Credit to Aresh Pourkavoos for the logicgraph.dev icon.
