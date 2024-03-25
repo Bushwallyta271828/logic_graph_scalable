@@ -1,22 +1,15 @@
 FROM node:20-alpine
 
-WORKDIR /src/app
-
-COPY package*.json ./
+COPY package*.json /
 
 RUN npx next telemetry disable && \
     npm ci
 
-COPY . .
+COPY . /
 
-RUN npm run build
+RUN npm run build && \
+    chmod -R +x /scripts
 
-EXPOSE 3000
-
-COPY ../../scripts ./scripts
-
-RUN chmod -R +x ./scripts
-
-ENV PATH="./scripts:$PATH"
+ENV PATH="/scripts:$PATH"
 
 CMD ["run.sh"]

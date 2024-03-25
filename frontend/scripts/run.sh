@@ -4,4 +4,4 @@ set -e
 
 env > .env.local
 
-npm start
+npx next start -p $FRONTEND_PORT
