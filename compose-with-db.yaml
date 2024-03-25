@@ -4,7 +4,7 @@ services:
       context: ./frontend
     restart: always
     environment:
-      - BACKEND_ADDRESS=http://backend:80/
+      - BACKEND_ADDRESS=http://backend:9000/
     depends_on:
       - backend
     ports:
@@ -15,6 +15,7 @@ services:
       context: ./backend
     restart: always
     environment:
+      - BACKEND_PORT=9000
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
