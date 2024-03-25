@@ -17,6 +17,6 @@ COPY ../../scripts ./scripts
 
 RUN chmod -R +x ./scripts
 
-ENV PATH="/scripts:$PATH"
+ENV PATH="./scripts:$PATH"
 
 CMD ["run.sh"]
