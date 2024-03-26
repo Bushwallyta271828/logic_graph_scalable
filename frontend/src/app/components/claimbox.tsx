@@ -19,9 +19,10 @@ function ContentRegion({initialText} : ContentRegionProps) {
   }
 
   return (
-    <div className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm cursor-pointer">
+    <>
       {isEditing ? (
         <input
+          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm"
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -29,11 +30,13 @@ function ContentRegion({initialText} : ContentRegionProps) {
           autoFocus
         />
       ) : (
-        <p onClick={handleClick}>
+        <p
+          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm"
+          onClick={handleClick}>
           {text}
         </p>
       )}
-    </div>
+    </>
   );
 }
 
@@ -48,9 +51,7 @@ export default function ClaimBox({initialText} : ClaimBoxProps) {
         <p>9372</p>
         <p>some_user</p>
       </div>
-      <div className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm">
-        <ContentRegion initialText={initialText} />
-      </div>
+      <ContentRegion initialText={initialText} />
     </div>
   );
 }
