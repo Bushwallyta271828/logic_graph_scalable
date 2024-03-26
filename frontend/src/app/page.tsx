@@ -1,5 +1,7 @@
-import Claimbox from "@/app/components/claimbox";
+import ClaimBox from "@/app/components/claimbox";
+import CallAPI from "@/app/_lib/callapi";
 
 export default async function Home() {
-  return(<Claimbox />);
+  const responseText = await (await CallAPI()).text();
+  return(<ClaimBox text={responseText}/>);
 }

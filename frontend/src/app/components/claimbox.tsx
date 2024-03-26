@@ -1,12 +1,12 @@
-import CallAPI from "@/app/_lib/callapi";
+type ClaimBoxProps = {
+  text: string;
+};
 
-export default async function Claimbox() {
-  const responseText = await (await CallAPI()).text();
-
+export default function ClaimBox({text} : ClaimBoxProps) {
   return (
-    <div>
+    <div className="bg-blue-200 text-black max-w-xl mx-auto px-4 py-2 rounded-full shadow-md">
       <strong>Response:</strong>
-      <pre>{responseText}</pre>
+      <pre>{text}</pre>
     </div>
   );
 }
