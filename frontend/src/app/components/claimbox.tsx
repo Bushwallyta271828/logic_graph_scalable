@@ -10,7 +10,7 @@ export default function ClaimBox({text} : ClaimBoxProps) {
         <p>Text Claim</p>
         <p>some_user</p>
       </div>
-      <div className="bg-indigo-950 text-white flex-1 p-2 rounded-r-md text-wrap text-sm">
+      <div className="bg-blue-950 text-white flex-1 p-2 rounded-r-md text-wrap text-sm">
         <p>{text}{text}{text}{text}{text}</p>
       </div>
     </div>

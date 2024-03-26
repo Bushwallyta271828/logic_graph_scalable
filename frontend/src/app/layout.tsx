@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/app/components/navbar";
+import NavBar from "@/app/components/navbar";
 
 export const metadata: Metadata = {
   title: "Logic Graph",
@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-neutral-800">
-        <Navbar />
+        <NavBar />
         {children}
       </body>
     </html>
