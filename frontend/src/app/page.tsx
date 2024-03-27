@@ -22,6 +22,6 @@ export default async function Home() {
     user: 'some_user'
   },];
   return (
-    <ClaimList claims={claims}/>
+    <ClaimList initialClaims={claims}/>
   );
 }

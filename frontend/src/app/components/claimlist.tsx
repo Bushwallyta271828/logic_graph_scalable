@@ -5,7 +5,7 @@ import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
 export type ClaimListProps = {
-  claims: ClaimBoxProps[];
+  initialClaims: ClaimBoxProps[];
 };
 
 type MovableClaimBoxProps = {
@@ -28,32 +28,19 @@ const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) => {
   );
 }
 
-const reorder = (indexedClaims: MovableClaimBoxProps[], startIndex: number, endIndex: number) => {
-  const result = Array.from(indexedClaims);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
-export function ClaimList({claims} : ClaimListProps) {
-  const initialOrderedClaims = claims.map(
-    (claim: ClaimBoxProps, index: number) => ({claim: claim, index: index})
-  );
-  const [orderedClaims, setOrderedClaims] = useState(initialOrderedClaims);
+export function ClaimList({initialClaims} : ClaimListProps) {
+  const [claims, setClaims] = useState(initialClaims);
 
   function onDragEnd(result : DropResult) {
     if (!result.destination || (result.destination.index === result.source.index)) {
       return;
     }
 
-    const newOrderedClaims = reorder(
-      orderedClaims,
-      result.source.index,
-      result.destination.index
-    );
+    const newClaims = Array.from(claims);
+    const [removed] = newClaims.splice(result.source.index, 1);
+    newClaims.splice(result.destination.index, 0, removed);
 
-    setOrderedClaims(newOrderedClaims);
+    setClaims(newClaims);
   }
 
   return (
@@ -63,8 +50,8 @@ export function ClaimList({claims} : ClaimListProps) {
           <div className="flex flex-col p-4 gap-4"
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {orderedClaims.map((orderedClaim: MovableClaimBoxProps, index: number) => (
-              <MovableClaimBox {...orderedClaim} key={orderedClaim.claim.claimID} />))}
+            {claims.map((claim: ClaimBoxProps, index: number) => (
+              <MovableClaimBox claim={claim} index={index} key={claim.claimID} />))}
             {provided.placeholder}
           </div>
         )}
