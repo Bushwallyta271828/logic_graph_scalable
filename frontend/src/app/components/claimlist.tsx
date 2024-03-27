@@ -19,7 +19,7 @@
 
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
 type QuoteType = {
   id: string;
@@ -84,7 +84,7 @@ const QuoteList = React.memo(function QuoteList({ quotes }: QuoteListType) {
 export default function QuoteApp() {
   const [state, setState] = useState({ quotes: initial });
 
-  function onDragEnd(result) {
+  function onDragEnd(result : DropResult) {
     if (!result.destination) {
       return;
     }
