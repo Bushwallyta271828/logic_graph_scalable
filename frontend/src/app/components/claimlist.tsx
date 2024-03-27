@@ -25,14 +25,6 @@ type MovableClaimBoxProps = {
   index: number;
 };
 
-const reorder = (indexedClaims: IndexedClaimBoxProps[], startIndex: number, endIndex: number) => {
-  const result = Array.from(claims);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) {
   return (
     <Draggable draggableId={claim.claimID} index={index}>
@@ -47,6 +39,14 @@ const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) {
     </Draggable>
   );
 }
+
+const reorder = (indexedClaims: IndexedClaimBoxProps[], startIndex: number, endIndex: number) => {
+  const result = Array.from(claims);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 type QuoteListType = {
   quotes: QuoteType[];
