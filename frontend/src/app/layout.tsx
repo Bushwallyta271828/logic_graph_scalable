@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-neutral-800 no-scrollbar overflow-y-scroll">
+      <body className="bg-neutral-800 scrollbar scrollbar-thin scrollbar-thumb-lime-500 scrollbar-track-orange-700">
         <NavBar />
         {children}
       </body>
