@@ -20,10 +20,14 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import type { Quote as QuoteType } from "../types";
+
+type QuoteType = {
+  id: string;
+  content: string;
+}; 
 
 const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
-  const custom: Quote = {
+  const custom: QuoteType = {
     id: `id-${k}`,
     content: `Quote ${k}`
   };
@@ -32,7 +36,7 @@ const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
 });
 
 const grid = 8;
-const reorder = (list, startIndex, endIndex) => {
+const reorder = (list: QuoteType[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
@@ -40,11 +44,23 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-function Quote({ quote, index }) {
+type QuoteFunctionType = {
+  quote: QuoteType;
+  index: number;
+};
+
+function Quote({ quote, index }: QuoteFunctionType) {
   return (
     <Draggable draggableId={quote.id} index={index}>
       {provided => (
-        <div style="width: 200px; border: 1px solid grey; margin-bottom: 8px; background-color: lightblue; padding: 8px;"
+        <div
+          style={{
+            width: "200px", 
+            border: "1px solid grey", 
+            marginBottom: "8px", 
+            backgroundColor: "lightblue", 
+            padding: "8px"
+          }}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
@@ -55,7 +71,11 @@ function Quote({ quote, index }) {
   );
 }
 
-const QuoteList = React.memo(function QuoteList({ quotes }) {
+type QuoteListType = {
+  quotes: QuoteType[];
+};
+
+const QuoteList = React.memo(function QuoteList({ quotes }: QuoteListType) {
   return quotes.map((quote: QuoteType, index: number) => (
     <Quote quote={quote} index={index} key={quote.id} />
   ));
