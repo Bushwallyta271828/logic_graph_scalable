@@ -1,10 +1,9 @@
 'use client';
 
-//import ClaimBox from "@/app/components/claimbox";
-//
-//type ClaimListProps = {
-//  initialText: string;
-//};
+type ClaimListProps = {
+  initialText: string;
+};
+
 //
 //export default function ClaimList({initialText} : ClaimListProps) {
 //  return (
@@ -17,14 +16,9 @@
 //  );
 //}
 
-import ClaimBox from "@/app/components/claimbox";
+import { ClaimBox, ClaimBoxProps } from "@/app/components/claimbox";
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-
-type QuoteType = {
-  id: string;
-  content: string;
-}; 
 
 const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
   const custom: QuoteType = {

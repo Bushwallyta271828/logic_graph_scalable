@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 type ClaimBoxProps = {
   initialText: string;
+  claimID: string;
+  user: string;
 };
 
 type ContentRegionProps = {
@@ -43,12 +45,12 @@ function ContentRegion({initialText} : ContentRegionProps) {
   );
 }
 
-export default function ClaimBox({initialText} : ClaimBoxProps) {
+export default function ClaimBox({initialText, claimID, user} : ClaimBoxProps) {
   return (
-    <div draggable="true" className="flex shadow-xl">
+    <div className="flex shadow-xl">
       <div className="bg-slate-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
-        <p>9372</p>
-        <p>some_user</p>
+        <p>{claimID}</p>
+        <p>{user}</p>
       </div>
       <ContentRegion initialText={initialText} />
     </div>
