@@ -16,48 +16,32 @@ import { ClaimBox, ClaimBoxProps } from "@/app/components/claimbox";
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
-type Claims = {
+type ClaimListProps = {
   claims: ClaimBoxProps[];
 };
 
-const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
-  const custom: QuoteType = {
-    id: `id-${k}`,
-    content: `Quote ${k}`
-  };
+type MovableClaimBoxProps = {
+  claim: ClaimBoxProps;
+  index: number;
+};
 
-  return custom;
-});
-
-const reorder = (list: QuoteType[], startIndex: number, endIndex: number) => {
-  const result = Array.from(list);
+const reorder = (indexedClaims: IndexedClaimBoxProps[], startIndex: number, endIndex: number) => {
+  const result = Array.from(claims);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
 
   return result;
 };
 
-type QuoteFunctionType = {
-  quote: QuoteType;
-  index: number;
-};
-
-function Quote({ quote, index }: QuoteFunctionType) {
+const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) {
   return (
-    <Draggable draggableId={quote.id} index={index}>
+    <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
         <div
-          style={{
-            width: "200px", 
-            border: "1px solid grey", 
-            marginBottom: "8px", 
-            backgroundColor: "lightblue", 
-            padding: "8px"
-          }}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
-          {quote.content}
+          <ClaimBox {...claim} />
         </div>
       )}
     </Draggable>
@@ -68,7 +52,7 @@ type QuoteListType = {
   quotes: QuoteType[];
 };
 
-function QuoteList({ quotes }: QuoteListType) {
+const function QuoteList({ quotes }: QuoteListType) {
   return quotes.map((quote: QuoteType, index: number) => (
     <Quote quote={quote} index={index} key={quote.id} />
   ));
