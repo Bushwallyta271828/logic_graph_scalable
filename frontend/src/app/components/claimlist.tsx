@@ -1,9 +1,5 @@
 'use client';
 
-type ClaimListProps = {
-  initialText: string;
-};
-
 //
 //export default function ClaimList({initialText} : ClaimListProps) {
 //  return (
@@ -19,6 +15,10 @@ type ClaimListProps = {
 import { ClaimBox, ClaimBoxProps } from "@/app/components/claimbox";
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+
+type Claims = {
+  claims: ClaimBoxProps[];
+};
 
 const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
   const custom: QuoteType = {
@@ -74,8 +74,8 @@ function QuoteList({ quotes }: QuoteListType) {
   ));
 }
 
-export default function ClaimList() {
-  const [state, setState] = useState({ quotes: initial });
+export default function ClaimList({claims} : Claims) {
+  const [state, setState] = useState({ claims: claims });
 
   function onDragEnd(result : DropResult) {
     if (!result.destination) {
