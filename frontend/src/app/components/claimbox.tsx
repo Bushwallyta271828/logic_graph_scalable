@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-type ClaimBoxProps = {
+export type ClaimBoxProps = {
   initialText: string;
   claimID: string;
   user: string;
@@ -45,7 +45,7 @@ function ContentRegion({initialText} : ContentRegionProps) {
   );
 }
 
-export default function ClaimBox({initialText, claimID, user} : ClaimBoxProps) {
+export function ClaimBox({initialText, claimID, user} : ClaimBoxProps) {
   return (
     <div className="flex shadow-xl">
       <div className="bg-slate-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">

@@ -1,5 +1,5 @@
 import { ClaimBoxProps } from "@/app/components/claimbox";
-import ClaimList from "@/app/components/claimlist";
+import { ClaimList } from "@/app/components/claimlist";
 import CallAPI from "@/app/_lib/callapi";
 
 export default async function Home() {

@@ -16,7 +16,7 @@ import { ClaimBox, ClaimBoxProps } from "@/app/components/claimbox";
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
-type ClaimListProps = {
+export type ClaimListProps = {
   claims: ClaimBoxProps[];
 };
 
@@ -25,7 +25,7 @@ type MovableClaimBoxProps = {
   index: number;
 };
 
-const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) {
+const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) => {
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
@@ -40,22 +40,22 @@ const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) {
   );
 }
 
-const reorder = (indexedClaims: IndexedClaimBoxProps[], startIndex: number, endIndex: number) => {
-  const result = Array.from(claims);
+const reorder = (indexedClaims: MovableClaimBoxProps[], startIndex: number, endIndex: number) => {
+  const result = Array.from(indexedClaims);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
 
   return result;
 };
 
-export default function ClaimList({claims} : Claims) {
+export function ClaimList({claims} : ClaimListProps) {
   const initialOrderedClaims = claims.map(
-    (claim: ClaimBoxProps, index: number) => ({claim: claim; index: index;})
+    (claim: ClaimBoxProps, index: number) => ({claim: claim, index: index})
   );
   const [orderedClaims, setOrderedClaims] = useState(initialOrderedClaims);
 
   function onDragEnd(result : DropResult) {
-    if (!result.destination || (result.destination.index === result.source.index))
+    if (!result.destination || (result.destination.index === result.source.index)) {
       return;
     }
 
@@ -73,7 +73,7 @@ export default function ClaimList({claims} : Claims) {
       <Droppable droppableId="list">
         {provided => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
-            {orderedClaims.map((orderedClaim: movableClaimBoxProps, index: number) => (
+            {orderedClaims.map((orderedClaim: MovableClaimBoxProps, index: number) => (
               <MovableClaimBox {...orderedClaim} key={orderedClaim.claim.claimID} />))}
             {provided.placeholder}
           </div>
