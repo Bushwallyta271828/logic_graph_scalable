@@ -35,7 +35,6 @@ const initial = Array.from({ length: 10 }, (v, k) => k).map(k => {
   return custom;
 });
 
-const grid = 8;
 const reorder = (list: QuoteType[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -81,7 +80,7 @@ function QuoteList({ quotes }: QuoteListType) {
   ));
 }
 
-export default function QuoteApp() {
+export default function ClaimList() {
   const [state, setState] = useState({ quotes: initial });
 
   function onDragEnd(result : DropResult) {

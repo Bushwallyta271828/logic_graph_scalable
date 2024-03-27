@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 
+type ClaimBoxProps = {
+  initialText: string;
+};
+
 type ContentRegionProps = {
   initialText: string;
 };
@@ -38,10 +42,6 @@ function ContentRegion({initialText} : ContentRegionProps) {
     </>
   );
 }
-
-type ClaimBoxProps = {
-  initialText: string;
-};
 
 export default function ClaimBox({initialText} : ClaimBoxProps) {
   return (
