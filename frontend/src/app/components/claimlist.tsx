@@ -1,17 +1,5 @@
 'use client';
 
-//
-//export default function ClaimList({initialText} : ClaimListProps) {
-//  return (
-//    <div className="flex flex-col p-4 gap-4">
-//      <ClaimBox initialText={initialText}/>
-//      <ClaimBox initialText={initialText}/>
-//      <ClaimBox initialText={initialText}/>
-//      <ClaimBox initialText={initialText}/>
-//    </div>
-//  );
-//}
-
 import { ClaimBox, ClaimBoxProps } from "@/app/components/claimbox";
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
@@ -72,7 +60,9 @@ export function ClaimList({claims} : ClaimListProps) {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="list">
         {provided => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
+          <div className="flex flex-col p-4 gap-4"
+            ref={provided.innerRef}
+            {...provided.droppableProps}>
             {orderedClaims.map((orderedClaim: MovableClaimBoxProps, index: number) => (
               <MovableClaimBox {...orderedClaim} key={orderedClaim.claim.claimID} />))}
             {provided.placeholder}

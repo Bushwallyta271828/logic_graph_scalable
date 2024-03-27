@@ -4,12 +4,23 @@ import CallAPI from "@/app/_lib/callapi";
 
 export default async function Home() {
   const responseText = await (await CallAPI()).text();
-  const claimBoxInfo: ClaimBoxProps = {
+  const claims = [{
     initialText: responseText,
-    claimID: '9372',
+    claimID: '1',
     user: 'some_user'
-  };
-  const claims = [claimBoxInfo, claimBoxInfo, claimBoxInfo, claimBoxInfo];
+  },{
+    initialText: responseText,
+    claimID: '10',
+    user: 'some_user'
+  },{
+    initialText: responseText,
+    claimID: '100',
+    user: 'some_user'
+  },{
+    initialText: responseText,
+    claimID: '1000',
+    user: 'some_user'
+  },];
   return (
     <ClaimList claims={claims}/>
   );
