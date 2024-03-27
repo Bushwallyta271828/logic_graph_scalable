@@ -48,35 +48,24 @@ const reorder = (indexedClaims: IndexedClaimBoxProps[], startIndex: number, endI
   return result;
 };
 
-type QuoteListType = {
-  quotes: QuoteType[];
-};
-
-const function QuoteList({ quotes }: QuoteListType) {
-  return quotes.map((quote: QuoteType, index: number) => (
-    <Quote quote={quote} index={index} key={quote.id} />
-  ));
-}
-
 export default function ClaimList({claims} : Claims) {
-  const [state, setState] = useState({ claims: claims });
+  const initialOrderedClaims = claims.map(
+    (claim: ClaimBoxProps, index: number) => ({claim: claim; index: index;})
+  );
+  const [orderedClaims, setOrderedClaims] = useState(initialOrderedClaims);
 
   function onDragEnd(result : DropResult) {
-    if (!result.destination) {
+    if (!result.destination || (result.destination.index === result.source.index))
       return;
     }
 
-    if (result.destination.index === result.source.index) {
-      return;
-    }
-
-    const quotes = reorder(
-      state.quotes,
+    const newOrderedClaims = reorder(
+      orderedClaims,
       result.source.index,
       result.destination.index
     );
 
-    setState({ quotes });
+    setOrderedClaims(newOrderedClaims);
   }
 
   return (
@@ -84,7 +73,8 @@ export default function ClaimList({claims} : Claims) {
       <Droppable droppableId="list">
         {provided => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
-            <QuoteList quotes={state.quotes} />
+            {orderedClaims.map((orderedClaim: movableClaimBoxProps, index: number) => (
+              <MovableClaimBox {...orderedClaim} key={orderedClaim.claim.claimID} />))}
             {provided.placeholder}
           </div>
         )}
