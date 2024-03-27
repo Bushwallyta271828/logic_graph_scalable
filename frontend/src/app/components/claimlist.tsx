@@ -17,8 +17,8 @@
 //  );
 //}
 
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import ClaimBox from "@/app/components/claimbox";
+import { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
 type QuoteType = {
@@ -75,11 +75,11 @@ type QuoteListType = {
   quotes: QuoteType[];
 };
 
-const QuoteList = React.memo(function QuoteList({ quotes }: QuoteListType) {
+function QuoteList({ quotes }: QuoteListType) {
   return quotes.map((quote: QuoteType, index: number) => (
     <Quote quote={quote} index={index} key={quote.id} />
   ));
-});
+}
 
 export default function QuoteApp() {
   const [state, setState] = useState({ quotes: initial });
@@ -115,8 +115,3 @@ export default function QuoteApp() {
     </DragDropContext>
   );
 }
-
-
-//const rootElement = document.getElementById("root");
-//ReactDOM.render(<QuoteApp />, rootElement);
-
