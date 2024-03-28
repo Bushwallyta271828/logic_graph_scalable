@@ -8,12 +8,7 @@ export type ClaimListProps = {
   initialClaims: ClaimBoxProps[];
 };
 
-type MovableClaimBoxProps = {
-  claim: ClaimBoxProps;
-  index: number;
-};
-
-const MovableClaimBox = ({claim, index}: MovableClaimBoxProps) => {
+const MovableClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
