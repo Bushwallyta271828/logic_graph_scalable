@@ -17,6 +17,7 @@ export type ClaimBoxProps = {
 
 const DefinitionBox = ({definition, index, final}: {definition: DefinitionBoxProps, index: number, final: boolean}) => {
   return (
+    //draggableID only needs to be unique within each DragDropContext, i.e. the list for each claim.
     <Draggable draggableId={definition.claimID} index={index}>
       {provided => (
         <div
@@ -27,7 +28,7 @@ const DefinitionBox = ({definition, index, final}: {definition: DefinitionBoxPro
             <div className="bg-red-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
               <p>{definition.claimID}</p>
             </div>
-            <div className="bg-red-900 text-white flex-1 p-2 rounded-r-md text-ellipsis text-sm">
+            <div className=`bg-red-${final ? 700 : 900} text-white flex-1 p-2 rounded-r-md text-ellipsis text-sm`>
               <p>{definition.text}</p>
             </div>
           </div>
@@ -37,30 +38,38 @@ const DefinitionBox = ({definition, index, final}: {definition: DefinitionBoxPro
   );
 }
 
-function DefinitionList({definitions} : {definitions: DefinitionBoxProps[]}) {
-  const [claims, setClaims] = useState(initialClaims);
+function DefinitionList({initialDefinitions, claimID} : {initialDefinitions: DefinitionBoxProps[], claimID: string}) {
+  //I only use the claimID to generate a unique key for each DefinitionBox
+  const [definitions, setDefinitions] = useState(initialDefinitions);
 
   function onDragEnd(result : DropResult) {
     if (!result.destination || (result.destination.index === result.source.index)) {
       return;
     }
 
-    const newClaims = Array.from(claims);
-    const [removed] = newClaims.splice(result.source.index, 1);
-    newClaims.splice(result.destination.index, 0, removed);
+    const newDefinitions = Array.from(definitions);
+    const [removed] = newDefinitions.splice(result.source.index, 1);
+    newDefinitions.splice(result.destination.index, 0, removed);
 
-    setClaims(newClaims);
+    setDefinitions(newDefinitions);
   }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="list">
         {provided => (
-          <div className="flex flex-col p-4 gap-4"
+          <div className="flex flex-col"
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {claims.map((claim: ClaimBoxProps, index: number) => (
-              <MovableClaimBox claim={claim} index={index} key={claim.claimID} />))}
+            {definitions.map((definition: DefinitionBoxProps, index: number) => (
+              <DefinitionBox
+                definition={definition}
+                index={index}
+                final=(index===definitions.length - 1)
+                key={claimID+"."+definition.claimID}
+                //Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
+                //Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key.
+              />))}
             {provided.placeholder}
           </div>
         )}
@@ -103,14 +112,19 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
   );
 }
 
-export function ClaimBox({initialText, claimID, user} : ClaimBoxProps) {
+export function ClaimBox({initialText, claimID, user, definitions} : ClaimBoxProps) {
   return (
     <div className="flex shadow-xl">
-      <div className="bg-slate-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
-        <p>{claimID}</p>
-        <p>{user}</p>
+      <div className="flex">
+        <div className="bg-slate-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
+          <p>{claimID}</p>
+          <p>{user}</p>
+        </div>
+        <ClaimContentRegion initialText={initialText} />
       </div>
-      <ClaimContentRegion initialText={initialText} />
+      <div className="ml-30">
+        <DefinitionList definitions={definitions} />
+      </div>
     </div>
   );
 }
