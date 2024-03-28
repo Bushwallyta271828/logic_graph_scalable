@@ -28,10 +28,10 @@ const DefinitionBox = ({definition, index, final, claimID}:
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
           <div className="flex shadow-xl">
-            <div className="bg-red-800 text-white w-20 p-2 rounded-l-md text-ellipsis text-sm">
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-red-800 text-white w-20 p-2 text-ellipsis text-sm`}>
               <p>{definition.claimID}</p>
             </div>
-            <div className={`${final ? "bg-red-700" : "bg-red-900"} text-white flex-1 p-2 rounded-r-md text-ellipsis text-sm`}>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-red-900 text-white flex-1 p-2 text-ellipsis text-sm`}>
               <p>{definition.text}</p>
             </div>
           </div>
