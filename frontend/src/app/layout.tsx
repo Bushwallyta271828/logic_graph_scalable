@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/app/components/navbar";
-
-const inter = Inter({ subsets: ["latin"] });
+import NavBar from "@/app/components/navbar";
 
 export const metadata: Metadata = {
   title: "Logic Graph",
@@ -15,9 +12,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
+    <html lang="en" className="scrollbar-thin scrollbar-track-slate-900 scrollbar-thumb-slate-800">
+      <body className="bg-neutral-800">
+        <NavBar />
         {children}
       </body>
     </html>
