@@ -124,14 +124,70 @@ function DefinitionList({initialDefinitions, claimID}:
 
 
 
+//import { useRef, useEffect } from 'react';
+//
+//function ClaimContentRegion({ initialText }: { initialText: string }) {
+//  const [text, setText] = useState(initialText);
+//  const [isEditing, setIsEditing] = useState(false);
+//  const textareaRef = useRef<HTMLTextAreaElement>(null); // Step 1: Create a ref for the textarea
+//
+//  // Step 2: Adjust Height Function
+//  const adjustHeight = () => {
+//    if (textareaRef.current) {
+//      textareaRef.current.style.height = 'inherit';
+//      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+//    }
+//  };
+//
+//  useEffect(() => {
+//    adjustHeight(); // Adjust height on mount and when initialText changes
+//  }, [initialText]);
+//
+//  function handleClick() {
+//    setIsEditing(true);
+//  }
+//
+//  function handleBlur() {
+//    setIsEditing(false);
+//  }
+//
+//  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+//    setText(e.target.value);
+//    adjustHeight();
+//  };
+//
+//  return (
+//    <>
+//      {isEditing ? (
+//        <textarea
+//          ref={textareaRef} // Step 3: Assign the ref to the textarea
+//          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm outline-none"
+//          value={text}
+//          onChange={handleChange}
+//          onBlur={handleBlur}
+//          autoFocus
+//          style={{ overflow: 'hidden' }} // Prevent scrollbar from appearing
+//        />
+//      ) : (
+//        <p
+//          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm"
+//          onClick={handleClick}
+//        >
+//          {text}
+//        </p>
+//      )}
+//    </>
+//  );
+//}
+
+
 import { useRef, useEffect } from 'react';
 
 function ClaimContentRegion({ initialText }: { initialText: string }) {
   const [text, setText] = useState(initialText);
   const [isEditing, setIsEditing] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null); // Step 1: Create a ref for the textarea
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Step 2: Adjust Height Function
   const adjustHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'inherit';
@@ -142,6 +198,12 @@ function ClaimContentRegion({ initialText }: { initialText: string }) {
   useEffect(() => {
     adjustHeight(); // Adjust height on mount and when initialText changes
   }, [initialText]);
+
+  useEffect(() => {
+    if (isEditing) {
+      adjustHeight(); // Also adjust height right when it switches to editing mode
+    }
+  }, [isEditing]); // Listening for changes to isEditing
 
   function handleClick() {
     setIsEditing(true);
@@ -160,13 +222,13 @@ function ClaimContentRegion({ initialText }: { initialText: string }) {
     <>
       {isEditing ? (
         <textarea
-          ref={textareaRef} // Step 3: Assign the ref to the textarea
+          ref={textareaRef}
           className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm outline-none"
           value={text}
           onChange={handleChange}
           onBlur={handleBlur}
           autoFocus
-          style={{ overflow: 'hidden' }} // Prevent scrollbar from appearing
+          style={{ overflow: 'hidden' }}
         />
       ) : (
         <p
@@ -179,7 +241,6 @@ function ClaimContentRegion({ initialText }: { initialText: string }) {
     </>
   );
 }
-
 
 
 const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
