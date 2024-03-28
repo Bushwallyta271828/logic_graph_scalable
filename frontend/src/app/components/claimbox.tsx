@@ -120,7 +120,7 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
 
 export function ClaimBox({initialText, claimID, user, definitions} : ClaimBoxProps) {
   return (
-    <div className="flex shadow-xl">
+    <div className="flex flex-col shadow-xl">
       <div className="flex">
         <div className="bg-slate-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
           <p>{claimID}</p>
