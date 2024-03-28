@@ -15,10 +15,12 @@ export type ClaimBoxProps = {
   definitions: DefinitionBoxProps[];
 };
 
-const DefinitionBox = ({definition, index, final}: {definition: DefinitionBoxProps, index: number, final: boolean}) => {
+const DefinitionBox = ({definition, index, final, claimID}:
+  {definition: DefinitionBoxProps, index: number, final: boolean, claimID: string}) => {
   return (
-    //draggableID only needs to be unique within each DragDropContext, i.e. the list for each claim.
-    <Draggable draggableId={definition.claimID} index={index}>
+    //Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
+    //Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key.
+    <Draggable draggableId={claimID+"."+definition.claimID} index={index}>
       {provided => (
         <div
           ref={provided.innerRef}
@@ -38,8 +40,9 @@ const DefinitionBox = ({definition, index, final}: {definition: DefinitionBoxPro
   );
 }
 
-function DefinitionList({initialDefinitions, claimID} : {initialDefinitions: DefinitionBoxProps[], claimID: string}) {
-  //I only use the claimID to generate a unique key for each DefinitionBox
+function DefinitionList({initialDefinitions, claimID}:
+  {initialDefinitions: DefinitionBoxProps[], claimID: string}) {
+  //I only use the claimID to generate unique keys and ID's.
   const [definitions, setDefinitions] = useState(initialDefinitions);
 
   function onDragEnd(result : DropResult) {
@@ -56,7 +59,7 @@ function DefinitionList({initialDefinitions, claimID} : {initialDefinitions: Def
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="list">
+      <Droppable droppableId={claimID+"-list"}>
         {provided => (
           <div className="flex flex-col"
             ref={provided.innerRef}
@@ -65,7 +68,8 @@ function DefinitionList({initialDefinitions, claimID} : {initialDefinitions: Def
               <DefinitionBox
                 definition={definition}
                 index={index}
-                final=(index===definitions.length - 1)
+                final={index===definitions.length - 1}
+                claimID={claimID}
                 key={claimID+"."+definition.claimID}
                 //Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
                 //Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key.
