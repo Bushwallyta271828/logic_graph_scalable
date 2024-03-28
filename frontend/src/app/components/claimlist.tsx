@@ -113,7 +113,7 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
         />
       ) : (
         <p
-          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap break-words text-sm"
+          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm"
           onClick={handleClick}>
           {text}
         </p>
