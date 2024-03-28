@@ -122,13 +122,13 @@ export function ClaimBox({initialText, claimID, user, definitions} : ClaimBoxPro
   return (
     <div className="flex flex-col shadow-xl">
       <div className="flex">
-        <div className="bg-slate-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
+        <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md text-ellipsis text-sm">
           <p>{claimID}</p>
           <p>{user}</p>
         </div>
         <ClaimContentRegion initialText={initialText} />
       </div>
-      <div className="ml-30">
+      <div className="ml-20">
         <DefinitionList initialDefinitions={definitions} claimID={claimID} />
       </div>
     </div>

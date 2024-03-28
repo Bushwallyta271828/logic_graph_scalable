@@ -14,7 +14,7 @@ export default async function Home() {
   const claims = [{
     initialText: responseText,
     claimID: '1',
-    user: 'some_user',
+    user: 'some_userrrrrrrr',
     definitions: definitions
   },{
     initialText: responseText,
@@ -24,7 +24,7 @@ export default async function Home() {
   },{
     initialText: responseText,
     claimID: '100',
-    user: 'some_user',
+    user: 'ssssssome_user',
     definitions: definitions
   },{
     initialText: responseText,
