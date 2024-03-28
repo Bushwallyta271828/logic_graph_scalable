@@ -32,11 +32,11 @@ const DefinitionBox = ({definition, index, final, claimID}:
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
           <div className="flex shadow-xl">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-teal-900 text-white w-20 p-2 text-ellipsis text-sm truncate`}>
-              <p>{definition.claimID}</p>
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-teal-900 text-white w-20 p-2`}>
+              <p className="text-ellipsis text-sm truncate">{definition.claimID}</p>
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-teal-950 text-white flex-1 p-2 text-ellipsis text-sm break-words min-w-0`}>
-              <p>{definition.text}</p>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-teal-950 text-white flex-1 p-2 min-w-0`}>
+              <p className="text-ellipsis text-sm break-words">{definition.text}</p>
             </div>
           </div>
         </div>
