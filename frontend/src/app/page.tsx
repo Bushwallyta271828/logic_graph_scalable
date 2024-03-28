@@ -4,10 +4,18 @@ import CallAPI from "@/app/_lib/callapi";
 
 export default async function Home() {
   const responseText = await (await CallAPI()).text();
+  const definitions = [{
+    claimID: 'a',
+    text: 'A moon is an object in orbit around another body.'
+  },{
+    claimID: 'b',
+    text: 'Cheese is cheese.'
+  }];
   const claims = [{
     initialText: responseText,
     claimID: '1',
-    user: 'some_user'
+    user: 'some_user',
+    definitions: definitions
   },{
     initialText: responseText,
     claimID: '10',
@@ -15,7 +23,8 @@ export default async function Home() {
   },{
     initialText: responseText,
     claimID: '100',
-    user: 'some_user'
+    user: 'some_user',
+    definitions: definitions
   },{
     initialText: responseText,
     claimID: '1000',
@@ -31,7 +40,8 @@ export default async function Home() {
   },{
     initialText: responseText,
     claimID: '200',
-    user: 'some_user'
+    user: 'some_user',
+    definitions: definitions
   },{
     initialText: responseText,
     claimID: '2000',
@@ -39,7 +49,8 @@ export default async function Home() {
   },{
     initialText: responseText,
     claimID: '3',
-    user: 'some_user'
+    user: 'some_user',
+    definitions: definitions
   },{
     initialText: responseText,
     claimID: '30',
@@ -55,7 +66,8 @@ export default async function Home() {
   },{
     initialText: responseText,
     claimID: '4',
-    user: 'some_user'
+    user: 'some_user',
+    definitions: definitions
   },{
     initialText: responseText,
     claimID: '40',

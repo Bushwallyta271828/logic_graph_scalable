@@ -18,8 +18,9 @@ export type ClaimBoxProps = {
 const DefinitionBox = ({definition, index, final, claimID}:
   {definition: DefinitionBoxProps, index: number, final: boolean, claimID: string}) => {
   return (
-    //Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
-    //Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key.
+    /**
+     * Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
+     * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
     <Draggable draggableId={claimID+"."+definition.claimID} index={index}>
       {provided => (
         <div
@@ -71,8 +72,9 @@ function DefinitionList({initialDefinitions, claimID}:
                 final={index===definitions.length - 1}
                 claimID={claimID}
                 key={claimID+"."+definition.claimID}
-                //Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
-                //Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key.
+                /**
+                 * Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
+                 * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
               />))}
             {provided.placeholder}
           </div>
