@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scrollbar scrollbar-thumb-lime-500 scrollbar-track-orange-700">
+    <html lang="en" className="scrollbar scrollbar-track-gray-900 scrollbar-thumb-blue-950">
       <body className="bg-neutral-800">
         <NavBar />
         {children}
