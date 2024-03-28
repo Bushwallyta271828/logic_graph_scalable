@@ -130,13 +130,13 @@ const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex" {...provided.dragHandleProps}>
             <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md text-ellipsis text-sm">
-              <p>{claimID}</p>
-              <p>{user}</p>
+              <p>{claim.claimID}</p>
+              <p>{claim.user}</p>
             </div>
-            <ClaimContentRegion initialText={initialText} />
+            <ClaimContentRegion initialText={claim.initialText} />
           </div>
           <div className="ml-20">
-            <DefinitionList initialDefinitions={definitions} claimID={claimID} />
+            <DefinitionList initialDefinitions={claim.definitions} claimID={claim.claimID} />
           </div>
         </div>
       )}
