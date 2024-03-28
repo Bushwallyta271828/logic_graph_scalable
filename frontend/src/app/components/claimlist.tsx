@@ -32,10 +32,10 @@ const DefinitionBox = ({definition, index, final, claimID}:
           {...provided.draggableProps}
           {...provided.dragHandleProps}>
           <div className="flex shadow-xl">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-red-800 text-white w-20 p-2 text-ellipsis text-sm`}>
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-teal-900 text-white w-20 p-2 text-ellipsis text-sm`}>
               <p>{definition.claimID}</p>
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-red-900 text-white flex-1 p-2 text-ellipsis text-sm`}>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-teal-950 text-white flex-1 p-2 text-ellipsis text-sm`}>
               <p>{definition.text}</p>
             </div>
           </div>
@@ -105,7 +105,7 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
     <>
       {isEditing ? (
         <textarea
-          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm outline-none"
+          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap break-words text-sm outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={handleBlur}
@@ -113,7 +113,7 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
         />
       ) : (
         <p
-          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm"
+          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap break-words text-sm"
           onClick={handleClick}>
           {text}
         </p>
