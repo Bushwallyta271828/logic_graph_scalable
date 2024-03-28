@@ -35,7 +35,7 @@ const DefinitionBox = ({definition, index, final, claimID}:
             <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-teal-900 text-white w-20 p-2 text-ellipsis text-sm truncate`}>
               <p>{definition.claimID}</p>
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-teal-950 text-white flex-1 p-2 text-ellipsis text-sm break-words`}>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-teal-950 text-white flex-1 p-2 text-ellipsis text-sm break-words min-w-0`}>
               <p>{definition.text}</p>
             </div>
           </div>
