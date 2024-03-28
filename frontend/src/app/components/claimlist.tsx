@@ -105,7 +105,7 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
     <>
       {isEditing ? (
         <textarea
-          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm"
+          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap text-sm outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={handleBlur}
