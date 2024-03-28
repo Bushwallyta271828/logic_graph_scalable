@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-neutral-800 scrollbar scrollbar-thin scrollbar-thumb-lime-500 scrollbar-track-orange-700">
+    <html lang="en" className="scrollbar scrollbar-thumb-lime-500 scrollbar-track-orange-700">
+      <body className="bg-neutral-800 scrollbar scrollbar-thumb-lime-500 scrollbar-track-orange-700">
         <NavBar />
         {children}
       </body>
