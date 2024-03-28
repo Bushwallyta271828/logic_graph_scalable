@@ -126,9 +126,9 @@ const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
-        <div className="flex flex-col shadow-xl"
+        <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
-          <div className="flex" {...provided.dragHandleProps}>
+          <div className="flex shadow-xl" {...provided.dragHandleProps}>
             <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md">
               <p className="text-sm truncate">{claim.claimID}</p>
               <p className="text-sm truncate">{claim.user}</p>
