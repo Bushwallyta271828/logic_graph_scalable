@@ -105,7 +105,7 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
     <>
       {isEditing ? (
         <textarea
-          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md text-wrap break-words text-sm outline-none"
+          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={handleBlur}
@@ -129,9 +129,9 @@ const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
         <div className="flex flex-col shadow-xl"
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex" {...provided.dragHandleProps}>
-            <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md text-ellipsis text-sm">
-              <p>{claim.claimID}</p>
-              <p>{claim.user}</p>
+            <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md">
+              <p className="text-sm truncate">{claim.claimID}</p>
+              <p className="text-sm truncate">{claim.user}</p>
             </div>
             <ClaimContentRegion initialText={claim.initialText} />
           </div>
