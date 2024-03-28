@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
 export type DefinitionBoxProps = {
@@ -88,101 +88,6 @@ function DefinitionList({initialDefinitions, claimID}:
   );
 }
 
-
-//function ClaimContentRegion({initialText} : {initialText : string}) {
-//  const [text, setText] = useState(initialText);
-//  const [isEditing, setIsEditing] = useState(false);
-//
-//  function handleClick() {
-//    setIsEditing(true);
-//  }
-//
-//  function handleBlur() {
-//    setIsEditing(false);
-//  }
-//
-//  return (
-//    <>
-//      {isEditing ? (
-//        <textarea
-//          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm outline-none"
-//          value={text}
-//          onChange={(e) => setText(e.target.value)}
-//          onBlur={handleBlur}
-//          autoFocus
-//        />
-//      ) : (
-//        <p
-//          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm"
-//          onClick={handleClick}>
-//          {text}
-//        </p>
-//      )}
-//    </>
-//  );
-//}
-
-
-
-//import { useRef, useEffect } from 'react';
-//
-//function ClaimContentRegion({ initialText }: { initialText: string }) {
-//  const [text, setText] = useState(initialText);
-//  const [isEditing, setIsEditing] = useState(false);
-//  const textareaRef = useRef<HTMLTextAreaElement>(null); // Step 1: Create a ref for the textarea
-//
-//  // Step 2: Adjust Height Function
-//  const adjustHeight = () => {
-//    if (textareaRef.current) {
-//      textareaRef.current.style.height = 'inherit';
-//      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-//    }
-//  };
-//
-//  useEffect(() => {
-//    adjustHeight(); // Adjust height on mount and when initialText changes
-//  }, [initialText]);
-//
-//  function handleClick() {
-//    setIsEditing(true);
-//  }
-//
-//  function handleBlur() {
-//    setIsEditing(false);
-//  }
-//
-//  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-//    setText(e.target.value);
-//    adjustHeight();
-//  };
-//
-//  return (
-//    <>
-//      {isEditing ? (
-//        <textarea
-//          ref={textareaRef} // Step 3: Assign the ref to the textarea
-//          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm outline-none"
-//          value={text}
-//          onChange={handleChange}
-//          onBlur={handleBlur}
-//          autoFocus
-//          style={{ overflow: 'hidden' }} // Prevent scrollbar from appearing
-//        />
-//      ) : (
-//        <p
-//          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm"
-//          onClick={handleClick}
-//        >
-//          {text}
-//        </p>
-//      )}
-//    </>
-//  );
-//}
-
-
-import { useRef, useEffect } from 'react';
-
 function ClaimContentRegion({ initialText }: { initialText: string }) {
   const [text, setText] = useState(initialText);
   const [isEditing, setIsEditing] = useState(false);
@@ -190,28 +95,13 @@ function ClaimContentRegion({ initialText }: { initialText: string }) {
 
   const adjustHeight = () => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'inherit';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   };
 
   useEffect(() => {
-    adjustHeight(); // Adjust height on mount and when initialText changes
-  }, [initialText]);
-
-  useEffect(() => {
-    if (isEditing) {
-      adjustHeight(); // Also adjust height right when it switches to editing mode
-    }
-  }, [isEditing]); // Listening for changes to isEditing
-
-  function handleClick() {
-    setIsEditing(true);
-  }
-
-  function handleBlur() {
-    setIsEditing(false);
-  }
+    adjustHeight();
+  }, [text, isEditing]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
@@ -226,15 +116,13 @@ function ClaimContentRegion({ initialText }: { initialText: string }) {
           className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm outline-none"
           value={text}
           onChange={handleChange}
-          onBlur={handleBlur}
+          onBlur={() => setIsEditing(false)}
           autoFocus
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <p
-          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm"
-          onClick={handleClick}
-        >
+        <p className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm"
+          onClick={() => setIsEditing(true)}>
           {text}
         </p>
       )}
