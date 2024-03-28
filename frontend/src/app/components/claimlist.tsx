@@ -122,42 +122,21 @@ function ClaimContentRegion({initialText} : {initialText : string}) {
   );
 }
 
-//export function ClaimBox({initialText, claimID, user, definitions} : ClaimBoxProps) {
-//  return (
-//    <div className="flex flex-col shadow-xl">
-//      <div className="flex">
-//        <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md text-ellipsis text-sm">
-//          <p>{claimID}</p>
-//          <p>{user}</p>
-//        </div>
-//        <ClaimContentRegion initialText={initialText} />
-//      </div>
-//      <div className="ml-20">
-//        <DefinitionList initialDefinitions={definitions} claimID={claimID} />
-//      </div>
-//    </div>
-//  );
-//}
-
 const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}>
-          <div className="flex flex-col shadow-xl">
-            <div className="flex">
-              <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md text-ellipsis text-sm">
-                <p>{claimID}</p>
-                <p>{user}</p>
-              </div>
-              <ClaimContentRegion initialText={initialText} />
+        <div className="flex flex-col shadow-xl"
+          ref={provided.innerRef} {...provided.draggableProps}>
+          <div className="flex" {...provided.dragHandleProps}>
+            <div className="bg-slate-800 text-white w-20 p-2 rounded-l-md text-ellipsis text-sm">
+              <p>{claimID}</p>
+              <p>{user}</p>
             </div>
-            <div className="ml-20">
-              <DefinitionList initialDefinitions={definitions} claimID={claimID} />
-            </div>
+            <ClaimContentRegion initialText={initialText} />
+          </div>
+          <div className="ml-20">
+            <DefinitionList initialDefinitions={definitions} claimID={claimID} />
           </div>
         </div>
       )}
@@ -188,7 +167,7 @@ export function ClaimList({initialClaims} : ClaimListProps) {
             ref={provided.innerRef}
             {...provided.droppableProps}>
             {claims.map((claim: ClaimBoxProps, index: number) => (
-              <MovableClaimBox claim={claim} index={index} key={claim.claimID} />))}
+              <ClaimBox claim={claim} index={index} key={claim.claimID} />))}
             {provided.placeholder}
           </div>
         )}
