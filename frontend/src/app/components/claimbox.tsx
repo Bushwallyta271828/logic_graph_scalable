@@ -1,18 +1,47 @@
 'use client';
 
 import { useState } from 'react';
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+
+export type DefinitionBoxProps = {
+  text: string;
+  claimID: string;
+};
 
 export type ClaimBoxProps = {
   initialText: string;
   claimID: string;
   user: string;
+  definitions: DefinitionBoxProps[];
 };
 
-type ContentRegionProps = {
+const DefinitionBox = ({definition, index, final}: {definition: DefinitionBoxProps, index: number, final: boolean}) => {
+  return (
+    <Draggable draggableId={definition.claimID} index={index}>
+      {provided => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}>
+          <div className="flex shadow-xl">
+            <div className="bg-red-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
+              <p>{definition.claimID}</p>
+            </div>
+            <div className="bg-red-900 text-white flex-1 p-2 rounded-r-md text-ellipsis text-sm">
+              <p>{definition.text}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </Draggable>
+  );
+}
+
+type ClaimContentRegionProps = {
   initialText: string;
 };
 
-function ContentRegion({initialText} : ContentRegionProps) {
+function ClaimContentRegion({initialText} : ClaimContentRegionProps) {
   const [text, setText] = useState(initialText);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -52,7 +81,7 @@ export function ClaimBox({initialText, claimID, user} : ClaimBoxProps) {
         <p>{claimID}</p>
         <p>{user}</p>
       </div>
-      <ContentRegion initialText={initialText} />
+      <ClaimContentRegion initialText={initialText} />
     </div>
   );
 }
