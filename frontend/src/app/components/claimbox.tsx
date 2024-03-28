@@ -31,7 +31,7 @@ const DefinitionBox = ({definition, index, final, claimID}:
             <div className="bg-red-800 text-white w-30 p-2 rounded-l-md text-ellipsis text-sm">
               <p>{definition.claimID}</p>
             </div>
-            <div className=`bg-red-${final ? 700 : 900} text-white flex-1 p-2 rounded-r-md text-ellipsis text-sm`>
+            <div className={`bg-red-${final ? 700 : 900} text-white flex-1 p-2 rounded-r-md text-ellipsis text-sm`}>
               <p>{definition.text}</p>
             </div>
           </div>
@@ -129,7 +129,7 @@ export function ClaimBox({initialText, claimID, user, definitions} : ClaimBoxPro
         <ClaimContentRegion initialText={initialText} />
       </div>
       <div className="ml-30">
-        <DefinitionList definitions={definitions} />
+        <DefinitionList initialDefinitions={definitions} claimID={claimID} />
       </div>
     </div>
   );

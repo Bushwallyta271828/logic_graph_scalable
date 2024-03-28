@@ -19,7 +19,8 @@ export default async function Home() {
   },{
     initialText: responseText,
     claimID: '10',
-    user: 'some_user'
+    user: 'some_user',
+    definitions: [],
   },{
     initialText: responseText,
     claimID: '100',
@@ -28,59 +29,9 @@ export default async function Home() {
   },{
     initialText: responseText,
     claimID: '1000',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '2',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '20',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '200',
     user: 'some_user',
     definitions: definitions
-  },{
-    initialText: responseText,
-    claimID: '2000',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '3',
-    user: 'some_user',
-    definitions: definitions
-  },{
-    initialText: responseText,
-    claimID: '30',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '300',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '3000',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '4',
-    user: 'some_user',
-    definitions: definitions
-  },{
-    initialText: responseText,
-    claimID: '40',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '400',
-    user: 'some_user'
-  },{
-    initialText: responseText,
-    claimID: '4000',
-    user: 'some_user'
-  },];
+  }];
   return (
     <ClaimList initialClaims={claims}/>
   );
