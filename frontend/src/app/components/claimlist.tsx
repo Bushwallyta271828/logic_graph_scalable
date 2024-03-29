@@ -3,20 +3,23 @@
 import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
-export type DefinitionBoxProps = {
-  text: string;
+export type Claim = {
   claimID: string;
+  author: string;
 };
 
-export type ClaimBoxProps = {
-  initialText: string;
-  claimID: string;
-  user: string;
-  definitions: DefinitionBoxProps[];
-};
+export type TextClaim = {
+  text: string;
+  definitions: DefinitionClaim[];
+} & Claim;
+
+export type DefinitionClaim = {
+  text: string;
+  definitions: DefinitionClaim[];
+} & Claim;
 
 export type ClaimListProps = {
-  initialClaims: ClaimBoxProps[];
+  claims: Claim[];
 };
 
 const DefinitionBox = ({definition, index, final, claimID}:
