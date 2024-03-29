@@ -88,7 +88,8 @@ function DefinitionList({initialDefinitions, claimID}:
   );
 }
 
-function ClaimContentRegion({ initialText }: { initialText: string }) {
+function ClaimContentRegion({ initialText, noDefinitions }:
+  { initialText: string, noDefinitions: boolean }) {
   const [text, setText] = useState(initialText);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -108,12 +109,13 @@ function ClaimContentRegion({ initialText }: { initialText: string }) {
     adjustHeight();
   };
 
+  const rounding = noDefinitions ? "rounded-r-md" : "rounded-tr-md";
   return (
     <>
       {isEditing ? (
         <textarea
           ref={textareaRef}
-          className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm outline-none"
+          className={`bg-slate-900 text-white flex-1 p-2 ${rounding} break-words min-w-0 text-sm outline-none`}
           value={text}
           onChange={handleChange}
           onBlur={() => setIsEditing(false)}
@@ -121,7 +123,7 @@ function ClaimContentRegion({ initialText }: { initialText: string }) {
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <p className="bg-slate-900 text-white flex-1 p-2 rounded-r-md break-words min-w-0 text-sm"
+        <p className={`bg-slate-900 text-white flex-1 p-2 ${rounding} break-words min-w-0 text-sm`}
           onClick={() => setIsEditing(true)}>
           {text}
         </p>
@@ -142,7 +144,7 @@ const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
               <p className="text-sm truncate">{claim.claimID}</p>
               <p className="text-sm truncate">{claim.user}</p>
             </div>
-            <ClaimContentRegion initialText={claim.initialText} />
+            <ClaimContentRegion initialText={claim.initialText} noDefinitions={claim.definitions.length === 0}/>
           </div>
           <div className="ml-20">
             <DefinitionList initialDefinitions={claim.definitions} claimID={claim.claimID} />
