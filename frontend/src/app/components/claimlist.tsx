@@ -88,8 +88,7 @@ function DefinitionList({initialDefinitions, claimID}:
   );
 }
 
-function ClaimContentRegion({ initialText, noDefinitions }:
-  { initialText: string, noDefinitions: boolean }) {
+function ClaimContentRegion({ initialText }: { initialText: string}) {
   const [text, setText] = useState(initialText);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -109,13 +108,12 @@ function ClaimContentRegion({ initialText, noDefinitions }:
     adjustHeight();
   };
 
-  const rounding = noDefinitions ? "rounded-r-md" : "rounded-tr-md";
   return (
     <>
       {isEditing ? (
         <textarea
           ref={textareaRef}
-          className={`bg-slate-900 text-white flex-1 p-2 ${rounding} break-words min-w-0 text-sm outline-none`}
+          className="bg-slate-900 text-white flex-1 p-2 break-words min-w-0 text-sm outline-none"
           value={text}
           onChange={handleChange}
           onBlur={() => setIsEditing(false)}
@@ -123,7 +121,7 @@ function ClaimContentRegion({ initialText, noDefinitions }:
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <p className={`bg-slate-900 text-white flex-1 p-2 ${rounding} break-words min-w-0 text-sm`}
+        <p className="bg-slate-900 text-white flex-1 p-2 break-words min-w-0 text-sm"
           onClick={() => setIsEditing(true)}>
           {text}
         </p>
@@ -131,7 +129,6 @@ function ClaimContentRegion({ initialText, noDefinitions }:
     </>
   );
 }
-
 
 const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
   return (
@@ -144,7 +141,10 @@ const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
               <p className="text-sm truncate">{claim.claimID}</p>
               <p className="text-sm truncate">{claim.user}</p>
             </div>
-            <ClaimContentRegion initialText={claim.initialText} noDefinitions={claim.definitions.length === 0}/>
+            <ClaimContentRegion initialText={claim.initialText}/>
+            <div className={`bg-teal-900 text-white w-10 ${claim.definitions.length === 0 ? "rounded-r-md" : "rounded-tr-md"}`}>
+              <p>+</p>
+            </div>
           </div>
           <div className="ml-20">
             <DefinitionList initialDefinitions={claim.definitions} claimID={claim.claimID} />
