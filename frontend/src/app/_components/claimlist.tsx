@@ -9,7 +9,7 @@ export type ClaimListProps = {
 };
 
 const DefinitionBox = ({definition, index, final, claimID}:
-  {definition: DefinitionBoxProps, index: number, final: boolean, claimID: string}) => {
+  {definition: DefinitionClaim, index: number, final: boolean, claimID: string}) => {
   return (
     /**
      * Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
@@ -35,7 +35,7 @@ const DefinitionBox = ({definition, index, final, claimID}:
 }
 
 function DefinitionList({initialDefinitions, claimID}:
-  {initialDefinitions: DefinitionBoxProps[], claimID: string}) {
+  {initialDefinitions: DefinitionClaim[], claimID: string}) {
   //I only use the claimID to generate unique keys and ID's.
   const [definitions, setDefinitions] = useState(initialDefinitions);
 
@@ -58,7 +58,7 @@ function DefinitionList({initialDefinitions, claimID}:
           <div className="flex flex-col"
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {definitions.map((definition: DefinitionBoxProps, index: number) => (
+            {definitions.map((definition: DefinitionClaim, index: number) => (
               <DefinitionBox
                 definition={definition}
                 index={index}
@@ -119,7 +119,7 @@ function ClaimContentRegion({ initialText }: { initialText: string}) {
   );
 }
 
-const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
+const ClaimBox = ({claim, index} : {claim: Claim, index: number}) => {
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
@@ -128,9 +128,9 @@ const ClaimBox = ({claim, index} : {claim: ClaimBoxProps, index: number}) => {
           <div className="flex shadow-xl" {...provided.dragHandleProps}>
             <div className="bg-slate-800 w-20 p-2 rounded-l-md">
               <p className="text-white text-sm truncate">{claim.claimID}</p>
-              <p className="text-white text-sm truncate">{claim.user}</p>
+              <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
-            <ClaimContentRegion initialText={claim.initialText}/>
+            <ClaimContentRegion initialText={claim.text}/>
             <div className={`bg-teal-900 w-8 flex items-center justify-center ${claim.definitions.length === 0 ? "rounded-r-md" : "rounded-tr-md"}`}>
               <p className="text-white text-lg">+</p>
             </div>
@@ -166,7 +166,7 @@ export function ClaimList({initialClaims} : ClaimListProps) {
           <div className="flex flex-col p-4 gap-4"
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {claims.map((claim: ClaimBoxProps, index: number) => (
+            {claims.map((claim: Claim, index: number) => (
               <ClaimBox claim={claim} index={index} key={claim.claimID} />))}
             {provided.placeholder}
           </div>
