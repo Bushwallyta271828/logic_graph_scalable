@@ -73,19 +73,21 @@ function DefinitionList({initialDefinitions, claimID}:
   );
 }
 
-export function ClaimBox({claim, index, tabColor, contentRegion, hasDefinitions}:
-  {claim: Claim, index: number, tabColor: string, contentRegion: COME BACK, hasDefinitions: boolean}) {
+export function ClaimBox({claim, index, tabColor, bodyColor, contentRegion, hasDefinitions}:
+  {claim: Claim, index: number, tabColor: string, bodyColor: string, ContentRegion: ElementType, hasDefinitions: boolean}) {
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex shadow-xl" {...provided.dragHandleProps}>
-            <div className="bg-slate-800 w-20 p-2 rounded-l-md">
+            <div className={tabColor+" w-20 p-2 rounded-l-md"}>
               <p className="text-white text-sm truncate">{claim.claimID}</p>
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
-            <ClaimContentRegion initialText={claim.text}/>
+            <div className={bodyColor+" flex-1 p-2 min-w-0"}>
+              <ContentRegion />
+            </div>
             <div className={`bg-teal-900 w-8 flex items-center justify-center ${claim.definitions.length === 0 ? "rounded-r-md" : "rounded-tr-md"}`}>
               <p className="text-white text-lg">+</p>
             </div>
