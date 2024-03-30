@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import NavBar from "@/app/components/navbar";
+import NavBar from "@/app/_components/navbar";
 
 export const metadata: Metadata = {
   title: "Logic Graph",

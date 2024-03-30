@@ -1,22 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-
-export type Claim = {
-  claimID: string;
-  author: string;
-};
-
-export type TextClaim = {
-  text: string;
-  definitions: DefinitionClaim[];
-} & Claim;
-
-export type DefinitionClaim = {
-  text: string;
-  definitions: DefinitionClaim[];
-} & Claim;
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { Claim, TextClaim, DefinitionClaim } from '@/app/_types/claimtypes';
 
 export type ClaimListProps = {
   claims: Claim[];
