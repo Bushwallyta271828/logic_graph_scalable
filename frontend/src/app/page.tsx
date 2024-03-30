@@ -5,28 +5,27 @@ export default async function Home() {
   const responseText = await (await CallAPI()).text();
   const claims = [{
     claimID: '1',
-    author: 'some_userrrrrrrr',
+    author: 'alpha',
     claimType: 'Text',
     text: responseText,
-    definitions: ['2f48298fh', '23r83984934'],
+    definitionClaimIDs: ['10', '100'],
   },{
     claimID: '10',
-    author: 'some_user',
-    claimType: 'Text',
-    text: responseText,
-    definitions: [],
+    author: 'beta',
+    claimType: 'Definition',
+    text: 'The moon is defined to be the moon.',
+    definitionClaimIDs: [],
   },{
     claimID: '100',
-    author: 'ssssssome_user',
-    claimType: 'Text',
-    text: responseText,
-    definitions: ['32090923432'],
+    author: 'gamma',
+    claimType: 'Definition',
+    text: 'Cheese is defined to be whatever the moon is made out of.',
+    definitionClaimIDs: ['10'],
   },{
     claimID: '1000',
-    author: 'some_user',
-    claimType: 'Text',
-    text: responseText,
-    definitions: ['32f398j4', '23jf289', '57575'],
+    author: 'delta',
+    claimType: 'ZerothOrder',
+    formula: 12345,
   }];
   return (
     <ClaimList initialClaims={claims}/>
