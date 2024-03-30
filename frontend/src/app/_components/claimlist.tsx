@@ -4,10 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Claim } from '@/app/_types/claimtypes';
 
-export type ClaimListProps = {
-  claims: Claim[];
-};
-
 const DefinitionBox = ({definition, index, final, claimID}:
   {definition: DefinitionClaim, index: number, final: boolean, claimID: string}) => {
   return (
@@ -144,7 +140,7 @@ const ClaimBox = ({claim, index} : {claim: Claim, index: number}) => {
   );
 }
 
-export function ClaimList({initialClaims} : ClaimListProps) {
+export function ClaimList({claims} : {claims: Claim[]}) {
   const [claims, setClaims] = useState(initialClaims);
 
   function onDragEnd(result : DropResult) {
