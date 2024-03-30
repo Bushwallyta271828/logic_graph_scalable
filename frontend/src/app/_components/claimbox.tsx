@@ -116,9 +116,13 @@ function ClaimContentRegion({ initialText }: { initialText: string}) {
 }
 
 export default function ClaimBox({claim, index} : {claim: Claim, index: number}) {
-  const includeDefinitions = (claim.claimType === 'text' || claim.claimType === 'definition');
-  const claimContentRounding = TODO;
-  const addDefinitionButtonRounding = TODO;
+  const includeDefinitions = 'definitionClaimIDs' in claim;
+
+  //Which element is on the right can change depending on the value of includeDefinitions.
+  const bottomRightRounding = (!includeDefinitions || claim.definitionClaimIDs.length === 0) ? ' rounded-br-md' : '';
+  const rightElementRounding = 'rounded-tr-md' + bottomRightRounding;
+  const claimContentRounding = includeDefinitions ? rightElementRounding : '';
+
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
@@ -133,7 +137,7 @@ export default function ClaimBox({claim, index} : {claim: Claim, index: number})
               <ClaimContentRegion claim={claim}/>
             </div>
             {includeDefinitions ?
-              <div className={`bg-definition-tab w-8 flex items-center justify-center ${addDefinitionButtonRounding}`}>
+              <div className={`bg-definition-tab w-8 flex items-center justify-center ${rightElementRounding}`}>
                 <p className="text-white text-lg">+</p>
               </div> :
               null
