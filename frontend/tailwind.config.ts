@@ -9,10 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'text-claim-tab': '#000060',
-	'text-claim-body': '#000040',
-	'definition-claim-tab': '#006060',
-	'definition-claim-body': '#004040',
+        'text-tab': '#000060',
+	'text-body': '#000040',
+	'definition-tab': '#006060',
+	'definition-body': '#004040',
+	'zeroth-order-tab': '#300060',
+	'zeroth-order-body': '#200040',
       },
     },
   },

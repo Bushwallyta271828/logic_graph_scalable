@@ -115,59 +115,40 @@ function ClaimContentRegion({ initialText }: { initialText: string}) {
   );
 }
 
-const ClaimBox = ({claim, index} : {claim: Claim, index: number}) => {
+export default function ClaimBox({claim, index} : {claim: Claim, index: number}) {
+  const includeDefinitions = (claim.claimType === 'Text' || claim.claimType === 'Definition');
+  const claimContentRounding = TODO;
+  const addDefinitionButtonRounding = TODO;
+  const tabColor = TODO;
+  const bodyColor = TODO;
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex shadow-xl" {...provided.dragHandleProps}>
-            <div className="bg-slate-800 w-20 p-2 rounded-l-md">
+            <div className={tabColor+" w-20 p-2 rounded-l-md"}>
               <p className="text-white text-sm truncate">{claim.claimID}</p>
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
-            <ClaimContentRegion initialText={claim.text}/>
-            <div className={`bg-teal-900 w-8 flex items-center justify-center ${claim.definitions.length === 0 ? "rounded-r-md" : "rounded-tr-md"}`}>
-              <p className="text-white text-lg">+</p>
+            <div className={bodyColor+" flex-1 p-2 min-w-0"+claimContentRounding}>
+              <ClaimContentRegion claim={claim}/>
             </div>
+            {includeDefinitions ?
+              <div className={"definitionbg-teal-900 w-8 flex items-center justify-center "+addDefinitionButtonRounding}>
+                <p className="text-white text-lg">+</p>
+              </div> :
+              null
+            }
           </div>
-          <div className="ml-20">
-            <DefinitionList initialDefinitions={claim.definitions} claimID={claim.claimID} />
-          </div>
+          {includeDefinitions ?
+            <div className="ml-20">
+              <DefinitionList definitionClaimIDs={claim.definitionClaimIDs} parentClaimID={claim.claimID} />
+            </div> :
+            null
+          }
         </div>
       )}
     </Draggable>
-  );
-}
-
-export function ClaimList({claims} : {claims: Claim[]}) {
-  const [claims, setClaims] = useState(initialClaims);
-
-  function onDragEnd(result : DropResult) {
-    if (!result.destination || (result.destination.index === result.source.index)) {
-      return;
-    }
-
-    const newClaims = Array.from(claims);
-    const [removed] = newClaims.splice(result.source.index, 1);
-    newClaims.splice(result.destination.index, 0, removed);
-
-    setClaims(newClaims);
-  }
-
-  return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="list">
-        {provided => (
-          <div className="flex flex-col p-4 gap-4"
-            ref={provided.innerRef}
-            {...provided.droppableProps}>
-            {claims.map((claim: Claim, index: number) => (
-              <ClaimBox claim={claim} index={index} key={claim.claimID} />))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
   );
 }
