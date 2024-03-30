@@ -6,25 +6,25 @@ export default async function Home() {
   const claims = [{
     claimID: '1',
     author: 'alpha',
-    claimType: 'Text',
+    claimType: 'text',
     text: responseText,
     definitionClaimIDs: ['10', '100'],
   },{
     claimID: '10',
     author: 'beta',
-    claimType: 'Definition',
+    claimType: 'definition',
     text: 'The moon is defined to be the moon.',
     definitionClaimIDs: [],
   },{
     claimID: '100',
     author: 'gamma',
-    claimType: 'Definition',
+    claimType: 'definition',
     text: 'Cheese is defined to be whatever the moon is made out of.',
     definitionClaimIDs: ['10'],
   },{
     claimID: '1000',
     author: 'delta',
-    claimType: 'ZerothOrder',
+    claimType: 'zeroth-order',
     formula: 12345,
   }];
   return (

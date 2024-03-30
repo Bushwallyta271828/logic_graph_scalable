@@ -116,26 +116,24 @@ function ClaimContentRegion({ initialText }: { initialText: string}) {
 }
 
 export default function ClaimBox({claim, index} : {claim: Claim, index: number}) {
-  const includeDefinitions = (claim.claimType === 'Text' || claim.claimType === 'Definition');
+  const includeDefinitions = (claim.claimType === 'text' || claim.claimType === 'definition');
   const claimContentRounding = TODO;
   const addDefinitionButtonRounding = TODO;
-  const tabColor = TODO;
-  const bodyColor = TODO;
   return (
     <Draggable draggableId={claim.claimID} index={index}>
       {provided => (
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex shadow-xl" {...provided.dragHandleProps}>
-            <div className={tabColor+" w-20 p-2 rounded-l-md"}>
+            <div className={`bg-${claim.claimType}-tab w-20 p-2 rounded-l-md`}>
               <p className="text-white text-sm truncate">{claim.claimID}</p>
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
-            <div className={bodyColor+" flex-1 p-2 min-w-0"+claimContentRounding}>
+            <div className={`bg-${claim.claimType}-body flex-1 p-2 min-w-0 ${claimContentRounding}`}>
               <ClaimContentRegion claim={claim}/>
             </div>
             {includeDefinitions ?
-              <div className={"definitionbg-teal-900 w-8 flex items-center justify-center "+addDefinitionButtonRounding}>
+              <div className={`bg-definition-tab w-8 flex items-center justify-center ${addDefinitionButtonRounding}`}>
                 <p className="text-white text-lg">+</p>
               </div> :
               null

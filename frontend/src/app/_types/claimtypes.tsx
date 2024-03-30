@@ -1,7 +1,7 @@
 export type TextClaim = {
   claimID: string;
   author: string;
-  claimType: 'Text';
+  claimType: 'text';
   text: string;
   definitionClaimIDs: string[];
 };
@@ -9,7 +9,7 @@ export type TextClaim = {
 export type DefinitionClaim = {
   claimID: string;
   author: string;
-  claimType: 'Definition';
+  claimType: 'definition';
   text: string;
   definitionClaimIDs: string[];
 };
@@ -17,7 +17,7 @@ export type DefinitionClaim = {
 export type ZerothOrderClaim = {
   claimID: string;
   author: string;
-  claimType: 'ZerothOrder';
+  claimType: 'zeroth-order';
   formula: number; //TODO: fix this type!
 };
 
