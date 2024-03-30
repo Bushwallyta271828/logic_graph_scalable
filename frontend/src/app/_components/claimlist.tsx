@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { Claim, TextClaim, DefinitionClaim } from '@/app/_types/claimtypes';
+import { Claim } from '@/app/_types/claimtypes';
 
 export type ClaimListProps = {
   claims: Claim[];
