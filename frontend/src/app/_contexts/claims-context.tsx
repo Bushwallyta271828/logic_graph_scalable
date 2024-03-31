@@ -6,16 +6,19 @@ import { createContext, useContext, useState } from 'react';
 import { Claim } from '@/app/_types/claim-types';
 
 type ClaimsContext = {
-  CHANGEMEclaims: Claim[],
-  setCHANGEMEClaims: React.Dispatch<React.SetStateAction<Claim[]>>;
+  claimLookup: { [claimID: string]: Claim };
+  claimIDs: string[];
+  setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
+  setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
 
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
-  const [CHANGEMEclaims, setCHANGEMEClaims] = useState<Claim[]>([]);
+  const [claimLookup, setClaimLookup] = useState<{ [claimID: string]: Claim }>({});
+  const [claimIDs, setClaimIDs] = useState<string[]>([]);
   return (
-    <ClaimsContext.Provider value={{CHANGEMEclaims, setCHANGEMEClaims}}>
+    <ClaimsContext.Provider value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs}}>
       {children}
     </ClaimsContext.Provider>
   );
