@@ -7,7 +7,7 @@ import { Claim } from '@/app/_types/claim-types';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
-  claimIDs: string[];
+  claimIDs: string[]; //used for storing the order in which the claims are displayed
   setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
 }
