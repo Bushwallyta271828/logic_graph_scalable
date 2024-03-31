@@ -3,12 +3,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Claim } from '@/app/_types/claimtypes';
-import { TextContentBox } from '@/app/_components/textcontentbox';
-import { DefinitionContentBox } from '@/app/_components/definitioncontentbox';
-import { TextContentBox } from '@/app/_components/textcontentbox';
 
-function DefinitionBox({definition, index, final, claimID}:
-  {definition: DefinitionClaim, index: number, final: boolean, claimID: string}) {
+const DefinitionBox = ({definition, index, final, claimID}:
+  {definition: DefinitionClaim, index: number, final: boolean, claimID: string}) => {
   return (
     /**
      * Note: I'm assuming that claimID and definition.claimID are both alphanumeric.
@@ -87,6 +84,49 @@ function ClaimContentBox({ claim }: { claim: Claim}) {
     default:
       throw new Error('Unrecognized claim.claimType');
   }
+}
+
+
+function ClaimContentBox({ claim }: { claim: Claim}) {
+  const [text, setText] = useState(initialText);
+  const [isEditing, setIsEditing] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [text, isEditing]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+    adjustHeight();
+  };
+
+  return (
+    <>
+      {isEditing ? (
+        <textarea
+          ref={textareaRef}
+          className="bg-slate-900 text-white flex-1 p-2 break-words min-w-0 text-sm outline-none"
+          value={text}
+          onChange={handleChange}
+          onBlur={() => setIsEditing(false)}
+          autoFocus
+          style={{ overflow: 'hidden' }}
+        />
+      ) : (
+        <p className="bg-slate-900 text-white flex-1 p-2 break-words min-w-0 text-sm"
+          onClick={() => setIsEditing(true)}>
+          {text}
+        </p>
+      )}
+    </>
+  );
 }
 
 export default function ClaimBox({claim, index} : {claim: Claim, index: number}) {
