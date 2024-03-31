@@ -94,10 +94,12 @@ export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
 
   console.log(`bg-${claim.claimType}-tab w-20 p-2 rounded-l-md`);
 
-  //Which element is on the right can change depending on the value of includeDefinitions.
+  //Note: I was going to simplify the logic so that the content box
+  //is always rounded on the right if there's no Add Definition button,
+  //but then I remembered that we might have user permission problems
+  //in the future where a text claim has definitions but the user
+  //can't add any of their own. 
   const bottomRightRounding = (!includeDefinitions || claim.definitionClaimIDs.length === 0) ? ' rounded-br-md' : '';
-  //const rightElementRounding = 'rounded-tr-md' + bottomRightRounding;
-  //const claimContentRounding = !includeDefinitions ? rightElementRounding : '';
 
   return (
     <Draggable draggableId={claim.claimID} index={index}>
