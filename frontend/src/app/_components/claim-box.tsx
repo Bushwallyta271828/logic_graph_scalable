@@ -1,23 +1,25 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { useClaimsContext } from '@/app/_contexts/claims-context';
+import { Draggable } from '@hello-pangea/dnd';
 import { Claim } from '@/app/_types/claim-types';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
 import { TextContentBox } from '@/app/_components/text-content-box';
 import { DefinitionContentBox } from '@/app/_components/definition-content-box';
 import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-box';
 
-function ClaimContentBox({ claimID }: { claimID: string}) {
-  const { claimLookup } = useClaimsContext();
-  switch (claimLookup[claimID].claimType) {
+function ClaimContentBox({claim}: {claim: Claim}) {
+  //I'm taking in claim as opposed to claimID to make absolutely sure that
+  //the claim rendered by ClaimBox matches the content box.
+  //I'm also using claim instead of claimID for the type-specific function
+  //calls so that the type checker knows that the properties are correct.
+  switch (claim.claimType) {
     case 'text':
-      return TextContentBox({claimID: claimID});
+      return TextContentBox({textClaim: claim});
     case 'definition':
-      return DefinitionContentBox({claimID: claimID});
+      return DefinitionContentBox({definitionClaim: claim});
     case 'zeroth-order':
-      return ZerothOrderContentBox({claimID: claimID});
+      return ZerothOrderContentBox({zerothOrderClaim: claim});
     default:
       throw new Error('Unrecognized claimType');
   }
@@ -47,7 +49,7 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
             <div className={`${claim.claimType === 'text' ? 'bg-text-body' : claim.claimType === 'definition' ? 'bg-definition-body' : 'bg-zeroth-order-body'} flex-1 p-2 min-w-0 ${!includeDefinitions ? 'rounded-tr-md' : ''} ${!includeDefinitions && bottomRightRounding ? 'rounded-br-md' : ''}`}>
-              <ClaimContentBox claimID={claimID}/>
+              <ClaimContentBox claim={claim}/>
             </div>
             {includeDefinitions ?
               <div className={`bg-definition-tab w-8 flex items-center justify-center rounded-tr-md ${bottomRightRounding ? 'rounded-br-md' : ''}`}>
