@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { TextClaim } from '@/app/_types/claim-types';
+import { DefinitionClaim } from '@/app/_types/claim-types';
 
-export default function TextContentBox({ textClaim }: { textClaim: TextClaim}) {
-  const [text, setText] = useState(textClaim.text);
+export default function DefinitionContentBox({ definitionClaim }: { definitionClaim: DefinitionClaim}) {
+  const [text, setText] = useState(definitionClaim.text);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
