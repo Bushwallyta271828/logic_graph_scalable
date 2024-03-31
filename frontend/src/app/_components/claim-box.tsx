@@ -28,6 +28,9 @@ function ClaimContentBox({claim}: {claim: Claim}) {
 export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
   const { claimLookup } = useClaimsContext();
   const claim = claimLookup[claimID];
+  if (!claim) {
+    throw new Error("claimID not present in claimLookup");
+  }
 
   const includeDefinitions = 'definitionClaimIDs' in claim;
 
