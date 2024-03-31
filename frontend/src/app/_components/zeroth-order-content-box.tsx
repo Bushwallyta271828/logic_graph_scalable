@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { ZerothOrderClaim } from '@/app/_types/claim-types';
 
-export default function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
+export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
   const [text, setText] = useState(zerothOrderClaim.formula);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);

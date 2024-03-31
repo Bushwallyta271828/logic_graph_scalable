@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { TextClaim } from '@/app/_types/claim-types';
 
-export default function TextContentBox({ textClaim }: { textClaim: TextClaim}) {
+export function TextContentBox({ textClaim }: { textClaim: TextClaim}) {
   const [text, setText] = useState(textClaim.text);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);

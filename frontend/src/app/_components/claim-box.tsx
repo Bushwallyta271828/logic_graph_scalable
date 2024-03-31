@@ -89,7 +89,7 @@ function ClaimContentBox({ claim }: { claim: Claim}) {
   }
 }
 
-export default function ClaimBox({claim, index} : {claim: Claim, index: number}) {
+export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
   const includeDefinitions = 'definitionClaimIDs' in claim;
 
   //Which element is on the right can change depending on the value of includeDefinitions.
