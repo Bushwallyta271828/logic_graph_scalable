@@ -2,29 +2,32 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { Claim } from '@/app/_types/claim-types';
 import { DefinitionList } from '@/app/_components/definition-list';
 import { TextContentBox } from '@/app/_components/text-content-box';
 import { DefinitionContentBox } from '@/app/_components/definition-content-box';
 import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-box';
 
-function ClaimContentBox({ claim }: { claim: Claim}) {
-  switch (claim.claimType) {
+function ClaimContentBox({ claimID }: { claimID: string}) {
+  const { claimLookup } = useClaimsContext();
+  switch (claimLookup[claimID].claimType) {
     case 'text':
-      return TextContentBox({textClaim: claim});
+      return TextContentBox({claimID: claimID});
     case 'definition':
-      return DefinitionContentBox({definitionClaim: claim});
+      return DefinitionContentBox({claimID: claimID});
     case 'zeroth-order':
-      return ZerothOrderContentBox({zerothOrderClaim: claim});
+      return ZerothOrderContentBox({claimID: claimID});
     default:
-      throw new Error('Unrecognized claim.claimType');
+      throw new Error('Unrecognized claimType');
   }
 }
 
-export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
-  const includeDefinitions = 'definitionClaimIDs' in claim;
+export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
+  const { claimLookup } = useClaimsContext();
+  const claim = claimLookup[claimID];
 
-  console.log(`bg-${claim.claimType}-tab w-20 p-2 rounded-l-md`);
+  const includeDefinitions = 'definitionClaimIDs' in claim;
 
   //Note: I was going to simplify the logic so that the content box
   //is always rounded on the right if there's no Add Definition button,
@@ -44,7 +47,7 @@ export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
             <div className={`${claim.claimType === 'text' ? 'bg-text-body' : claim.claimType === 'definition' ? 'bg-definition-body' : 'bg-zeroth-order-body'} flex-1 p-2 min-w-0 ${!includeDefinitions ? 'rounded-tr-md' : ''} ${!includeDefinitions && bottomRightRounding ? 'rounded-br-md' : ''}`}>
-              <ClaimContentBox claim={claim}/>
+              <ClaimContentBox claimID={claimID}/>
             </div>
             {includeDefinitions ?
               <div className={`bg-definition-tab w-8 flex items-center justify-center rounded-tr-md ${bottomRightRounding ? 'rounded-br-md' : ''}`}>
