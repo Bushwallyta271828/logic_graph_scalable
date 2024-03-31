@@ -12,4 +12,19 @@ type ClaimsContext = {
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
 
-export function ClaimsContextProvider
+export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
+  const [claims, setClaims] = useState([]);
+  return (
+    <ClaimsContext.Provider value={{claims, setClaims}}>
+      {children}
+    </ClaimsContext.Provider>
+  );
+}
+
+export function useClaimsContext() {
+  const context = useContext(ClaimsContext);
+  if (!context) {
+    throw new Error("useClaimsContext must be used within a ClaimsContextProvider!");
+  }
+  return context;
+}
