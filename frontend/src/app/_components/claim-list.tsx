@@ -6,7 +6,7 @@ import { ClaimBox } from '@/app/_components/claim-box';
 import { Claim } from '@/app/_types/claim-types';
 
 export function ClaimList({claims} : {claims: Claim[]}) {
-  const [dynamicClaims, setDynamicClaims] = useState(initialClaims);
+  const [dynamicClaims, setDynamicClaims] = useState(claims);
 
   function onDragEnd(result : DropResult) {
     if (!result.destination || (result.destination.index === result.source.index)) {

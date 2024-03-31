@@ -25,7 +25,7 @@ export default async function Home() {
     claimID: '1000',
     author: 'delta',
     claimType: 'zeroth-order',
-    formula: 12345,
+    formula: '12345',
   }];
   return (
     <ClaimList initialClaims={claims}/>

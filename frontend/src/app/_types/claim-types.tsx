@@ -18,7 +18,7 @@ export type ZerothOrderClaim = {
   claimID: string;
   author: string;
   claimType: 'zeroth-order';
-  formula: number; //TODO: fix this type!
+  formula: string; //TODO: fix this type!
 };
 
 export type Claim =

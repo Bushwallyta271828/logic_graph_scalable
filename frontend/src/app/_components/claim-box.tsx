@@ -24,7 +24,7 @@ function DefinitionBox({definition, index, final, parentClaimID}:
               <p className="text-sm truncate">{definition}</p>
             </div>
             <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-definition-body text-white flex-1 p-2 min-w-0`}>
-              <p className="text-sm break-words">Oops, I'm not managing the program's state well yet.</p>
+              <p className="text-sm break-words">{"Oops, I'm not managing the program's state well yet."}</p>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@ function DefinitionList({definitionClaimIDs, parentClaimID}:
           <div className="flex flex-col"
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {definitions.map((definition: DefinitionClaim, index: number) => (
+            {definitions.map((definition: string, index: number) => (
               <DefinitionBox
                 definition={definition}
                 index={index}
@@ -79,11 +79,11 @@ function DefinitionList({definitionClaimIDs, parentClaimID}:
 function ClaimContentBox({ claim }: { claim: Claim}) {
   switch (claim.claimType) {
     case 'text':
-      return TextContentBox(claim);
+      return TextContentBox({textClaim: claim});
     case 'definition':
-      return DefinitionContentBox(claim);
+      return DefinitionContentBox({definitionClaim: claim});
     case 'zeroth-order':
-      return ZerothOrderContentBox(claim);
+      return ZerothOrderContentBox({zerothOrderClaim: claim});
     default:
       throw new Error('Unrecognized claim.claimType');
   }
