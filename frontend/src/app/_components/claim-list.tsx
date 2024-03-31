@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { ClaimBox } from '@/app/_components/claim-box';
-import { Claim } from '@/app/_types/claim-types';
 
 export function ClaimList() {
   const [claimIDs, setClaimIDs] = useClaimsContext();
