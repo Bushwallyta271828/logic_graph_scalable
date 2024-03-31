@@ -13,15 +13,21 @@ export function NavigationBar() {
           <p>New Claim</p>
         </button>
         <div className="flex gap-4">
-          <button className="bg-transparent hover:bg-zinc-700 py-2 px-2 rounded">
-            <Link href="/">Claims</Link>
-          </button>
-          <button className="bg-transparent hover:bg-zinc-700 py-2 px-2 rounded">
-            <Link href="/">Analysis</Link>
-          </button>
-          <button className="bg-transparent hover:bg-zinc-700 py-2 px-2 rounded">
-            <Link href="/documentation">Documentation</Link>
-          </button>
+          <Link href="/">
+            <button className="bg-transparent hover:bg-zinc-700 py-2 px-2 rounded">
+              Claims
+            </button>
+          </Link>
+          <Link href="/">
+            <button className="bg-transparent hover:bg-zinc-700 py-2 px-2 rounded">
+              Analysis
+            </button>
+          </Link>
+          <Link href="/documentation">
+            <button className="bg-transparent hover:bg-zinc-700 py-2 px-2 rounded">
+              Documentation
+            </button>
+          </Link>
         </div>
       </div>
     </nav>
