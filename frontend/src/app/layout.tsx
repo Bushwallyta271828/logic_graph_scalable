@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import ClaimsContextProvider from '@/app/_contexts/claims-context';
-import NavigationBar from '@/app/_components/navigation-bar';
+import { ClaimsContextProvider } from '@/app/_contexts/claims-context';
+import { NavigationBar } from '@/app/_components/navigation-bar';
 
 export const metadata: Metadata = {
   title: 'Logic Graph',
