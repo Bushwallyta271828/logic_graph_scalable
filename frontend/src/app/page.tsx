@@ -1,5 +1,5 @@
-import { ClaimList } from '@/app/_components/claimlist';
-import CallAPI from '@/app/_lib/callapi';
+import { ClaimList } from '@/app/_components/claim-list';
+import CallAPI from '@/app/_lib/call-api';
 
 export default async function Home() {
   const responseText = await (await CallAPI()).text();

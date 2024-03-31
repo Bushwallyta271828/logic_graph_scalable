@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
-import { ClaimBox } from '@/app/_components/claimbox';
-import { Claim } from '@/app/_types/claimtypes';
+import { ClaimBox } from '@/app/_components/claim-box';
+import { Claim } from '@/app/_types/claim-types';
 
 export function ClaimList({claims} : {claims: Claim[]}) {
   const [claims, setClaims] = useState(initialClaims);

@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { Claim } from '@/app/_types/claimtypes';
-import { TextContentBox } from '@/app/_components/textcontentbox';
-import { DefinitionContentBox } from '@/app/_components/definitioncontentbox';
-import { TextContentBox } from '@/app/_components/textcontentbox';
+import { Claim } from '@/app/_types/claim-types';
+import { TextContentBox } from '@/app/_components/text-content-box';
+import { DefinitionContentBox } from '@/app/_components/definition-content-box';
+import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-box';
 
 function DefinitionBox({definition, index, final, claimID}:
   {definition: DefinitionClaim, index: number, final: boolean, claimID: string}) {
