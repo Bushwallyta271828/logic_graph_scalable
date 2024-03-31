@@ -92,10 +92,12 @@ function ClaimContentBox({ claim }: { claim: Claim}) {
 export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
   const includeDefinitions = 'definitionClaimIDs' in claim;
 
+  console.log(`bg-${claim.claimType}-tab w-20 p-2 rounded-l-md`);
+
   //Which element is on the right can change depending on the value of includeDefinitions.
   const bottomRightRounding = (!includeDefinitions || claim.definitionClaimIDs.length === 0) ? ' rounded-br-md' : '';
-  const rightElementRounding = 'rounded-tr-md' + bottomRightRounding;
-  const claimContentRounding = includeDefinitions ? rightElementRounding : '';
+  //const rightElementRounding = 'rounded-tr-md' + bottomRightRounding;
+  //const claimContentRounding = !includeDefinitions ? rightElementRounding : '';
 
   return (
     <Draggable draggableId={claim.claimID} index={index}>
@@ -103,15 +105,15 @@ export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex shadow-xl" {...provided.dragHandleProps}>
-            <div className={`bg-${claim.claimType}-tab w-20 p-2 rounded-l-md`}>
+            <div className={`${claim.claimType === 'text' ? 'bg-text-tab' : claim.claimType === 'definition' ? 'bg-definition-tab' : 'bg-zeroth-order-tab'} w-20 p-2 rounded-l-md`}>
               <p className="text-white text-sm truncate">{claim.claimID}</p>
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
-            <div className={`bg-${claim.claimType}-body flex-1 p-2 min-w-0 ${claimContentRounding}`}>
+            <div className={`${claim.claimType === 'text' ? 'bg-text-body' : claim.claimType === 'definition' ? 'bg-definition-body' : 'bg-zeroth-order-body'} flex-1 p-2 min-w-0 ${!includeDefinitions ? 'rounded-tr-md' : ''} ${!includeDefinitions && bottomRightRounding ? 'rounded-br-md' : ''}`}>
               <ClaimContentBox claim={claim}/>
             </div>
             {includeDefinitions ?
-              <div className={`bg-definition-tab w-8 flex items-center justify-center ${rightElementRounding}`}>
+              <div className={`bg-definition-tab w-8 flex items-center justify-center rounded-tr-md ${bottomRightRounding ? 'rounded-br-md' : ''}`}>
                 <p className="text-white text-lg">+</p>
               </div> :
               null
