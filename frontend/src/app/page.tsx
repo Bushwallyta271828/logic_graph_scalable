@@ -1,37 +1,33 @@
-import { ClaimList } from "@/app/components/claimlist";
-import CallAPI from "@/app/_lib/callapi";
+import { ClaimList } from '@/app/_components/claim-list';
+import CallAPI from '@/app/_lib/call-api';
 
 export default async function Home() {
   const responseText = await (await CallAPI()).text();
-  const definitions = [{
-    claimID: 'a29u2d829udiu32',
-    text: 'A moon is an object in orbit around another body.'
-  },{
-    claimID: 'bf43f0394f03434f09hf28h9283h9',
-    text: 'Cheese is that which is not not not not not not not not not not not not not not not not not not not not not not not not not not not not not not not not cheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeese.'
-  }];
   const claims = [{
-    initialText: responseText,
     claimID: '1',
-    user: 'some_userrrrrrrr',
-    definitions: definitions
+    author: 'alpha',
+    claimType: 'text' as const,
+    text: responseText,
+    definitionClaimIDs: ['10', '100'],
   },{
-    initialText: responseText,
     claimID: '10',
-    user: 'some_user',
-    definitions: [],
+    author: 'beta',
+    claimType: 'definition' as const,
+    text: 'The moon is defined to be the moon.',
+    definitionClaimIDs: [],
   },{
-    initialText: responseText,
     claimID: '100',
-    user: 'ssssssome_user',
-    definitions: definitions
+    author: 'gamma',
+    claimType: 'definition' as const,
+    text: 'Cheese is defined to be whatever the moon is made out of.',
+    definitionClaimIDs: ['10'],
   },{
-    initialText: responseText,
     claimID: '1000',
-    user: 'some_user',
-    definitions: definitions
+    author: 'delta',
+    claimType: 'zeroth-order' as const,
+    formula: '12345',
   }];
   return (
-    <ClaimList initialClaims={claims}/>
+    <ClaimList claims={claims}/>
   );
 }
