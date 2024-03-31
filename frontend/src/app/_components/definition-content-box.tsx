@@ -28,7 +28,7 @@ export function DefinitionContentBox({ definitionClaim }: { definitionClaim: Def
       {isEditing ? (
         <textarea
           ref={textareaRef}
-          className="text-white text-sm w-full h-full break-words outline-none"
+          className="bg-transparent text-white text-sm w-full h-full break-words outline-none"
           value={text}
           onChange={handleChange}
           onBlur={() => setIsEditing(false)}
