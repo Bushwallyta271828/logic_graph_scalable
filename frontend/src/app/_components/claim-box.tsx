@@ -18,7 +18,8 @@ function DefinitionBox({definition, index, final, parentClaimID}:
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
-          {...provided.dragHandleProps}>
+          {...provided.dragHandleProps}
+          className="border-t border-neutral-500">
           <div className="flex shadow-xl">
             <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-definition-tab text-white w-20 p-2`}>
               <p className="text-sm truncate">{definition}</p>
