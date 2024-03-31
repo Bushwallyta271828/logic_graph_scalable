@@ -5,7 +5,7 @@ import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { ClaimBox } from '@/app/_components/claim-box';
 
 export function ClaimList() {
-  const [claimIDs, setClaimIDs] = useClaimsContext();
+  const {claimIDs, setClaimIDs} = useClaimsContext();
 
   function onDragEnd(result : DropResult) {
     if (!result.destination || (result.destination.index === result.source.index)) {
