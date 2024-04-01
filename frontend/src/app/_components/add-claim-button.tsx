@@ -28,9 +28,6 @@ export function AddClaimButton() {
               )}
             </Menu.Item>
           </div>
-          <Menu.Item disabled>
-            <span className="block px-4 py-2 text-sm opacity-75">Invite a friend (coming soon!)</span>
-          </Menu.Item>
         </Menu.Items>
       </Menu>
     </div>
