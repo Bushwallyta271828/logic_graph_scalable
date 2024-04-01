@@ -41,7 +41,7 @@ export function NewClaimButton() {
   return (
     <div className="relative">
       <Menu>
-        <Menu.Button className="bg-transparent hover:bg-zinc-700 px-2 py-1 rounded">
+        <Menu.Button className="bg-transparent hover:medium-neutral px-2 py-1 rounded">
           New Claim
         </Menu.Button>
         <Menu.Items className="absolute w-40 origin-top-right bg-transparent outline-none rounded-md shadow-xl text-sm font-normal">

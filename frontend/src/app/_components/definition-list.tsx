@@ -32,12 +32,12 @@ function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="border-t border-neutral-500">
+          className="border-t border-bright-neutral">
           <div className="flex">
             <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-definition-tab w-20 p-2`}>
               <p className="text-sm truncate">{definitionClaimID}</p>
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-neutral-500"} bg-definition-body flex-1 p-2 min-w-0`}>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-bright-neutral"} bg-definition-body flex-1 p-2 min-w-0`}>
               <p className="text-sm break-words">{definitionText}</p>
             </div>
           </div>
