@@ -32,14 +32,8 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
     throw new Error("claimID not present in claimLookup");
   }
 
-  const includeDefinitions = 'definitionClaimIDs' in claim;
-
-  //Note: I was going to simplify the logic so that the content box
-  //is always rounded on the right if there's no Add Definition button,
-  //but then I remembered that we might have user permission problems
-  //in the future where a text claim has definitions but the user
-  //can't add any of their own. 
-  const bottomRightRounding = (!includeDefinitions || claim.definitionClaimIDs.length === 0) ? ' rounded-br-md' : '';
+  const acceptsDefinitions = 'definitionClaimIDs' in claim;
+  const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
 
   return (
     <Draggable draggableId={claim.claimID} index={index}>
@@ -51,17 +45,11 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
               <p className="text-white text-sm truncate">{claim.claimID}</p>
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
-            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 ${!includeDefinitions ? 'rounded-tr-md' : ''} ${!includeDefinitions && bottomRightRounding ? 'rounded-br-md' : ''}`}>
+            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 rounded-tr-md ${hasDefinitions ? 'rounded-br-md' : ''}`}>
               <ClaimContentBox claim={claim}/>
             </div>
-            {includeDefinitions ?
-              <div className={`bg-medium-definition w-8 flex items-center justify-center rounded-tr-md ${bottomRightRounding ? 'rounded-br-md' : ''}`}>
-                <p className="text-white text-lg">+</p>
-              </div> :
-              null
-            }
           </div>
-          {includeDefinitions ?
+          {acceptsDefinitions ?
             <div className="ml-20">
               <DefinitionList claim={claim} />
             </div> :
