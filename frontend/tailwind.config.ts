@@ -9,6 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+	'bright-neutral': '#404040',
+	'medium-neutral': '#303030',
+	'dark-neutral': '#202020',
         'bright-text': '#000080',
         'medium-text': '#000060',
 	'dark-text': '#000040',
