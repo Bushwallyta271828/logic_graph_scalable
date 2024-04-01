@@ -63,7 +63,7 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
           </div>
           {includeDefinitions ?
             <div className="ml-20">
-              <DefinitionList claimID={claim.claimID} />
+              <DefinitionList claim={claim} />
             </div> :
             null
           }
