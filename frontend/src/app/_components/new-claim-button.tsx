@@ -13,21 +13,21 @@ export function NewClaimButton() {
           <div>
             <Menu.Item>
               {({ active }) => (
-                <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-text-tag' : 'bg-text-body'}`}>
+                <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-text-tab' : 'bg-text-body'}`}>
                   Text Claim
                 </a>
               )}
             </Menu.Item>
             <Menu.Item>
               {({ active }) => (
-                <a className={`block px-4 py-2 ${active ? 'bg-definition-tag' : 'bg-definition-body'}`}>
+                <a className={`block px-4 py-2 ${active ? 'bg-definition-tab' : 'bg-definition-body'}`}>
                   Definition Claim
                 </a>
               )}
             </Menu.Item>
             <Menu.Item>
               {({ active }) => (
-                <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-zeroth-order-tag' : 'bg-zeroth-order-body'}`}>
+                <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-zeroth-order-tab' : 'bg-zeroth-order-body'}`}>
                   Zeroth Order Claim
                 </a>
               )}
