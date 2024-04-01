@@ -44,7 +44,7 @@ export function NewClaimButton() {
         <Menu.Button>
           {({ open }) => 
             open
-              ? (<p className="px-2 py-1 rounded bg-bright-neutral hover:bg-medium-neutral">New Claim</p>)
+              ? (<p className="px-2 py-1 rounded bg-medium-neutral hover:bg-bright-neutral">New Claim</p>)
               : (<p className="px-2 py-1 rounded bg-transparent hover:bg-medium-neutral">New Claim</p>) 
           }
         </Menu.Button>
