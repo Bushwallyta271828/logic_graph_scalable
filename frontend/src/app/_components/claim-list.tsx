@@ -5,18 +5,13 @@ import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { ClaimBox } from '@/app/_components/claim-box';
 
 export function ClaimList() {
-  const {claimIDs, setClaimIDs} = useClaimsContext();
+  const { claimIDs, moveClaim } = useClaimsContext();
 
   function onDragEnd(result : DropResult) {
     if (!result.destination || (result.destination.index === result.source.index)) {
       return;
     }
-
-    const newClaimIDs = Array.from(claimIDs);
-    const [removed] = newClaimIDs.splice(result.source.index, 1);
-    newClaimIDs.splice(result.destination.index, 0, removed);
-
-    setClaimIDs(newClaimIDs);
+    moveClaim(result.source.index, result.destination.index);
   }
 
   return (
