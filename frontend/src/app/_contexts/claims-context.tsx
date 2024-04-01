@@ -10,6 +10,8 @@ type ClaimsContext = {
   claimIDs: string[]; //used for storing the order in which the claims are displayed
   setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
+  addClaim: (claim: Claim) => void;
+  moveClaim: (startIndex: number, endIndex: number) => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -17,8 +19,20 @@ export const ClaimsContext = createContext<ClaimsContext | null>(null);
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
   const [claimLookup, setClaimLookup] = useState<{ [claimID: string]: Claim }>({});
   const [claimIDs, setClaimIDs] = useState<string[]>([]);
+
+  const addClaim = (claim: Claim) => {
+    const claimID = claim.claimID;
+    setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
+    setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
+  };
+
+  const moveClaim = (startIndex: number, endIndex: number) => {
+
+  };
+
   return (
-    <ClaimsContext.Provider value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs}}>
+    <ClaimsContext.Provider
+      value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs, addClaim, moveClaim}}>
       {children}
     </ClaimsContext.Provider>
   );
