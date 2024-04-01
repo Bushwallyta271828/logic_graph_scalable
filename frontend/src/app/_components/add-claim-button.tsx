@@ -1,89 +1,52 @@
 'use client';
 
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import {
+  TEDropdown,
+  TEDropdownToggle,
+  TEDropdownMenu,
+  TEDropdownItem,
+  TERipple,
+} from "tw-elements-react";
 
-export function AddClaimButton() {
+export default function DropdownBasicExample(): JSX.Element {
   return (
-    <DropdownButton id="add-claim-button" title="New Claim">
-      <Dropdown.Item href="#/action-1">Text Claim</Dropdown.Item>
-      <Dropdown.Item href="#/action-2">Definition Claim</Dropdown.Item>
-      <Dropdown.Item href="#/action-3">Zeroth Order Claim</Dropdown.Item>
-    </DropdownButton>
+    <TEDropdown className="flex justify-center">
+      <TERipple rippleColor="light">
+        <TEDropdownToggle className="flex items-center whitespace-nowrap rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] motion-reduce:transition-none dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+          Dropdown button
+          <span className="ml-2 [&>svg]:w-5 w-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </span>
+        </TEDropdownToggle>
+      </TERipple>
+
+      <TEDropdownMenu>
+        <TEDropdownItem>
+          <a href="#" className="block w-full min-w-[160px] cursor-pointer whitespace-nowrap bg-transparent px-4 py-2 text-sm text-left font-normal pointer-events-auto text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:bg-neutral-100 focus:bg-neutral-100 focus:text-neutral-800 focus:outline-none active:no-underline dark:text-neutral-200 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600 dark:active:bg-neutral-600">
+            Action
+          </a>
+        </TEDropdownItem>
+        <TEDropdownItem>
+          <a href="#" className="block w-full min-w-[160px] cursor-pointer whitespace-nowrap bg-transparent px-4 py-2 text-sm text-left font-normal pointer-events-auto text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:bg-neutral-100 focus:bg-neutral-100 focus:text-neutral-800 focus:outline-none active:no-underline dark:text-neutral-200 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600 dark:active:bg-neutral-600">
+            Another action
+          </a>
+        </TEDropdownItem>
+        <TEDropdownItem>
+          <a href="#" className="block w-full min-w-[160px] cursor-pointer whitespace-nowrap bg-transparent px-4 py-2 text-sm text-left font-normal pointer-events-auto text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:bg-neutral-100 focus:bg-neutral-100 focus:text-neutral-800 focus:outline-none active:no-underline dark:text-neutral-200 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600 dark:active:bg-neutral-600">
+            Something else here
+          </a>
+        </TEDropdownItem>
+      </TEDropdownMenu>
+    </TEDropdown>
   );
 }
-
-
-
-//import { useState, useRef, useEffect, RefObject } from 'react';
-////import { addClaim } from '@app/_contexts/claims-context';
-//
-////export function AddClaimButton() {
-////  return (
-////    <button className="bg-transparent hover:bg-zinc-700 px-2 py-1 rounded">
-////      New Claim
-////    </button>
-////  );
-////}
-//
-//
-//export function Dropdown() {
-//  const [isOpen, setIsOpen] = useState(false);
-//  const toggleDropdown = () => setIsOpen(!isOpen);
-//  const dropdownRef : RefObject<HTMLDivElement | null> = useRef(null);
-//
-//  // Close dropdown when clicking outside
-//  useEffect(() => {
-//    const handleClickOutside = (event: MouseEvent) => {
-//      if (dropdownRef && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-//        setIsOpen(false);
-//      }
-//    };
-//
-//    document.addEventListener('mousedown', handleClickOutside);
-//    return () => {
-//      document.removeEventListener('mousedown', handleClickOutside);
-//    };
-//  }, [dropdownRef]);
-//
-//  return (
-//    <div className="relative" ref={dropdownRef}>
-//      <button
-//        onClick={toggleDropdown}
-//        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-//      >
-//        New Claim
-//      </button>
-//      {isOpen && (
-//        <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
-//          <a
-//            key={index}
-//            onClick={console.log('text')}
-//            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-//          >
-//            Text Claim
-//          </a>
-//          <a
-//            key={index}
-//            onClick={console.log('definition')}
-//            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-//          >
-//            Definition Claim
-//          </a>
-//          <a
-//            key={index}
-//            onClick={console.log('zeroth-order')}
-//            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-//          >
-//            Zeroth Order Claim
-//          </a>
-//        </div>
-//      )}
-//    </div>
-//  );
-//};
-
-//import Dropdown from 'react-dropdown';
-//import 'react-dropdown/style.css';
-
-//export function 
