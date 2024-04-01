@@ -9,12 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'text-tab': '#000060',
-	'text-body': '#000040',
-	'definition-tab': '#003060',
-	'definition-body': '#002040',
-	'zeroth-order-tab': '#300060',
-	'zeroth-order-body': '#200040',
+        'bright-text': '#000080',
+        'medium-text': '#000060',
+	'dark-text': '#000040',
+	'bright-definition': '#004080',
+	'medium-definition': '#003060',
+	'dark-definition': '#002040',
+	'bright-zeroth-order': '#400080',
+	'medium-zeroth-order': '#300060',
+	'dark-zeroth-order': '#200040',
       },
     },
   },
