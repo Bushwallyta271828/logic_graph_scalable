@@ -52,12 +52,12 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
 
   function onDragEnd(result : DropResult) {
     if (!result.destination) {return;}
-    moveDefinition({startIndex: result.source.index, endIndex: result.destination.index});
+    moveDefinition({claim: claim, startIndex: result.source.index, endIndex: result.destination.index});
   }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId={claimID+"-list"}>
+      <Droppable droppableId={claim.claimID+"-list"}>
         {provided => (
           <div className="flex flex-col rounded-b-md shadow-xl" //rounded-b-md only needed for shadow
             ref={provided.innerRef}
@@ -66,11 +66,11 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
               <DefinitionBox
                 definitionClaimID={definitionClaimID}
                 index={index}
-                final={index===definitions.length - 1}
+                final={index===claim.definitionClaimIDs.length - 1}
                 parentClaimID={claim.claimID}
-                key={parentClaimID+"."+definitionClaimID}
+                key={claim.claimID+"."+definitionClaimID}
                 /**
-                 * Note: I'm assuming that parentClaimID and definitionClaimID are both alphanumeric.
+                 * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.
                  * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
               />))}
             {provided.placeholder}
