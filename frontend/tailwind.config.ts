@@ -11,8 +11,8 @@ const config: Config = {
       colors: {
         'text-tab': '#000060',
 	'text-body': '#000040',
-	'definition-tab': '#006060',
-	'definition-body': '#004040',
+	'definition-tab': '#003060',
+	'definition-body': '#002040',
 	'zeroth-order-tab': '#300060',
 	'zeroth-order-body': '#200040',
       },

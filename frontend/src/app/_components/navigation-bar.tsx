@@ -1,19 +1,27 @@
 import Link from 'next/link';
+import { NewClaimButton } from '@/app/_components/new-claim-button';
 
-export default function NavigationBar() {
+export function NavigationBar() {
   return (
-    <nav className="bg-zinc-900 text-white px-8 py-4">
+    <nav className="bg-zinc-900 text-white text-lg font-bold px-8 py-4">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="flex gap-8">
-          <div className="text-lg font-bold">
-            <Link href="/">Claims</Link>
-          </div>
-          <div className="text-lg font-bold">
-            <Link href="/">Analysis</Link>
-          </div>
-        </div>
-        <div className="text-lg font-bold">
-          <Link href="/documentation">Documentation</Link>
+        <NewClaimButton />
+        <div className="flex gap-4">
+          <Link href="/">
+            <button className="bg-transparent hover:bg-zinc-700 px-2 py-1 rounded">
+              Claims
+            </button>
+          </Link>
+          <Link href="/analysis">
+            <button className="bg-transparent hover:bg-zinc-700 px-2 py-1 rounded">
+              Analysis
+            </button>
+          </Link>
+          <Link href="/documentation">
+            <button className="bg-transparent hover:bg-zinc-700 px-2 py-1 rounded">
+              Documentation
+            </button>
+          </Link>
         </div>
       </div>
     </nav>

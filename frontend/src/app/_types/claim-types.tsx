@@ -14,6 +14,10 @@ export type DefinitionClaim = {
   definitionClaimIDs: string[];
 };
 
+export type ClaimWithDefinitions = 
+  | TextClaim
+  | DefinitionClaim;
+
 export type ZerothOrderClaim = {
   claimID: string;
   author: string;

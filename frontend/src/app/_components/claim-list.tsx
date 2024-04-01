@@ -1,23 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { ClaimBox } from '@/app/_components/claim-box';
-import { Claim } from '@/app/_types/claim-types';
 
-export function ClaimList({claims} : {claims: Claim[]}) {
-  const [dynamicClaims, setDynamicClaims] = useState(claims);
+export function ClaimList() {
+  const { claimIDs, moveClaim } = useClaimsContext();
 
   function onDragEnd(result : DropResult) {
-    if (!result.destination || (result.destination.index === result.source.index)) {
-      return;
-    }
-
-    const newClaims = Array.from(dynamicClaims);
-    const [removed] = newClaims.splice(result.source.index, 1);
-    newClaims.splice(result.destination.index, 0, removed);
-
-    setDynamicClaims(newClaims);
+    if (!result.destination) {return;}
+    moveClaim({startIndex: result.source.index, endIndex: result.destination.index});
   }
 
   return (
@@ -27,8 +19,8 @@ export function ClaimList({claims} : {claims: Claim[]}) {
           <div className="flex flex-col p-4 gap-4"
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {dynamicClaims.map((claim: Claim, index: number) => (
-              <ClaimBox claim={claim} index={index} key={claim.claimID} />))}
+            {claimIDs.map((claimID: string, index: number) => (
+              <ClaimBox claimID={claimID} index={index} key={claimID} />))}
             {provided.placeholder}
           </div>
         )}

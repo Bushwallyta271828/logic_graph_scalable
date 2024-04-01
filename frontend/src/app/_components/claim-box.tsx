@@ -1,14 +1,18 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { Draggable } from '@hello-pangea/dnd';
 import { Claim } from '@/app/_types/claim-types';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
 import { TextContentBox } from '@/app/_components/text-content-box';
 import { DefinitionContentBox } from '@/app/_components/definition-content-box';
 import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-box';
 
-function ClaimContentBox({ claim }: { claim: Claim}) {
+function ClaimContentBox({claim}: {claim: Claim}) {
+  //I'm taking in claim as opposed to claimID to make absolutely sure that
+  //the claim rendered by ClaimBox matches the content box.
+  //I'm also using claim instead of claimID for the type-specific function
+  //calls so that the type checker knows that the properties are correct.
   switch (claim.claimType) {
     case 'text':
       return TextContentBox({textClaim: claim});
@@ -17,14 +21,18 @@ function ClaimContentBox({ claim }: { claim: Claim}) {
     case 'zeroth-order':
       return ZerothOrderContentBox({zerothOrderClaim: claim});
     default:
-      throw new Error('Unrecognized claim.claimType');
+      throw new Error('Unrecognized claimType');
   }
 }
 
-export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
-  const includeDefinitions = 'definitionClaimIDs' in claim;
+export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
+  const { claimLookup } = useClaimsContext();
+  const claim = claimLookup[claimID];
+  if (!claim) {
+    throw new Error("claimID not present in claimLookup");
+  }
 
-  console.log(`bg-${claim.claimType}-tab w-20 p-2 rounded-l-md`);
+  const includeDefinitions = 'definitionClaimIDs' in claim;
 
   //Note: I was going to simplify the logic so that the content box
   //is always rounded on the right if there's no Add Definition button,
@@ -55,7 +63,7 @@ export function ClaimBox({claim, index} : {claim: Claim, index: number}) {
           </div>
           {includeDefinitions ?
             <div className="ml-20">
-              <DefinitionList definitionClaimIDs={claim.definitionClaimIDs} parentClaimID={claim.claimID} />
+              <DefinitionList claim={claim} />
             </div> :
             null
           }

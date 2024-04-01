@@ -1,27 +1,44 @@
 'use client';
 
-import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { ClaimWithDefinitions, DefinitionClaim } from '@/app/_types/claim-types';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 
-function DefinitionBox({definition, index, final, parentClaimID}:
-  {definition: string, index: number, final: boolean, parentClaimID: string}) {
+function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
+  {definitionClaimID: string, index: number, final: boolean, parentClaimID: string}) {
+  /**
+   * Note: I'm assuming that parentClaimID and definitionClaimID are both alphanumeric.
+   * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
+
+  const { claimLookup } = useClaimsContext();
+  let definitionText = '';
+  let validDefinition = false;
+  if (!(definitionClaimID in claimLookup)) {
+    definitionText = "Oops, looks like that's not a valid claim ID!";
+  } else {
+    const definitionClaim = claimLookup[definitionClaimID];
+    if (definitionClaim.claimType !== 'definition') {
+      definitionText = "Oops, looks like that claim ID doesn't correspond to a definition!";
+    } else {
+      definitionText = definitionClaim.text;
+      validDefinition = true;
+    }
+  }
+
   return (
-    /**
-     * Note: I'm assuming that parentClaimID and definition are both alphanumeric.
-     * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
-    <Draggable draggableId={parentClaimID+"."+definition} index={index}>
+    <Draggable draggableId={parentClaimID+"."+definitionClaimID} index={index}>
       {provided => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className="border-t border-neutral-500">
-          <div className="flex shadow-xl">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-definition-tab text-white w-20 p-2`}>
-              <p className="text-sm truncate">{definition}</p>
+          <div className="flex">
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-definition-tab w-20 p-2`}>
+              <p className="text-sm truncate">{definitionClaimID}</p>
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-definition-body text-white flex-1 p-2 min-w-0`}>
-              <p className="text-sm break-words">{"Oops, I'm not managing the program's state well yet."}</p>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-neutral-500"} bg-definition-body flex-1 p-2 min-w-0`}>
+              <p className="text-sm break-words">{definitionText}</p>
             </div>
           </div>
         </div>
@@ -30,39 +47,30 @@ function DefinitionBox({definition, index, final, parentClaimID}:
   );
 }
 
-export function DefinitionList({definitionClaimIDs, parentClaimID}:
-  {definitionClaimIDs: string[], parentClaimID: string}) {
-  //I only use the claimID to generate unique keys and ID's.
-  const [definitions, setDefinitions] = useState(definitionClaimIDs);
+export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
+  const { moveDefinition } = useClaimsContext();
 
   function onDragEnd(result : DropResult) {
-    if (!result.destination || (result.destination.index === result.source.index)) {
-      return;
-    }
-
-    const newDefinitions = Array.from(definitions);
-    const [removed] = newDefinitions.splice(result.source.index, 1);
-    newDefinitions.splice(result.destination.index, 0, removed);
-
-    setDefinitions(newDefinitions);
+    if (!result.destination) {return;}
+    moveDefinition({claim: claim, startIndex: result.source.index, endIndex: result.destination.index});
   }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId={parentClaimID+"-list"}>
+      <Droppable droppableId={claim.claimID+"-list"}>
         {provided => (
-          <div className="flex flex-col"
+          <div className="flex flex-col rounded-b-md shadow-xl" //rounded-b-md only needed for shadow
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {definitions.map((definition: string, index: number) => (
+            {claim.definitionClaimIDs.map((definitionClaimID: string, index: number) => (
               <DefinitionBox
-                definition={definition}
+                definitionClaimID={definitionClaimID}
                 index={index}
-                final={index===definitions.length - 1}
-                parentClaimID={parentClaimID}
-                key={parentClaimID+"."+definition}
+                final={index===claim.definitionClaimIDs.length - 1}
+                parentClaimID={claim.claimID}
+                key={claim.claimID+"."+definitionClaimID}
                 /**
-                 * Note: I'm assuming that parentClaimID and definition are both alphanumeric.
+                 * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.
                  * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
               />))}
             {provided.placeholder}
