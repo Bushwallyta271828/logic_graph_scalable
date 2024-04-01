@@ -8,6 +8,7 @@ export function ClaimList() {
   const { claimIDs, moveClaim } = useClaimsContext();
 
   function onDragEnd(result : DropResult) {
+    if (!result.destination) {return;}
     moveClaim({startIndex: result.source.index, endIndex: result.destination.index});
   }
 

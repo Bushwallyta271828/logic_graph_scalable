@@ -51,6 +51,7 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
   const { moveDefinition } = useClaimsContext();
 
   function onDragEnd(result : DropResult) {
+    if (!result.destination) {return;}
     moveDefinition({startIndex: result.source.index, endIndex: result.destination.index});
   }
 
