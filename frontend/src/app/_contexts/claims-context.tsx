@@ -12,6 +12,7 @@ type ClaimsContext = {
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
   addClaim: (claim: Claim) => void;
   moveClaim: (startIndex: number, endIndex: number) => void;
+  moveDefinition: (claimID: string, startIndex: number, endIndex: number) => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -35,9 +36,24 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
+  const moveDefinition = (claimID: string, startIndex: number, endIndex: number) => {
+    setClaimLookup(prevClaimLookup => {
+      const claim = preClaimLookup[claimID];
+      if ('definitionClaimIDs' in claim) {
+        let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
+        const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
+        newDefinitionClaimIDs.splice(endIndex, 0, removed);
+        
+        return ;
+      } else {
+        throw new Error("Cannot move definition since definitionClaimIDs doesn't exist");
+      }
+    });
+  };
+
   return (
     <ClaimsContext.Provider
-      value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs, addClaim, moveClaim}}>
+      value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs, addClaim, moveClaim, moveDefinition}}>
       {children}
     </ClaimsContext.Provider>
   );
