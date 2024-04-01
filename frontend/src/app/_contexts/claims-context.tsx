@@ -39,14 +39,20 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const moveDefinition = (claimID: string, startIndex: number, endIndex: number) => {
     setClaimLookup(prevClaimLookup => {
       const claim = preClaimLookup[claimID];
-      if ('definitionClaimIDs' in claim) {
+      if (!claim) {
+        throw new Error("Cannot move definition since claim doesn't exist");
+      } else if (!('definitionClaimIDs' in claim)) {
+        throw new Error("Cannot move definition since claim.definitionClaimIDs doesn't exist");
+      } else {
         let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
         const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
         newDefinitionClaimIDs.splice(endIndex, 0, removed);
         
-        return ;
-      } else {
-        throw new Error("Cannot move definition since definitionClaimIDs doesn't exist");
+        // Now, create a new claim object with the updated definitions
+        const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+
+        // Finally, return a new claimLookup object with the updated claim
+        return { ...prevClaimLookup, [claimID]: updatedClaim };
       }
     });
   };
