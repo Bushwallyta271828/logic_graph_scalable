@@ -1,7 +1,7 @@
 'use client';
 
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { ClaimWithDefinitions } from '@/app/_types/claim-types';
+import { ClaimWithDefinitions, DefinitionClaim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_context/claims-context';
 
 function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
@@ -9,6 +9,22 @@ function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
   /**
    * Note: I'm assuming that parentClaimID and definitionClaimID are both alphanumeric.
    * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
+
+  const { claimLookup } = useClaimsContext();
+  let definitionText = '';
+  let validDefinition = false;
+  if (!(definitionClaimID in claimLookup)) {
+    definitionText = "Oops, looks like that's not a valid claim ID!";
+  } else {
+    const definitionClaim = claimLookup[definitionClaimID];
+    if (definitionClaim.claimType !== 'definition') {
+      definitionText = "Oops, looks like that claim ID doesn't correspond to a definition!";
+    } else {
+      definitionText = definitionClaim.text;
+      validDefinition = true;
+    }
+  }
+
   return (
     <Draggable draggableId={parentClaimID+"."+definitionClaimID} index={index}>
       {provided => (
@@ -18,11 +34,11 @@ function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
           {...provided.dragHandleProps}
           className="border-t border-neutral-500">
           <div className="flex">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-definition-tab text-white w-20 p-2`}>
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-definition-tab w-20 p-2`}>
               <p className="text-sm truncate">{definitionClaimID}</p>
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} bg-definition-body text-white flex-1 p-2 min-w-0`}>
-              <p className="text-sm break-words">{"Oops, I'm not managing the program's state well yet."}</p>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-neutral-500"} bg-definition-body flex-1 p-2 min-w-0`}>
+              <p className="text-sm break-words">{definitionText}</p>
             </div>
           </div>
         </div>
