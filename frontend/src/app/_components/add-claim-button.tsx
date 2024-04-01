@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, RefObject } from 'react';
 //import { addClaim } from '@app/_contexts/claims-context';
 
 //export function AddClaimButton() {
@@ -15,12 +15,12 @@ import { useState, useRef, useEffect } from 'react';
 export function Dropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const toggleDropdown = () => setIsOpen(!isOpen);
-  const dropdownRef = useRef(null);
+  const dropdownRef : RefObject<HTMLDivElement | null> = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
