@@ -11,9 +11,9 @@ type ClaimsContext = {
   setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
   newClaimID: () => string;
-  addClaim: Claim => void;
-  moveClaim: {startIndex: number, endIndex: number} => void;
-  moveDefinition: {claim: ClaimWithDefinitions, startIndex: number, endIndex: number} => void;
+  addClaim: (claim: Claim) => void;
+  moveClaim: ({startIndex, endIndex}: {startIndex: number, endIndex: number}) => void;
+  moveDefinition: ({claim, startIndex, endIndex}: {claim: ClaimWithDefinitions, startIndex: number, endIndex: number}) => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
