@@ -10,6 +10,7 @@ type ClaimsContext = {
   claimIDs: string[]; //used for storing the order in which the claims are displayed
   setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
+  newClaimID: () => string;
   addClaim: (claim: Claim) => void;
   moveClaim: (startIndex: number, endIndex: number) => void;
   moveDefinition: (claimID: string, startIndex: number, endIndex: number) => void;
@@ -20,6 +21,23 @@ export const ClaimsContext = createContext<ClaimsContext | null>(null);
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
   const [claimLookup, setClaimLookup] = useState<{ [claimID: string]: Claim }>({});
   const [claimIDs, setClaimIDs] = useState<string[]>([]);
+
+  const newClaimID = () => {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let uniqueID;
+    let attempts = 0;
+    do {
+      uniqueID = '';
+      for (let i = 0; i < 6; i++) {
+        uniqueID += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      attempts += 1;
+    } while (claimLookup.hasOwnProperty(uniqueID) && attempts < 100);
+    if (claimLookup.hasOwnProperty(uniqueID)) {
+      throw new Error("Unable to generate new claimID");
+    }
+    return uniqueID;
+  };
 
   const addClaim = (claim: Claim) => {
     const claimID = claim.claimID;
@@ -55,7 +73,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   return (
     <ClaimsContext.Provider
-      value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs, addClaim, moveClaim, moveDefinition}}>
+      value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs, newClaimID, addClaim, moveClaim, moveDefinition}}>
       {children}
     </ClaimsContext.Provider>
   );
