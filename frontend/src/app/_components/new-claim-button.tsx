@@ -9,7 +9,7 @@ export function NewClaimButton() {
         <Menu.Button className="bg-transparent hover:bg-zinc-700 px-2 py-1 rounded">
           New Claim
         </Menu.Button>
-        <Menu.Items className="absolute w-48 origin-top-right bg-transparent outline-none text-sm">
+        <Menu.Items className="absolute w-40 origin-top-right bg-transparent outline-none text-sm font-normal">
           <div>
             <Menu.Item>
               {({ active }) => (
