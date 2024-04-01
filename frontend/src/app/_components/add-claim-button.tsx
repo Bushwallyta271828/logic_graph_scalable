@@ -1,21 +1,18 @@
 'use client';
 
 import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 
 export function AddClaimButton() {
   return (
-    <Dropdown>
-      <Dropdown.Toggle variant="success" id="dropdown-basic">
-        New Claim
-      </Dropdown.Toggle>
-      <Dropdown.Menu>
-        <Dropdown.Item>Text Claim</Dropdown.Item>
-        <Dropdown.Item>Definition Claim</Dropdown.Item>
-        <Dropdown.Item>Zeroth Order Claim</Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+    <DropdownButton id="add-claim-button" title="New Claim">
+      <Dropdown.Item href="#/action-1">Text Claim</Dropdown.Item>
+      <Dropdown.Item href="#/action-2">Definition Claim</Dropdown.Item>
+      <Dropdown.Item href="#/action-3">Zeroth Order Claim</Dropdown.Item>
+    </DropdownButton>
   );
 }
+
 
 
 //import { useState, useRef, useEffect, RefObject } from 'react';
