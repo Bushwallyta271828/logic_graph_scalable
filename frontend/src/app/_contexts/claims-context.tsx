@@ -64,7 +64,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
       newDefinitionClaimIDs.splice(endIndex, 0, removed);
       const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
-      return { ...prevClaimLookup, [claimID]: updatedClaim };
+      return { ...prevClaimLookup, [claim.claimID]: updatedClaim };
     });
   };
 
