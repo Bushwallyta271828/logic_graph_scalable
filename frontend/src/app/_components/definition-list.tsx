@@ -2,7 +2,7 @@
 
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { ClaimWithDefinitions, DefinitionClaim } from '@/app/_types/claim-types';
-import { useClaimsContext } from '@/app/_context/claims-context';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 
 function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
   {definitionClaimID: string, index: number, final: boolean, parentClaimID: string}) {

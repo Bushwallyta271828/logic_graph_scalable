@@ -11,9 +11,9 @@ type ClaimsContext = {
   setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
   newClaimID: () => string;
-  addClaim: (claim: Claim) => void;
-  moveClaim: (startIndex: number, endIndex: number) => void;
-  moveDefinition: (claim: ClaimWithDefinitions, startIndex: number, endIndex: number) => void;
+  addClaim: Claim => void;
+  moveClaim: {startIndex: number, endIndex: number} => void;
+  moveDefinition: {claim: ClaimWithDefinitions, startIndex: number, endIndex: number} => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -45,7 +45,8 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
   };
 
-  const moveClaim = (startIndex: number, endIndex: number) => {
+  const moveClaim = ({startIndex, endIndex}:
+    {startIndex: number, endIndex: number}) => {
     if (startIndex === endIndex) { return; }
     setClaimIDs(prevClaimIDs => {
       let newClaimIDs = [...prevClaimIDs];
@@ -55,7 +56,8 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
-  const moveDefinition = (claim: ClaimWithDefinitions, startIndex: number, endIndex: number) => {
+  const moveDefinition = ({claim, startIndex, endIndex}:
+    {claim: ClaimWithDefinitions, startIndex: number, endIndex: number}) => {
     if (startIndex === endIndex) { return; }
     setClaimLookup(prevClaimLookup => {
       let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
