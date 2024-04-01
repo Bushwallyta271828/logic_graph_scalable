@@ -16,7 +16,7 @@ function DefinitionBox({definition, index, final, parentClaimID}:
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className="border-t border-neutral-500">
-          <div className="flex shadow-xl">
+          <div className="flex">
             <div className={`${final ? "rounded-bl-md" : "rounded-none"} bg-definition-tab text-white w-20 p-2`}>
               <p className="text-sm truncate">{definition}</p>
             </div>
@@ -51,7 +51,7 @@ export function DefinitionList({definitionClaimIDs, parentClaimID}:
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId={parentClaimID+"-list"}>
         {provided => (
-          <div className="flex flex-col"
+          <div className="flex flex-col rounded-b-md shadow-xl" //rounded-b-md only needed for shadow
             ref={provided.innerRef}
             {...provided.droppableProps}>
             {definitions.map((definition: string, index: number) => (
