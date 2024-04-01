@@ -27,7 +27,12 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   };
 
   const moveClaim = (startIndex: number, endIndex: number) => {
-
+    setClaimIDs(prevClaimIDs => {
+      let newClaimIDs = [...prevClaimIDs];
+      const [removed] = newClaimIDs.splice(startIndex, 1);
+      newClaimIDs.splice(endIndex, 0, removed);
+      return newClaimIDs;
+    });
   };
 
   return (
