@@ -3,7 +3,7 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { Claim } from '@/app/_types/claim-types';
+import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
@@ -13,7 +13,7 @@ type ClaimsContext = {
   newClaimID: () => string;
   addClaim: (claim: Claim) => void;
   moveClaim: (startIndex: number, endIndex: number) => void;
-  moveDefinition: (claimID: string, startIndex: number, endIndex: number) => void;
+  moveDefinition: (claim: ClaimWithDefinitions, startIndex: number, endIndex: number) => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -55,21 +55,14 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
-  const moveDefinition = (claimID: string, startIndex: number, endIndex: number) => {
+  const moveDefinition = (claim: ClaimWithDefinitions, startIndex: number, endIndex: number) => {
     if (startIndex === endIndex) { return; }
     setClaimLookup(prevClaimLookup => {
-      const claim = prevClaimLookup[claimID];
-      if (!claim) {
-        throw new Error("Cannot move definition since claim doesn't exist");
-      } else if (!('definitionClaimIDs' in claim)) {
-        throw new Error("Cannot move definition since claim.definitionClaimIDs doesn't exist");
-      } else {
-        let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
-        const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
-        newDefinitionClaimIDs.splice(endIndex, 0, removed);
-        const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
-        return { ...prevClaimLookup, [claimID]: updatedClaim };
-      }
+      let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
+      const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
+      newDefinitionClaimIDs.splice(endIndex, 0, removed);
+      const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+      return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
   };
 

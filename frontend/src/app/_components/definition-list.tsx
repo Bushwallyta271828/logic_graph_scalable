@@ -37,14 +37,16 @@ export function DefinitionList({claimID} : {claimID: string}) {
     moveDefinition({startIndex: result.source.index, endIndex: result.destination.index});
   }
 
+  const getDefinitions(
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId={parentClaimID+"-list"}>
+      <Droppable droppableId={claimID+"-list"}>
         {provided => (
           <div className="flex flex-col rounded-b-md shadow-xl" //rounded-b-md only needed for shadow
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            {definitions.map((definition: string, index: number) => (
+            {claimLookup[claimID].map((definitionClaimID: string, index: number) => (
               <DefinitionBox
                 definition={definition}
                 index={index}
