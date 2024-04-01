@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { AddClaimButton } from '@/app/_components/add-claim-button';
+import { NewClaimButton } from '@/app/_components/new-claim-button';
 
 export function NavigationBar() {
   return (
     <nav className="bg-zinc-900 text-white text-lg font-bold px-8 py-4">
       <div className="container mx-auto flex justify-between items-center">
-        <AddClaimButton />
+        <NewClaimButton />
         <div className="flex gap-4">
           <Link href="/">
             <button className="bg-transparent hover:bg-zinc-700 px-2 py-1 rounded">

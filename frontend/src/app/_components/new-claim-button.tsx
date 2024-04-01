@@ -2,7 +2,7 @@
 
 import { Menu } from '@headlessui/react'
 
-export function AddClaimButton() {
+export function NewClaimButton() {
   return (
     <div className="relative">
       <Menu>
