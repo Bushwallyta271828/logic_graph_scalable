@@ -47,15 +47,15 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex shadow-xl" {...provided.dragHandleProps}>
-            <div className={`${claim.claimType === 'text' ? 'bg-text-tab' : claim.claimType === 'definition' ? 'bg-definition-tab' : 'bg-zeroth-order-tab'} w-20 p-2 rounded-l-md`}>
+            <div className={`${claim.claimType === 'text' ? 'bg-medium-text' : claim.claimType === 'definition' ? 'bg-medium-definition' : 'bg-medium-zeroth-order'} w-20 p-2 rounded-l-md`}>
               <p className="text-white text-sm truncate">{claim.claimID}</p>
               <p className="text-white text-sm truncate">{claim.author}</p>
             </div>
-            <div className={`${claim.claimType === 'text' ? 'bg-text-body' : claim.claimType === 'definition' ? 'bg-definition-body' : 'bg-zeroth-order-body'} flex-1 p-2 min-w-0 ${!includeDefinitions ? 'rounded-tr-md' : ''} ${!includeDefinitions && bottomRightRounding ? 'rounded-br-md' : ''}`}>
+            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 ${!includeDefinitions ? 'rounded-tr-md' : ''} ${!includeDefinitions && bottomRightRounding ? 'rounded-br-md' : ''}`}>
               <ClaimContentBox claim={claim}/>
             </div>
             {includeDefinitions ?
-              <div className={`bg-definition-tab w-8 flex items-center justify-center rounded-tr-md ${bottomRightRounding ? 'rounded-br-md' : ''}`}>
+              <div className={`bg-medium-definition w-8 flex items-center justify-center rounded-tr-md ${bottomRightRounding ? 'rounded-br-md' : ''}`}>
                 <p className="text-white text-lg">+</p>
               </div> :
               null

@@ -49,7 +49,7 @@ export function NewClaimButton() {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  className={`block px-4 py-2 rounded-t-md ${active ? 'bg-text-tab' : 'bg-text-body'}`}
+                  className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-text' : 'bg-medium-text'}`}
                   onClick={addTextClaim}>
                   Text Claim
                 </a>
@@ -58,7 +58,7 @@ export function NewClaimButton() {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  className={`block px-4 py-2 ${active ? 'bg-definition-tab' : 'bg-definition-body'}`}
+                  className={`block px-4 py-2 ${active ? 'bg-bright-definition' : 'bg-medium-definition'}`}
                   onClick={addDefinitionClaim}>
                   Definition Claim
                 </a>
@@ -67,7 +67,7 @@ export function NewClaimButton() {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  className={`block px-4 py-2 rounded-b-md ${active ? 'bg-zeroth-order-tab' : 'bg-zeroth-order-body'}`}
+                  className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-zeroth-order' : 'bg-medium-zeroth-order'}`}
                   onClick={addZerothOrderClaim}>
                   Zeroth Order Claim
                 </a>

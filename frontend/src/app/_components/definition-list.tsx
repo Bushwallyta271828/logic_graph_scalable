@@ -34,10 +34,10 @@ function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
           {...provided.dragHandleProps}
           className="border-t border-bright-neutral">
           <div className="flex">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-definition-tab w-20 p-2`}>
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-medium-definition w-20 p-2`}>
               <p className="text-sm truncate">{definitionClaimID}</p>
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-bright-neutral"} bg-definition-body flex-1 p-2 min-w-0`}>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-bright-neutral"} bg-dark-definition flex-1 p-2 min-w-0`}>
               <p className="text-sm break-words">{definitionText}</p>
             </div>
           </div>
