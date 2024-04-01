@@ -4,11 +4,12 @@ import { Menu } from '@headlessui/react'
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 
 export function NewClaimButton() {
-  const { addClaim } = useClaimsContext();
+  const { newClaimID, addClaim } = useClaimsContext();
 
   const addTextClaim = () => {
+    const claimID = newClaimID();
     addClaim({
-      claimID: 'random',
+      claimID: claimID,
       author: 'local',
       claimType: 'text' as const,
       text: '',
@@ -17,8 +18,9 @@ export function NewClaimButton() {
   }
   
   const addDefinitionClaim = () => {
+    const claimID = newClaimID();
     addClaim({
-      claimID: 'random',
+      claimID: claimID,
       author: 'local',
       claimType: 'definition' as const,
       text: '',
@@ -27,8 +29,9 @@ export function NewClaimButton() {
   }
 
   const addZerothOrderClaim = () => {
+    const claimID = newClaimID();
     addClaim({
-      claimID: 'random',
+      claimID: claimID,
       author: 'local',
       claimType: 'zeroth-order' as const,
       formula: ''
