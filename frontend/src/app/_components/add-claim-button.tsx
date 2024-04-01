@@ -8,7 +8,7 @@ import {
   TERipple,
 } from "tw-elements-react";
 
-export default function DropdownBasicExample(): JSX.Element {
+export function AddClaimButton() {
   return (
     <TEDropdown className="flex justify-center">
       <TERipple rippleColor="light">
