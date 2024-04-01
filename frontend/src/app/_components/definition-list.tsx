@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { useClaimsContext } from '@app/_context/claims-context';
 
 function DefinitionBox({definition, index, final, parentClaimID}:
   {definition: string, index: number, final: boolean, parentClaimID: string}) {
@@ -30,21 +30,11 @@ function DefinitionBox({definition, index, final, parentClaimID}:
   );
 }
 
-export function DefinitionList({definitionClaimIDs, parentClaimID}:
-  {definitionClaimIDs: string[], parentClaimID: string}) {
-  //I only use the claimID to generate unique keys and ID's.
-  const [definitions, setDefinitions] = useState(definitionClaimIDs);
+export function DefinitionList({claimID} : {claimID: string}) {
+  const { claimLookup, moveDefinition } = useClaimsContext();
 
   function onDragEnd(result : DropResult) {
-    if (!result.destination || (result.destination.index === result.source.index)) {
-      return;
-    }
-
-    const newDefinitions = Array.from(definitions);
-    const [removed] = newDefinitions.splice(result.source.index, 1);
-    newDefinitions.splice(result.destination.index, 0, removed);
-
-    setDefinitions(newDefinitions);
+    moveDefinition({startIndex: result.source.index, endIndex: result.destination.index});
   }
 
   return (

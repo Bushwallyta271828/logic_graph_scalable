@@ -46,6 +46,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   };
 
   const moveClaim = (startIndex: number, endIndex: number) => {
+    if (startIndex === endIndex) { return; }
     setClaimIDs(prevClaimIDs => {
       let newClaimIDs = [...prevClaimIDs];
       const [removed] = newClaimIDs.splice(startIndex, 1);
@@ -55,6 +56,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   };
 
   const moveDefinition = (claimID: string, startIndex: number, endIndex: number) => {
+    if (startIndex === endIndex) { return; }
     setClaimLookup(prevClaimLookup => {
       const claim = prevClaimLookup[claimID];
       if (!claim) {
