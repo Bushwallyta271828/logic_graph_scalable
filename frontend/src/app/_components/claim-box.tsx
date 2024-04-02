@@ -20,7 +20,7 @@ function ClaimTab({claim} : {claim: Claim}) {
           <p className="text-white text-sm truncate">{claim.claimID}</p>
           <p className="text-white text-sm truncate">{claim.author}</p>
         </Menu.Button>
-        <Menu.Items className="absolute w-100 origin-top-right bg-transparent outline-none rounded-md shadow-xl text-sm font-normal">
+        <Menu.Items className="absolute w-64 origin-top-right bg-transparent outline-none rounded-md shadow-xl text-sm font-normal">
           <div>
             {acceptsDefinitions ? 
               <Menu.Item>
@@ -80,7 +80,7 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
       {provided => (
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
-          <div className="flex shadow-xl" {...provided.dragHandleProps}>
+          <div className="flex rounded-md shadow-xl" {...provided.dragHandleProps}>
             <ClaimTab claim={claim} />
             <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
               <ClaimContentBox claim={claim} />
