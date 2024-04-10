@@ -66,6 +66,13 @@ function ClaimContentBox({claim}: {claim: Claim}) {
   }
 }
 
+function NewDefinitionBox({claim, setDisplayNewDefinitionBox} :
+  {claim: Claim, setDisplayNewDefinitionBox: React.Dispatch<React.SetStateAction<boolean>>}) {
+  const [text, setText] = useState("");
+
+  
+}
+
 export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
   const { claimLookup } = useClaimsContext();
   const claim = claimLookup[claimID];
@@ -73,12 +80,11 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
     throw new Error("claimID not present in claimLookup");
   }
 
-  const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
-
   //I'd rather not create a whole new context just for the Attach Definition procedure.
-  const [displayNewAttachmentBox, setDisplayNewAttachmentBox] = useState(false);
-  const [text, setText] = useState("");
+  const [displayNewDefinitionBox, setDisplayNewDefinitionBox] = useState(false);
+  
+  const acceptsDefinitions = 'definitionClaimIDs' in claim;
+  const roundBottomRight = !acceptsDefinitions || (claim.definitionClaimIDs.length === 0 && !displayNewDefinitionBox);
 
   return (
     <Draggable draggableId={claim.claimID} index={index} disableInteractiveElementBlocking={true}>
@@ -87,12 +93,16 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex rounded-md shadow-xl" {...provided.dragHandleProps}>
             <ClaimTab claim={claim} />
-            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
+            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 ${roundBottomRight ? 'rounded-r-md' : 'rounded-tr-md'}`}>
               <ClaimContentBox claim={claim} />
             </div>
           </div>
           {acceptsDefinitions ?
             <div className="ml-20">
+              {displayNewDefinitionBox ? 
+                <NewDefinitionBox claim={claim} setDisplayNewDefinitionBox={setDisplayNewDefinitionBox} />
+                : null
+              }
               <DefinitionList claim={claim} />
             </div> :
             null
