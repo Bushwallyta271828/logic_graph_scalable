@@ -10,7 +10,8 @@ import { TextContentBox } from '@/app/_components/text-content-box';
 import { DefinitionContentBox } from '@/app/_components/definition-content-box';
 import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-box';
 
-function ClaimTab({claim} : {claim: Claim}) {
+function ClaimTab({claim, setDisplayNewDefinitionBox} :
+  {claim: Claim, setDisplayNewDefinitionBox: React.Dispatch<React.SetStateAction<boolean>>}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   //const { attachDefinition, deleteClaim } = useClaimsContext();
 
@@ -68,9 +69,18 @@ function ClaimContentBox({claim}: {claim: Claim}) {
 
 function NewDefinitionBox({claim, setDisplayNewDefinitionBox} :
   {claim: Claim, setDisplayNewDefinitionBox: React.Dispatch<React.SetStateAction<boolean>>}) {
-  const [text, setText] = useState("");
+  //const [text, setText] = useState("");
 
-  
+  return (
+    <div className="flex border-t border-bright-neutral">
+      <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-medium-definition w-20 p-2`}>
+        <p className="text-sm truncate">1234567</p>
+      </div>
+      <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-bright-neutral"} bg-dark-definition flex-1 p-2 min-w-0`}>
+        <p className="text-sm break-words">COME NBACK</p>
+      </div>
+    </div>
+  );
 }
 
 export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
@@ -92,7 +102,7 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex rounded-md shadow-xl" {...provided.dragHandleProps}>
-            <ClaimTab claim={claim} />
+            <ClaimTab claim={claim} setDisplayNewDefinitionBox={setDisplayNewDefinitionBox} />
             <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 ${roundBottomRight ? 'rounded-r-md' : 'rounded-tr-md'}`}>
               <ClaimContentBox claim={claim} />
             </div>
