@@ -36,7 +36,7 @@ function ClaimTab({claim} : {claim: Claim}) {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} ${active ? 'bg-amber-800' : 'bg-amber-950'}`}>
+                  className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}>
                   Delete Claim
                 </a>
               )}
