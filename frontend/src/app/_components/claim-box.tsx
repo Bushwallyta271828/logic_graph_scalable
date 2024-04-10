@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { Menu } from '@headlessui/react'
 import { Claim } from '@/app/_types/claim-types';
@@ -74,6 +75,10 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
 
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
+
+  //I'd rather not create a whole new context just for the Attach Definition procedure.
+  const [displayNewAttachmentBox, setDisplayNewAttachmentBox] = useState(false);
+  const [text, setText] = useState("");
 
   return (
     <Draggable draggableId={claim.claimID} index={index} disableInteractiveElementBlocking={true}>
