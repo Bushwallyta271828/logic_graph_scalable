@@ -16,7 +16,7 @@ function ClaimTab({claim} : {claim: Claim}) {
   return (
     <div className="relative">
       <Menu>
-        <Menu.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} w-20 p-2 rounded-l-md`}>
+        <Menu.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-20 p-2 rounded-l-md`}>
           <p className="text-white text-sm truncate">{claim.claimID}</p>
           <p className="text-white text-sm truncate">{claim.author}</p>
         </Menu.Button>
