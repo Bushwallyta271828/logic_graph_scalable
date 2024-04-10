@@ -20,7 +20,7 @@ function ClaimTab({claim} : {claim: Claim}) {
           <p className="text-white text-sm truncate">{claim.claimID}</p>
           <p className="text-white text-sm truncate">{claim.author}</p>
         </Menu.Button>
-        <Menu.Items className="absolute w-64 origin-top-right z-10 bg-transparent outline-none rounded-md shadow-xl text-sm font-normal">
+        <Menu.Items className="absolute w-64 origin-top-right z-10 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal">
           <div>
             {acceptsDefinitions ? 
               <Menu.Item>
