@@ -76,7 +76,7 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
   const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
 
   return (
-    <Draggable draggableId={claim.claimID} index={index}>
+    <Draggable draggableId={claim.claimID} index={index} disableInteractiveElementBlocking={true}>
       {provided => (
         <div className="flex flex-col"
           ref={provided.innerRef} {...provided.draggableProps}>
