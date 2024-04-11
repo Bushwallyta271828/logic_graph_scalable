@@ -58,7 +58,6 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
-
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
     const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
     const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
@@ -69,7 +68,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     {claim: ClaimWithDefinitions, index: number, newDefinitionClaimID: string}) => {
     let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
     if (index < 0 || index >= newDefinitionClaimIDs.length) {throw new Error("Index out of bounds");}
-    if (newStr === "") {newDefinitionClaimIDs.splice(index, 1);}
+    if (newDefinitionClaimID === "") {newDefinitionClaimIDs.splice(index, 1);}
       else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
     const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
@@ -89,7 +88,18 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   return (
     <ClaimsContext.Provider
-      value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs, newClaimID, addClaim, moveClaim, moveDefinition}}>
+      value={{
+        claimLookup,
+        claimIDs,
+        setClaimLookup,
+        setClaimIDs,
+        newClaimID,
+        addClaim,
+        moveClaim,
+        attachBlankDefinition,
+        editDefinitionClaimID,
+        moveDefinition,
+        }}>
       {children}
     </ClaimsContext.Provider>
   );
