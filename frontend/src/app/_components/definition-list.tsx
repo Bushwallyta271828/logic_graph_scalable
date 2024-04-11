@@ -74,7 +74,7 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
             {...provided.droppableProps}>
             {claim.definitionClaimIDs.map((definitionClaimID: string, index: number) => (
               <DefinitionBox
-                definitionClaimID={definitionClaimID}
+                initialDefinitionClaimID={definitionClaimID}
                 index={index}
                 final={index===claim.definitionClaimIDs.length - 1}
                 parentClaim={claim}
