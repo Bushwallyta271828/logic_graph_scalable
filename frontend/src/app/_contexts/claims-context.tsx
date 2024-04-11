@@ -61,25 +61,25 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
     const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
-    const updatedClaim = {...claim, definitionClaimIDs: newDefinitionClaimIDs};
-    setClaimLookup(prevClaimLookup => {...prevClaimLookup, [claim.claimID]: updatedClaim});
+    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    setClaimLookup(prevClaimLookup => { ...prevClaimLookup, [claim.claimID]: updatedClaim });
   };
   
   const editDefinitionClaimID = ({claim, index, newDefinitionClaimID}:
     {claim: ClaimWithDefinitions, index: number, newDefinitionClaimID: string}) => {
-    let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
+    let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
     if (index < 0 || index >= newDefinitionClaimIDs.length) {throw new Error("Index out of bounds");}
     if (newStr === "") {newDefinitionClaimIDs.splice(index, 1);}
       else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
-    const updatedClaim = {...claim, definitionClaimIDs: newDefinitionClaimIDs};
-    setClaimLookup(prevClaimLookup => {...prevClaimLookup, [claim.claimID]: updatedClaim});
+    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    setClaimLookup(prevClaimLookup => { ...prevClaimLookup, [claim.claimID]: updatedClaim });
   };
 
   const moveDefinition = ({claim, startIndex, endIndex}:
     {claim: ClaimWithDefinitions, startIndex: number, endIndex: number}) => {
     if (startIndex === endIndex) { return; }
     setClaimLookup(prevClaimLookup => {
-      let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
+      let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
       const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
       newDefinitionClaimIDs.splice(endIndex, 0, removed);
       const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
