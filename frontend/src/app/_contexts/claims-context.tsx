@@ -62,7 +62,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
     const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
     const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
-    setClaimLookup(prevClaimLookup => { ...prevClaimLookup, [claim.claimID]: updatedClaim });
+    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
   
   const editDefinitionClaimID = ({claim, index, newDefinitionClaimID}:
@@ -72,7 +72,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     if (newStr === "") {newDefinitionClaimIDs.splice(index, 1);}
       else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
     const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
-    setClaimLookup(prevClaimLookup => { ...prevClaimLookup, [claim.claimID]: updatedClaim });
+    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
 
   const moveDefinition = ({claim, startIndex, endIndex}:
