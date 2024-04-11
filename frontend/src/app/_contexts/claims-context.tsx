@@ -66,9 +66,17 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   
   const editDefinitionClaimID = ({claim, index, newDefinitionClaimID}:
     {claim: ClaimWithDefinitions, index: number, newDefinitionClaimID: string}) => {
+    if (index < 0 || index >= claim.definitionClaimIDs.length) {throw new Error("Index out of bounds");}
+    
+    let deleteAttachment = (newDefinitionClaimID === "");
+    claim.definitionClaimIDs.forEach((oldDefinitionClaimID, oldIndex) => {
+      if (newDefinitionClaimID === oldDefinitionClaimID && index !== oldIndex) {
+        deleteAttachment = true;
+      }
+    });
+ 
     let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
-    if (index < 0 || index >= newDefinitionClaimIDs.length) {throw new Error("Index out of bounds");}
-    if (newDefinitionClaimID === "") {newDefinitionClaimIDs.splice(index, 1);}
+    if (deleteAttachment) {newDefinitionClaimIDs.splice(index, 1);}
       else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
     const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
