@@ -13,6 +13,8 @@ type ClaimsContext = {
   newClaimID: () => string;
   addClaim: (claim: Claim) => void;
   moveClaim: ({startIndex, endIndex}: {startIndex: number, endIndex: number}) => void;
+  attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
+  editDefinitionClaimID: ({claim, index, newDefinitionClaimID}: {claim: ClaimWithDefinitions, index: number, newDefinitionClaimID: string}) => void;
   moveDefinition: ({claim, startIndex, endIndex}: {claim: ClaimWithDefinitions, startIndex: number, endIndex: number}) => void;
 }
 
@@ -56,11 +58,35 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
+  const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
+    const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
+    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
+  };
+  
+  const editDefinitionClaimID = ({claim, index, newDefinitionClaimID}:
+    {claim: ClaimWithDefinitions, index: number, newDefinitionClaimID: string}) => {
+    if (index < 0 || index >= claim.definitionClaimIDs.length) {throw new Error("Index out of bounds");}
+    
+    let deleteAttachment = (newDefinitionClaimID === "");
+    claim.definitionClaimIDs.forEach((oldDefinitionClaimID, oldIndex) => {
+      if (newDefinitionClaimID === oldDefinitionClaimID && index !== oldIndex) {
+        deleteAttachment = true;
+      }
+    });
+ 
+    let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
+    if (deleteAttachment) {newDefinitionClaimIDs.splice(index, 1);}
+      else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
+    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
+  };
+
   const moveDefinition = ({claim, startIndex, endIndex}:
     {claim: ClaimWithDefinitions, startIndex: number, endIndex: number}) => {
     if (startIndex === endIndex) { return; }
     setClaimLookup(prevClaimLookup => {
-      let newDefinitionClaimIDs = [...claim.definitionClaimIDs];
+      let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
       const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
       newDefinitionClaimIDs.splice(endIndex, 0, removed);
       const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
@@ -70,7 +96,18 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   return (
     <ClaimsContext.Provider
-      value={{claimLookup, claimIDs, setClaimLookup, setClaimIDs, newClaimID, addClaim, moveClaim, moveDefinition}}>
+      value={{
+        claimLookup,
+        claimIDs,
+        setClaimLookup,
+        setClaimIDs,
+        newClaimID,
+        addClaim,
+        moveClaim,
+        attachBlankDefinition,
+        editDefinitionClaimID,
+        moveDefinition,
+        }}>
       {children}
     </ClaimsContext.Provider>
   );

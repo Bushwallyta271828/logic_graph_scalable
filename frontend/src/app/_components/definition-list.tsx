@@ -1,22 +1,24 @@
 'use client';
 
+import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { ClaimWithDefinitions, DefinitionClaim } from '@/app/_types/claim-types';
+import { ClaimWithDefinitions } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 
-function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
-  {definitionClaimID: string, index: number, final: boolean, parentClaimID: string}) {
+function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
+  {initialDefinitionClaimID: string, index: number, final: boolean, parentClaim: ClaimWithDefinitions}) {
   /**
-   * Note: I'm assuming that parentClaimID and definitionClaimID are both alphanumeric.
+   * Note: I'm assuming that parentClaim.claimID and initialDefinitionClaimID are both alphanumeric.
    * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
 
-  const { claimLookup } = useClaimsContext();
+  const { claimLookup, editDefinitionClaimID } = useClaimsContext();
+
   let definitionText = '';
   let validDefinition = false;
-  if (!(definitionClaimID in claimLookup)) {
+  if (!(initialDefinitionClaimID in claimLookup)) {
     definitionText = "Oops, looks like that's not a valid claim ID!";
   } else {
-    const definitionClaim = claimLookup[definitionClaimID];
+    const definitionClaim = claimLookup[initialDefinitionClaimID];
     if (definitionClaim.claimType !== 'definition') {
       definitionText = "Oops, looks like that claim ID doesn't correspond to a definition!";
     } else {
@@ -25,19 +27,27 @@ function DefinitionBox({definitionClaimID, index, final, parentClaimID}:
     }
   }
 
+  const [ definitionClaimID, setDefinitionClaimID ] = useState(initialDefinitionClaimID);
+  
   return (
-    <Draggable draggableId={parentClaimID+"."+definitionClaimID} index={index}>
+    <Draggable draggableId={parentClaim.claimID+"."+initialDefinitionClaimID} index={index}>
       {provided => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="border-t border-neutral-500">
+          className="border-t border-bright-neutral">
           <div className="flex">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-definition-tab w-20 p-2`}>
-              <p className="text-sm truncate">{definitionClaimID}</p>
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-medium-definition w-20 p-2`}>
+              <input
+                type="text"
+                value={definitionClaimID}
+                onChange={(e) => setDefinitionClaimID(e.target.value)}
+                onBlur={() => editDefinitionClaimID({claim: parentClaim, index: index, newDefinitionClaimID: definitionClaimID})}
+                className="text-sm truncate bg-transparent w-full outline-none"
+              />
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-neutral-500"} bg-definition-body flex-1 p-2 min-w-0`}>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-bright-neutral"} bg-dark-definition flex-1 p-2 min-w-0`}>
               <p className="text-sm break-words">{definitionText}</p>
             </div>
           </div>
@@ -64,10 +74,10 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
             {...provided.droppableProps}>
             {claim.definitionClaimIDs.map((definitionClaimID: string, index: number) => (
               <DefinitionBox
-                definitionClaimID={definitionClaimID}
+                initialDefinitionClaimID={definitionClaimID}
                 index={index}
                 final={index===claim.definitionClaimIDs.length - 1}
-                parentClaimID={claim.claimID}
+                parentClaim={claim}
                 key={claim.claimID+"."+definitionClaimID}
                 /**
                  * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.

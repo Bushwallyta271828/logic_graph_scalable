@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scrollbar-thin scrollbar-track-slate-900 scrollbar-thumb-slate-800">
-      <body className="bg-neutral-800">
+    <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
+      <body className="bg-medium-neutral">
         <ClaimsContextProvider>
           <NavigationBar />
           {children}
