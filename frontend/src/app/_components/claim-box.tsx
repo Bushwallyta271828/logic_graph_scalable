@@ -11,7 +11,8 @@ import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-bo
 
 function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  //const { attachDefinition, deleteClaim } = useClaimsContext();
+  //const { attachBlankDefinition, deleteClaim } = useClaimsContext();
+  const { attachBlankDefinition } = useClaimsContext();
 
   return (
     <div className="relative">
@@ -26,7 +27,8 @@ function ClaimTab({claim} : {claim: Claim}) {
               <Menu.Item>
                 {({ active }) => (
                   <a
-                    className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-definition' : 'bg-medium-definition'}`}>
+                    className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-definition' : 'bg-medium-definition'}`}
+                    onClick={() => attachBlankDefinition(claim)}>
                     Attach Definition
                   </a>
                 )}
