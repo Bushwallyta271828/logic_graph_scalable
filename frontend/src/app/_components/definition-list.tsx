@@ -8,14 +8,14 @@ import { useClaimsContext } from '@/app/_contexts/claims-context';
 function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
   {initialDefinitionClaimID: string, index: number, final: boolean, parentClaim: ClaimWithDefinitions}) {
   /**
-   * Note: I'm assuming that parentClaimID and definitionClaimID are both alphanumeric.
+   * Note: I'm assuming that parentClaim.claimID and initialDefinitionClaimID are both alphanumeric.
    * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
 
   const { claimLookup, editDefinitionClaimID } = useClaimsContext();
 
   let definitionText = '';
   let validDefinition = false;
-  if (!(definitionClaimID in claimLookup)) {
+  if (!(initialDefinitionClaimID in claimLookup)) {
     definitionText = "Oops, looks like that's not a valid claim ID!";
   } else {
     const definitionClaim = claimLookup[initialDefinitionClaimID];
@@ -30,7 +30,7 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
   const [ definitionClaimID, setDefinitionClaimID ] = useState(initialDefinitionClaimID);
   
   return (
-    <Draggable draggableId={parentClaimID+"."+definitionClaimID} index={index}>
+    <Draggable draggableId={parentClaim.claimID+"."+initialDefinitionClaimID} index={index}>
       {provided => (
         <div
           ref={provided.innerRef}
@@ -77,7 +77,7 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
                 definitionClaimID={definitionClaimID}
                 index={index}
                 final={index===claim.definitionClaimIDs.length - 1}
-                parentClaimID={claim.claimID}
+                parentClaim={claim}
                 key={claim.claimID+"."+definitionClaimID}
                 /**
                  * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.
