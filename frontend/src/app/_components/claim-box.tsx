@@ -12,6 +12,7 @@ import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-bo
 function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   //const { attachDefinition, deleteClaim } = useClaimsContext();
+  const { attachBlankDefinition } = useClaimsContext();
 
   return (
     <div className="relative">
