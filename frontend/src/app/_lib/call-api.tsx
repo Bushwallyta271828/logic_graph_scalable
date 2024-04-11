@@ -1,6 +1,6 @@
 import { unstable_noStore as noStore } from 'next/cache';
 
-export default async function CallAPI() {
+export async function CallAPI() {
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     return new Response('BACKEND_ADDRESS undefined');
