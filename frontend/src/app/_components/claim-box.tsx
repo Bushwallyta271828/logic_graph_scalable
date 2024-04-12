@@ -6,9 +6,7 @@ import { Menu } from '@headlessui/react'
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
-import { TextContentBox } from '@/app/_components/text-content-box';
-import { DefinitionContentBox } from '@/app/_components/definition-content-box';
-import { ZerothOrderContentBox } from '@/app/_components/zeroth-order-content-box';
+import { StaticContentBox } from '@/app/_components/static-content-box';
 
 function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
@@ -52,10 +50,6 @@ function ClaimTab({claim} : {claim: Claim}) {
 }
 
 function ClaimContentBox({claim}: {claim: Claim}) {
-  //I'm taking in claim as opposed to claimID to make absolutely sure that
-  //the claim rendered by ClaimBox matches the content box.
-  //I'm also using claim instead of claimID for the type-specific function
-  //calls so that the type checker knows that the properties are correct.
   const [text, setText] = useState(claim.text);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -89,24 +83,11 @@ function ClaimContentBox({claim}: {claim: Claim}) {
         />
       ) : (
         <div className="w-full h-full p-2" onClick={() => setIsEditing(true)}>
-          <p className="text-white text-sm break-words">
-            {text}
-          </p>
+          <StaticContentBox claim={claim} />
         </div>
       )}
     </>
   );
-
-  //switch (claim.claimType) {
-  //  case 'text':
-  //    return TextContentBox({textClaim: claim});
-  //  case 'definition':
-  //    return DefinitionContentBox({definitionClaim: claim});
-  //  case 'zeroth-order':
-  //    return ZerothOrderContentBox({zerothOrderClaim: claim});
-  //  default:
-  //    throw new Error('Unrecognized claimType');
-  //}
 }
 
 export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
