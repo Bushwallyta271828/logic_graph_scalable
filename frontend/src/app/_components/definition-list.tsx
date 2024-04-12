@@ -16,11 +16,11 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
   let definitionText = '';
   let validDefinition = false;
   if (!(initialDefinitionClaimID in claimLookup)) {
-    definitionText = "Oops, looks like that's not a valid claim ID!";
+    definitionText = "Please enter the claim ID for the desired definition. A valid claim ID has not been entered.";
   } else {
     const definitionClaim = claimLookup[initialDefinitionClaimID];
     if (definitionClaim.claimType !== 'definition') {
-      definitionText = "Oops, looks like that claim ID doesn't correspond to a definition!";
+      definitionText = "This claim ID doesn't seem to correspond to a definition.";
     } else {
       definitionText = definitionClaim.text;
       validDefinition = true;
@@ -38,7 +38,7 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
           {...provided.dragHandleProps}
           className="border-t border-bright-neutral">
           <div className="flex">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white bg-medium-definition w-20 p-2`}>
+            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white ${validDefinition ? "bg-medium-definition" : "bg-medium-danger"} w-20 p-2`}>
               <input
                 type="text"
                 value={definitionClaimID}
@@ -47,7 +47,7 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
                 className="text-sm truncate bg-transparent w-full outline-none"
               />
             </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} ${validDefinition ? "text-white" : "text-bright-neutral"} bg-dark-definition flex-1 p-2 min-w-0`}>
+            <div className={`${final ? "rounded-br-md" : "rounded-none"} text-white ${validDefinition ? "bg-dark-definition" : "bg-dark-danger"} flex-1 p-2 min-w-0`}>
               <p className="text-sm break-words">{definitionText}</p>
             </div>
           </div>
