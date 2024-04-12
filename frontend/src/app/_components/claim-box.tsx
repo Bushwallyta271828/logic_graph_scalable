@@ -80,7 +80,7 @@ function ClaimContentBox({claim}: {claim: Claim}) {
       {isEditing ? (
         <textarea
           ref={textareaRef}
-          className="bg-transparent text-white text-sm w-full h-full break-words outline-none"
+          className="bg-transparent text-white text-sm w-full h-full p-2 break-words outline-none"
           value={text}
           onChange={handleChange}
           onBlur={() => setIsEditing(false)}
@@ -88,10 +88,11 @@ function ClaimContentBox({claim}: {claim: Claim}) {
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <p className="text-white text-sm w-full h-full break-words"
-          onClick={() => setIsEditing(true)}>
-          {text}
-        </p>
+        <div className="w-full h-full p-2" onClick={() => setIsEditing(true)}>
+          <p className="text-white text-sm break-words">
+            {text}
+          </p>
+        </div>
       )}
     </>
   );
@@ -125,7 +126,7 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
           ref={provided.innerRef} {...provided.draggableProps}>
           <div className="flex rounded-md shadow-xl" {...provided.dragHandleProps}>
             <ClaimTab claim={claim} />
-            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 p-2 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
+            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
               <ClaimContentBox claim={claim} />
             </div>
           </div>
