@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { MathJaxContext } from 'better-react-mathjax';
+//import { MathJaxContext } from 'better-react-mathjax';
 import { ClaimsContextProvider } from '@/app/_contexts/claims-context';
 import { NavigationBar } from '@/app/_components/navigation-bar';
 
@@ -26,10 +26,8 @@ export default function RootLayout({
     <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
       <body className="bg-medium-neutral">
         <ClaimsContextProvider>
-          <MathJaxContext config={MathJaxConfig}>
-            <NavigationBar />
-            {children}
-          </MathJaxContext>
+          <NavigationBar />
+          {children}
         </ClaimsContextProvider>
       </body>
     </html>

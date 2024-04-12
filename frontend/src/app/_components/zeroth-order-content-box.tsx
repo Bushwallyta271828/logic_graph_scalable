@@ -4,7 +4,7 @@
 import { ZerothOrderClaim } from '@/app/_types/claim-types';
 
 export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
-  return ();
+  return (<></>);
 }
 //  const [text, setText] = useState(zerothOrderClaim.formula);
 //  const [isEditing, setIsEditing] = useState(false);

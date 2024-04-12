@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { Menu } from '@headlessui/react'
 import { Claim } from '@/app/_types/claim-types';

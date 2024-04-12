@@ -34,7 +34,7 @@ export function NewClaimButton() {
       claimID: claimID,
       author: 'local',
       claimType: 'zeroth-order' as const,
-      formula: ''
+      text: ''
     });
   }
   
