@@ -55,15 +55,6 @@ import { useState, useEffect } from 'react';
 import { MathJax } from 'better-react-mathjax';
 import { ZerothOrderClaim } from '@/app/_types/claim-types';
 
-const config = {
-  loader: { load: ['input/asciimath'] },
-  asciimath: { delimiters: [["$$","$$"]] },
-  tex: {
-    inlineMath: [['$', '$']],
-    displayMath: [['$$', '$$']],
-  },
-};
-
 export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
   const [input, setInput] = useState<string>("");
 
@@ -75,21 +66,19 @@ export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: 
   }, [input]);
 
   return (
-    <MathJaxContext config={config}>
-      <div className="flex flex-col space-y-4 p-4">
-        <textarea
-          className="form-textarea mt-1 block w-full border rounded-md"
-          rows={4}
-          placeholder="Type your equations here using $$ to wrap them, e.g., $$x^2$$"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <div>
-          <MathJax dynamic>
-            {input}
-          </MathJax>
-        </div>
+    <div className="flex flex-col space-y-4 p-4">
+      <textarea
+        className="form-textarea mt-1 block w-full border rounded-md"
+        rows={4}
+        placeholder="Type your equations here using $$ to wrap them, e.g., $$x^2$$"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <div>
+        <MathJax dynamic>
+          {input}
+        </MathJax>
       </div>
-    </MathJaxContext>
+    </div>
   );
 };
