@@ -1,9 +1,11 @@
-//'use client';
-//
+'use client';
+
 //import { useState, useRef, useEffect } from 'react';
-//import { ZerothOrderClaim } from '@/app/_types/claim-types';
-//
-//export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
+import { ZerothOrderClaim } from '@/app/_types/claim-types';
+
+export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
+  return ();
+}
 //  const [text, setText] = useState(zerothOrderClaim.formula);
 //  const [isEditing, setIsEditing] = useState(false);
 //  const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -49,36 +51,36 @@
 
 
 
-'use client';
-
-import { useState, useEffect } from 'react';
-import { MathJax } from 'better-react-mathjax';
-import { ZerothOrderClaim } from '@/app/_types/claim-types';
-
-export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
-  const [input, setInput] = useState<string>("");
-
-  // Update the MathJax rendering every time the input changes
-  useEffect(() => {
-    if (window.MathJax) {
-      window.MathJax.typesetPromise();
-    }
-  }, [input]);
-
-  return (
-    <div className="flex flex-col space-y-4 p-4">
-      <textarea
-        className="form-textarea mt-1 block w-full border rounded-md"
-        rows={4}
-        placeholder="Type your equations here using $$ to wrap them, e.g., $$x^2$$"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <div>
-        <MathJax dynamic>
-          {input}
-        </MathJax>
-      </div>
-    </div>
-  );
-};
+//'use client';
+//
+//import { useState, useEffect } from 'react';
+//import { MathJax } from 'better-react-mathjax';
+//import { ZerothOrderClaim } from '@/app/_types/claim-types';
+//
+//export function ZerothOrderContentBox({ zerothOrderClaim }: { zerothOrderClaim: ZerothOrderClaim}) {
+//  const [input, setInput] = useState<string>("");
+//
+//  // Update the MathJax rendering every time the input changes
+//  useEffect(() => {
+//    if (window.MathJax) {
+//      window.MathJax.typesetPromise();
+//    }
+//  }, [input]);
+//
+//  return (
+//    <div className="flex flex-col space-y-4 p-4">
+//      <textarea
+//        className="form-textarea mt-1 block w-full border rounded-md"
+//        rows={4}
+//        placeholder="Type your equations here using $$ to wrap them, e.g., $$x^2$$"
+//        value={input}
+//        onChange={(e) => setInput(e.target.value)}
+//      />
+//      <div>
+//        <MathJax dynamic={true}>
+//          {input}
+//        </MathJax>
+//      </div>
+//    </div>
+//  );
+//};

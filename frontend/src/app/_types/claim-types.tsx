@@ -22,7 +22,7 @@ export type ZerothOrderClaim = {
   claimID: string;
   author: string;
   claimType: 'zeroth-order';
-  formula: string; //TODO: fix this type!
+  text: string;
 };
 
 export type Claim =

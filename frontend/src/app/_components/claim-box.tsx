@@ -55,16 +55,56 @@ function ClaimContentBox({claim}: {claim: Claim}) {
   //the claim rendered by ClaimBox matches the content box.
   //I'm also using claim instead of claimID for the type-specific function
   //calls so that the type checker knows that the properties are correct.
-  switch (claim.claimType) {
-    case 'text':
-      return TextContentBox({textClaim: claim});
-    case 'definition':
-      return DefinitionContentBox({definitionClaim: claim});
-    case 'zeroth-order':
-      return ZerothOrderContentBox({zerothOrderClaim: claim});
-    default:
-      throw new Error('Unrecognized claimType');
-  }
+  const [text, setText] = useState(claim.text);
+  const [isEditing, setIsEditing] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [text, isEditing]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+    adjustHeight();
+  };
+
+  return (
+    <>
+      {isEditing ? (
+        <textarea
+          ref={textareaRef}
+          className="bg-transparent text-white text-sm w-full h-full break-words outline-none"
+          value={text}
+          onChange={handleChange}
+          onBlur={() => setIsEditing(false)}
+          autoFocus
+          style={{ overflow: 'hidden' }}
+        />
+      ) : (
+        <p className="text-white text-sm w-full h-full break-words"
+          onClick={() => setIsEditing(true)}>
+          {text}
+        </p>
+      )}
+    </>
+  );
+
+  //switch (claim.claimType) {
+  //  case 'text':
+  //    return TextContentBox({textClaim: claim});
+  //  case 'definition':
+  //    return DefinitionContentBox({definitionClaim: claim});
+  //  case 'zeroth-order':
+  //    return ZerothOrderContentBox({zerothOrderClaim: claim});
+  //  default:
+  //    throw new Error('Unrecognized claimType');
+  //}
 }
 
 export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
