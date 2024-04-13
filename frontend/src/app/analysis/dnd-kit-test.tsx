@@ -2,7 +2,27 @@
 
 import { useState } from 'react';
 import { DndContext, closestCorners } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+function Task({id, title}: {id:number, title: string}) {
+  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id});
+
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}>
+      {title}
+    </div>
+  );
+}
 
 export function DndKitTest() {
   //Credit to https://www.youtube.com/watch?v=dL5SOdgMbRY for the starter code!
@@ -17,9 +37,7 @@ export function DndKitTest() {
       <div className="column">
         <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
         {tasks.map((task) => (
-          <div key={task.id}>
-            {task.title}
-          </div>
+          <Task id={task.id} title={task.title} key={task.id} />
         ))}
         </SortableContext>
       </div>
