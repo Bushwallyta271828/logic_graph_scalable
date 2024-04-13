@@ -6,7 +6,7 @@ import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } 
 import { CSS } from '@dnd-kit/utilities';
 import { Menu } from '@headlessui/react'
 
-function Task({id, title}: {id:number, title: string}) {
+function Task({id, title}: {id:string, title: string}) {
   const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id});
 
   const style = {
@@ -94,9 +94,16 @@ function Task({id, title}: {id:number, title: string}) {
 export function DndKitTest() {
   //Credit to https://www.youtube.com/watch?v=dL5SOdgMbRY for the starter code!
   const [tasks, setTasks] = useState([
-    {id:1, title:'Hello World 1'},
-    {id:2, title:'Hello World 2'},
-    {id:3, title:'Hello World 3'},
+    {id:'1', title:'Hello World 1'},
+    {id:'2', title:'Hello World 2'},
+    {id:'3', title:'Hello World 3'},
+    {id:'4', title:'Hello World 4'},
+    {id:'5', title:'Hello World 5'},
+    {id:'6', title:'Hello World 6'},
+    {id:'7', title:'Hello World 7'},
+    {id:'8', title:'Hello World 8'},
+    {id:'9', title:'Hello World 9'},
+    {id:'10', title:'Hello World 10'},
   ]);
 
   const handleDragEnd = (event: DragEndEvent) => {
