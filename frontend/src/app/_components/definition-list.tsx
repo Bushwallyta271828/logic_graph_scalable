@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { ClaimWithDefinitions } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 
@@ -60,33 +59,40 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
 export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
   const { moveDefinition } = useClaimsContext();
 
-  function onDragEnd(result : DropResult) {
-    if (!result.destination) {return;}
-    moveDefinition({claim: claim, startIndex: result.source.index, endIndex: result.destination.index});
+  function handleDragEnd(event: DragEndEvent) {
+    const {active, over} = event;
+    if (!over) {return;}
+    moveDefinition({claim: claim, startDefinitionClaimID: active.id, endDefinitionClaimID: over.id});
   }
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  )
+
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId={claim.claimID+"-list"}>
-        {provided => (
-          <div className="flex flex-col rounded-b-md shadow-xl" //rounded-b-md only needed for shadow
-            ref={provided.innerRef}
-            {...provided.droppableProps}>
-            {claim.definitionClaimIDs.map((definitionClaimID: string, index: number) => (
-              <DefinitionBox
-                initialDefinitionClaimID={definitionClaimID}
-                index={index}
-                final={index===claim.definitionClaimIDs.length - 1}
-                parentClaim={claim}
-                key={claim.claimID+"."+definitionClaimID}
-                /**
-                 * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.
-                 * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
-              />))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragEnd={handleDragEnd}>
+      <SortableContext
+        items={claim.definitionClaimIDs.map((definitionClaimID) => claim.claimID+'.'+definitionClaimID)}
+        strategy={verticalListSortingStrategy}
+        className="flex flex-col rounded-b-md shadow-xl">
+        {claim.definitionClaimIDs.map((definitionClaimID: string, index: number) => (
+          <DefinitionBox
+            initialDefinitionClaimID={definitionClaimID}
+            final={index===claim.definitionClaimIDs.length - 1}
+            parentClaim={claim}
+            key={claim.claimID+'.'+definitionClaimID}
+            /**
+             * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.
+             * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
+          />))}
+      </SortableContext>
+    </DndContext>
   );
 }

@@ -10,9 +10,8 @@ export function ClaimList() {
 
   function handleDragEnd(event : DragEndEvent) {
     const {active, over} = event;
-    if (over) {
-      moveClaim({startClaimID: active.id, endClaimID: over.id});
-    }
+    if (!over) {return;}
+    moveClaim({startClaimID: active.id, endClaimID: over.id});
   }
 
   //From https://github.com/clauderic/dnd-kit/issues/591
@@ -33,7 +32,7 @@ export function ClaimList() {
         items={claimIDs}
         strategy={verticalListSortingStrategy}
         className="flex flex-col p-4 gap-4">
-        {claimIDs.map((claimID: string, index: number) => (
+        {claimIDs.map((claimID: string) => (
           <ClaimBox claimID={claimID} key={claimID} />
         ))}
       </SortableContext>
