@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -14,6 +14,28 @@ function Task({id, title}: {id:number, title: string}) {
     transform: CSS.Transform.toString(transform),
   };
 
+
+
+  const [text, setText] = useState("Hello!");
+  const [isEditing, setIsEditing] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [text, isEditing]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+    adjustHeight();
+  };
+
+
   return (
     <div
       ref={setNodeRef}
@@ -21,6 +43,7 @@ function Task({id, title}: {id:number, title: string}) {
       {...listeners}
       style={style}>
       {title}
+      <div>
       <div className="relative">
       <Menu>
         <Menu.Button className={`bg-medium-text hover:bg-bright-text h-full w-20 p-2 rounded-l-md`}>
@@ -48,6 +71,21 @@ function Task({id, title}: {id:number, title: string}) {
           </div>
         </Menu.Items>
       </Menu>
+    </div>
+
+
+        <textarea
+          ref={textareaRef}
+          className="bg-transparent text-white text-sm w-full h-full p-2 break-words outline-none"
+          value={text}
+          onChange={handleChange}
+          onBlur={() => setIsEditing(false)}
+          autoFocus
+          style={{ overflow: 'hidden' }}
+        />
+
+
+
     </div>
     </div>
   );
