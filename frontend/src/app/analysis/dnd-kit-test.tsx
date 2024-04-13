@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { DndContext, closestCorners } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 function Task({id, title}: {id:number, title: string}) {
@@ -32,8 +32,20 @@ export function DndKitTest() {
     {id:3, title:'Hello World 3'},
   ]);
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const {active, over} = event;
+    if (over) {
+      if (active.id === over.id) return;
+      setTasks(tasks => {
+        const originalPos = tasks.findIndex(task => {return task.id === active.id;});
+        const newPos = tasks.findIndex(task => {return task.id === over.id;});
+        return arrayMove(tasks, originalPos, newPos);
+      });
+    }
+  }
+
   return (
-    <DndContext collisionDetection={closestCorners}>
+    <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
       <div className="column">
         <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
         {tasks.map((task) => (
