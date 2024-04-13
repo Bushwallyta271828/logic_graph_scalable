@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Draggable } from '@hello-pangea/dnd';
 import { Menu } from '@headlessui/react'
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
@@ -10,7 +9,6 @@ import { StaticContentBox } from '@/app/_components/static-content-box';
 
 function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  //const { attachBlankDefinition, deleteClaim } = useClaimsContext();
   const { attachBlankDefinition } = useClaimsContext();
 
   return (
@@ -90,7 +88,7 @@ function ClaimContentBox({claim}: {claim: Claim}) {
   );
 }
 
-export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
+export function ClaimBox({claimID} : {claimID: string}) {
   const { claimLookup } = useClaimsContext();
   const claim = claimLookup[claimID];
   if (!claim) {
@@ -100,25 +98,31 @@ export function ClaimBox({claimID, index} : {claimID: string, index: number}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
 
+  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({claimID});
+
+  const style = {transition, transform: CSS.Transform.toString(transform)};
+
+  //TODO: Fix shadow and simplify ClaimContentBox wrapper.
   return (
-    <Draggable draggableId={claim.claimID} index={index} disableInteractiveElementBlocking={true}>
-      {provided => (
-        <div className="flex flex-col"
-          ref={provided.innerRef} {...provided.draggableProps}>
-          <div className="flex rounded-md shadow-xl" {...provided.dragHandleProps}>
-            <ClaimTab claim={claim} />
-            <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
-              <ClaimContentBox claim={claim} />
-            </div>
-          </div>
-          {acceptsDefinitions ?
-            <div className="ml-20">
-              <DefinitionList claim={claim} />
-            </div> :
-            null
-          }
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      style={style}
+      className="flex flex-col">
+      <div
+        className="flex rounded-md shadow-xl"
+        {...listeners}>
+        <ClaimTab claim={claim} />
+        <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
+          <ClaimContentBox claim={claim} />
         </div>
-      )}
-    </Draggable>
+      </div>
+      {acceptsDefinitions ?
+        <div className="ml-20">
+          <DefinitionList claim={claim} />
+        </div> :
+        null
+      }
+    </div>
   );
 }
