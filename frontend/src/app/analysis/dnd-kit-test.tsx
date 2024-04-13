@@ -122,7 +122,7 @@ export function DndKitTest() {
   return (
     <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
       <div className="column">
-        <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+        <SortableContext items={tasks.map(({id, title}) => id)} strategy={verticalListSortingStrategy}>
         {tasks.map((task) => (
           <Task id={task.id} title={task.title} key={task.id} />
         ))}
