@@ -20,6 +20,10 @@ function Task({id, title}: {id:number, title: string}) {
       {...listeners}
       style={style}>
       {title}
+      <input type="text" value="Hi!"/>
+      <button onClick={e => {console.log("button pressed!");}}>
+        Hey
+      </button>
     </div>
   );
 }

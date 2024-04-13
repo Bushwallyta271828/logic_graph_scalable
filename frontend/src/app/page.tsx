@@ -5,7 +5,8 @@ export default async function Home() {
   const responseText = await (await CallAPI()).text();
   console.log(responseText);
   
-  return (
-    <ClaimList />
-  );
+  //return (
+  //  <ClaimList />
+  //);
+  return (<></>);
 }
