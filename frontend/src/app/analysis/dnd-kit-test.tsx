@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
+import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Menu } from '@headlessui/react'
