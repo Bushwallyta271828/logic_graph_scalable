@@ -3,6 +3,7 @@ export type TextClaim = {
   author: string;
   claimType: 'text';
   text: string;
+  dependencies: Set<string>;
   definitionClaimIDs: string[];
 };
 
@@ -11,6 +12,7 @@ export type DefinitionClaim = {
   author: string;
   claimType: 'definition';
   text: string;
+  dependencies: Set<string>;
   definitionClaimIDs: string[];
 };
 
@@ -23,6 +25,9 @@ export type ZerothOrderClaim = {
   author: string;
   claimType: 'zeroth-order';
   text: string;
+  dependencies: Set<string>;
+  validFormula: boolean;
+  expandedText: string;
 };
 
 export type Claim =
