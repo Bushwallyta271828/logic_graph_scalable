@@ -73,12 +73,12 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   const handleBlur = () => {
     setEditing(false);
     setClaimText({claimID: claim.claimID, newText: text});
-    const newClaim = claimLookup(claim.claimID);
+    const newClaim = claimLookup[claim.claimID];
     setValidText(getDisplayData(newClaim).validText);
   }
 
   return (
-    <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
+    <div className={`${!validText ? 'bg-dark-danger' : claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
       {editing ? (
         <textarea
           ref={textareaRef}

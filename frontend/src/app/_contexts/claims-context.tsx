@@ -136,7 +136,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
       {return {displayText: getInterpretedText(claim), validText: true};}
-    return {displayText: getInterpretedText(claim), validText: false}; //TODO: fix this!
+    return {displayText: getInterpretedText(claim), validText: claim.text.length > 5}; //TODO: fix this!
   }
 
 
