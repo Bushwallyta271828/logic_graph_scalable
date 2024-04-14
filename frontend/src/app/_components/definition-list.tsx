@@ -64,6 +64,8 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
   function handleDragEnd(event: DragEndEvent) {
     const {active, over} = event;
     if (!over) {return;}
+    if (typeof active.id !== 'string' || typeof over.id !== 'string')
+      {throw new Error("Unexpected identifier type");}
 
     const splitActiveID = active.id.split(".");
     const splitOverID = over.id.split(".");

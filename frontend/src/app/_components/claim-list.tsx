@@ -12,6 +12,8 @@ export function ClaimList() {
   function handleDragEnd(event : DragEndEvent) {
     const {active, over} = event;
     if (!over) {return;}
+    if (typeof active.id !== 'string' || typeof over.id !== 'string')
+      {throw new Error("Unexpected identifier type");}
     moveClaim({startClaimID: active.id, endClaimID: over.id});
   }
 
