@@ -51,9 +51,9 @@ function ClaimTab({claim} : {claim: Claim}) {
 function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
   const [editing, setEditing] = useState(false);
-  const [validText, setValidText] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { setClaimText, claimLookup, getDisplayData } = useClaimsContext();
+  const { setClaimText, getDisplayData } = useClaimsContext();
+  const [validText, setValidText] = useState(getDisplayData(claim).validText);
 
   const adjustHeight = () => {
     if (textareaRef.current) {
@@ -73,8 +73,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   const handleBlur = () => {
     setEditing(false);
     setClaimText({claimID: claim.claimID, newText: text});
-    const newClaim = claimLookup[claim.claimID];
-    setValidText(getDisplayData(newClaim).validText);
+    setValidText(getDisplayData({...claim, text:text}).validText);
   }
 
   return (
