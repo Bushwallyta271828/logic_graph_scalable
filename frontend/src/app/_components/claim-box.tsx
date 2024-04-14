@@ -98,7 +98,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
 
-  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({claimID});
+  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: claimID});
 
   const style = {transition, transform: CSS.Transform.toString(transform)};
 

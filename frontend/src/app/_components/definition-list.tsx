@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { DndContext } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
 import { ClaimWithDefinitions } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 
@@ -28,7 +30,7 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
 
   const [ definitionClaimID, setDefinitionClaimID ] = useState(initialDefinitionClaimID);
 
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({parentClaim.claimID+'.'+initialDefinitionClaimID});
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({id: parentClaim.claimID+'.'+initialDefinitionClaimID});
  
   const style = {transition, transform: CSS.Transform.toString(transform)};
  
