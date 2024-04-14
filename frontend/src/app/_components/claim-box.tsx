@@ -9,7 +9,7 @@ import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
 import { StaticContentBox } from '@/app/_components/static-content-box';
 
-function ClaimTab({claim, isDragging} : {claim: Claim, isDragging : boolean}) {
+function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const { attachBlankDefinition } = useClaimsContext();
 
@@ -114,7 +114,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
       <div
         className="flex rounded-md shadow-xl"
         {...listeners}>
-        <ClaimTab claim={claim} isDragging={isDragging} />
+        <ClaimTab claim={claim} />
         <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
           <ClaimContentBox claim={claim} />
         </div>
