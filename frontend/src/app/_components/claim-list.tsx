@@ -1,7 +1,7 @@
 'use client';
 
-import { DndContext } from '@dnd-kit/core';
-import { SortableContext } from '@dnd-kit/sortable';
+import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { ClaimBox } from '@/app/_components/claim-box';
 
