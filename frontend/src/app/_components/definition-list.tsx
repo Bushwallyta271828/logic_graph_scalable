@@ -31,7 +31,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
 
   const [ definitionClaimID, setDefinitionClaimID ] = useState(initialDefinitionClaimID);
 
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({id: parentClaim.claimID+'.'+initialDefinitionClaimID});
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({id: parentClaim.claimID+'.'+initialDefinitionClaimID});
  
   const style = {transition, transform: CSS.Translate.toString(transform)};
  
@@ -41,7 +41,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
       {...attributes}
       {...listeners}
       style={style}
-      className="flex border-t border-bright-neutral">
+      className={`flex border-t border-bright-neutral ${isDragging ? 'z-20' : 'z-0'}`}>
       <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white ${validDefinition ? "bg-medium-definition" : "bg-medium-danger"} w-20 p-2`}>
         <input
           type="text"

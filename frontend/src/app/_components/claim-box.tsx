@@ -9,7 +9,7 @@ import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
 import { StaticContentBox } from '@/app/_components/static-content-box';
 
-function ClaimTab({claim} : {claim: Claim}) {
+function ClaimTab({claim, isDragging} : {claim: Claim, isDragging : boolean}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const { attachBlankDefinition } = useClaimsContext();
 
@@ -20,7 +20,7 @@ function ClaimTab({claim} : {claim: Claim}) {
           <p className="text-white text-sm truncate">{claim.claimID}</p>
           <p className="text-white text-sm truncate">{claim.author}</p>
         </Menu.Button>
-        <Menu.Items className="absolute w-40 origin-top-right z-10 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal">
+        <Menu.Items className={`absolute w-40 origin-top-right ${isDragging ? 'z-30' : 'z-10'} bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
           <div>
             {acceptsDefinitions ? 
               <Menu.Item>
@@ -100,7 +100,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
 
-  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: claimID});
+  const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: claimID});
 
   const style = {transition, transform: CSS.Translate.toString(transform)};
 
@@ -110,11 +110,11 @@ export function ClaimBox({claimID} : {claimID: string}) {
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className="flex flex-col">
+      className={`flex flex-col ${isDragging ? 'z-20' : 'z-0'}`}>
       <div
         className="flex rounded-md shadow-xl"
         {...listeners}>
-        <ClaimTab claim={claim} />
+        <ClaimTab claim={claim} isDragging={isDragging} />
         <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
           <ClaimContentBox claim={claim} />
         </div>
