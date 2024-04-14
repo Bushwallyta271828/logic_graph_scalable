@@ -129,13 +129,20 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         return `"${claim.text}" is a valid definition`;
       case 'zeroth-order':
         return `We can assert "${claim.text}"`;
+      default:
+        throw new Error('Unrecognized claimType');
     }
   }
 
   const getDisplayText = (claim: Claim) => {
+    if (claim.claimType !== 'zeroth-order')
+      {return getInterpretedText(claim);}
+    return getInterpretedText(claim); //TODO: fix this!
   }
 
   const validZerothOrderText = (claim: ZerothOrderClaim) => {
+    //TODO: fix this!
+    return (claim.text.length < 5) ? false : true;
   }
 
 

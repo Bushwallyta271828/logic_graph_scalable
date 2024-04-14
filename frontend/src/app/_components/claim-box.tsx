@@ -7,7 +7,6 @@ import { Menu } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
-import { StaticContentBox } from '@/app/_components/static-content-box';
 
 function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
@@ -53,7 +52,7 @@ function ClaimContentBox({claim}: {claim: Claim}) {
   const [text, setText] = useState(claim.text);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { setClaimText } = useClaimsContext();
+  const { setClaimText, getDisplayText } = useClaimsContext();
 
   const adjustHeight = () => {
     if (textareaRef.current) {
@@ -88,9 +87,9 @@ function ClaimContentBox({claim}: {claim: Claim}) {
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <div className="w-full h-full p-2" onClick={() => setIsEditing(true)}>
-          <StaticContentBox claim={claim} />
-        </div>
+        <p className="text-white text-sm w-full h-full p-2 break-words" onClick={() => setIsEditing(true)}>
+          {getDisplayText(claim)}
+        </p>
       )}
     </>
   );
