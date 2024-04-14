@@ -3,7 +3,7 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { TextClaim, DefinitionClaim, ClaimWithDefinitions, ZerothOrderClaim, Claim } from '@/app/_types/claim-types';
+import { Claim, ClaimWithDefinitions, ZerothOrderClaim } from '@/app/_types/claim-types';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
@@ -122,6 +122,14 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   }
 
   const getInterpretedText = (claim: Claim) => {
+    switch (claim.claimType) {
+      case 'text':
+        return claim.text;
+      case 'definition':
+        return `"${claim.text}" is a valid definition`;
+      case 'zeroth-order':
+        return `We can assert "${claim.text}"`;
+    }
   }
 
   const getDisplayText = (claim: Claim) => {
