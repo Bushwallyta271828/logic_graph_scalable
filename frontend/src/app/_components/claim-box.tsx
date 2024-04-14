@@ -53,7 +53,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   const [editing, setEditing] = useState(false);
   const [validText, setValidText] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { setClaimText, claimLookup, getDisplayText } = useClaimsContext();
+  const { setClaimText, claimLookup, getDisplayData } = useClaimsContext();
 
   const adjustHeight = () => {
     if (textareaRef.current) {
@@ -74,7 +74,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
     setEditing(false);
     setClaimText({claimID: claim.claimID, newText: text});
     const newClaim = claimLookup(claim.claimID);
-    setValidText(getDisplayText(newClaim).validText);
+    setValidText(getDisplayData(newClaim).validText);
   }
 
   return (
@@ -91,7 +91,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
         />
       ) : (
         <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
-          {getDisplayText(claim).displayText}
+          {getDisplayData(claim).displayText}
         </p>
       )}
     </div>

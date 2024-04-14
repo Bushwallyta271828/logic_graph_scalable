@@ -21,7 +21,7 @@ type ClaimsContext = {
 
   setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
   getInterpretedText: (claim: Claim) => string;
-  getDisplayText: (claim: Claim) => {displayText: string, validText: boolean};
+  getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -133,7 +133,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     }
   }
 
-  const getDisplayText = (claim: Claim) => {
+  const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
       {return {displayText: getInterpretedText(claim), validText: true};}
     return {displayText: getInterpretedText(claim), validText: false}; //TODO: fix this!
@@ -158,8 +158,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
         setClaimText,
         getInterpretedText,
-        getDisplayText,
-        validZerothOrderText,
+        getDisplayData,
         }}>
       {children}
     </ClaimsContext.Provider>
