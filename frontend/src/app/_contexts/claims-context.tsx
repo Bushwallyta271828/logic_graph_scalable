@@ -4,6 +4,7 @@
 
 import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
+import { ParseFormula } from '@/app/_contexts/parse-formula';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
@@ -136,7 +137,12 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
       {return {displayText: getInterpretedText(claim), validText: true};}
-    return {displayText: getInterpretedText(claim), validText: claim.text.length > 5}; //TODO: fix this!
+    let substitutions: { [claimID: string]: string} = {};
+    for (let claimID in claimLookup) {
+      substitutions[claimID] = getInterpretedText(claimLookup[claimID]);
+    }
+    const {substitutedText, validText} = ParseFormula({formula: claim.text, substitutions: substitutions});
+    return {displayText: `We can assert "${substitutedText}"`, validText: validText};
   }
 
 
