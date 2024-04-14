@@ -20,7 +20,7 @@ function ClaimTab({claim, isDragging} : {claim: Claim, isDragging : boolean}) {
           <p className="text-white text-sm truncate">{claim.claimID}</p>
           <p className="text-white text-sm truncate">{claim.author}</p>
         </Menu.Button>
-        <Menu.Items className={`absolute w-40 origin-top-right ${isDragging ? 'z-30' : 'z-10'} bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
+        <Menu.Items className={`absolute w-40 origin-top-right z-10 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
           <div>
             {acceptsDefinitions ? 
               <Menu.Item>
@@ -110,7 +110,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className={`flex flex-col ${isDragging ? 'z-20' : 'z-0'}`}>
+      className={`flex flex-col ${isDragging ? 'z-20' : ''}`}>
       <div
         className="flex rounded-md shadow-xl"
         {...listeners}>
