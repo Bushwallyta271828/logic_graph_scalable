@@ -50,9 +50,10 @@ function ClaimTab({claim} : {claim: Claim}) {
 
 function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
-  const [isEditing, setIsEditing] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [validText, setValidText] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { setClaimText, getDisplayText } = useClaimsContext();
+  const { setClaimText, claimLookup, getDisplayText } = useClaimsContext();
 
   const adjustHeight = () => {
     if (textareaRef.current) {
@@ -62,7 +63,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
 
   useEffect(() => {
     adjustHeight();
-  }, [text, isEditing]);
+  }, [text, editing]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
@@ -70,13 +71,15 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   };
 
   const handleBlur = () => {
-    setIsEditing(false);
+    setEditing(false);
     setClaimText({claimID: claim.claimID, newText: text});
+    const newClaim = claimLookup(claim.claimID);
+    setValidText(getDisplayText(newClaim).validText);
   }
 
   return (
     <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
-      {isEditing ? (
+      {editing ? (
         <textarea
           ref={textareaRef}
           className="bg-transparent w-full h-full p-2 outline-none"
@@ -87,8 +90,8 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <p className="w-full h-full p-2" onClick={() => setIsEditing(true)}>
-          {getDisplayText(claim)}
+        <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
+          {getDisplayText(claim).displayText}
         </p>
       )}
     </div>
