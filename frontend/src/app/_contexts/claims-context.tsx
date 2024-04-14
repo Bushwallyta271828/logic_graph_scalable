@@ -12,10 +12,10 @@ type ClaimsContext = {
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
   newClaimID: () => string;
   addClaim: (claim: Claim) => void;
-  moveClaim: ({startIndex, endIndex}: {startIndex: number, endIndex: number}) => void;
+  moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
   attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
-  editDefinitionClaimID: ({claim, index, newDefinitionClaimID}: {claim: ClaimWithDefinitions, index: number, newDefinitionClaimID: string}) => void;
-  moveDefinition: ({claim, startIndex, endIndex}: {claim: ClaimWithDefinitions, startIndex: number, endIndex: number}) => void;
+  editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
+  moveDefinition: ({claim, startDefinitionClaimID, endDefinitionClaimID}: {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);

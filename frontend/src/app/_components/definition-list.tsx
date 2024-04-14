@@ -47,7 +47,7 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
           type="text"
           value={definitionClaimID}
           onChange={(e) => setDefinitionClaimID(e.target.value)}
-          onBlur={() => editDefinitionClaimID({claim: parentClaim, index: index, newDefinitionClaimID: definitionClaimID})}
+          onBlur={() => editDefinitionClaimID({claim: parentClaim, oldDefinitionClaimID: initialDefinitionClaimID, newDefinitionClaimID: definitionClaimID})}
           className="text-sm truncate bg-transparent w-full outline-none"
         />
       </div>
