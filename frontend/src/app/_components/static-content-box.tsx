@@ -15,7 +15,7 @@ function ZerothOrderContentBox({zerothOrderClaim} : {zerothOrderClaim: ZerothOrd
   return (
     <p className="text-white text-sm break-words">
       <MathJax>
-        {zerothOrderClaim.text}
+        {"\\(\\frac{10}{4x} \\approx 2^{12}\\)"}
       </MathJax>
     </p>
   );
