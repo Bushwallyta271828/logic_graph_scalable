@@ -2,6 +2,7 @@
 
 import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { MathJaxContext } from 'better-react-mathjax';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { ClaimBox } from '@/app/_components/claim-box';
 
@@ -26,20 +27,32 @@ export function ClaimList() {
     })
   );
 
+
+  const mathJaxConfig = {};
+  //  loader: { load: ['input/asciimath'] },
+  //  asciimath: { delimiters: [["$$","$$"]] },
+  //  tex: {
+  //    inlineMath: [['$', '$']],
+  //    displayMath: [['$$', '$$']],
+  //  },
+  //};
+
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragEnd={handleDragEnd}>
-      <SortableContext
-        items={claimIDs}
-        strategy={verticalListSortingStrategy}>
-        <div className="flex flex-col p-4 gap-4">
-          {claimIDs.map((claimID: string) => (
-            <ClaimBox claimID={claimID} key={claimID} />
-          ))}
-        </div>
-      </SortableContext>
-    </DndContext>
+    <MathJaxContext config={mathJaxConfig}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={claimIDs}
+          strategy={verticalListSortingStrategy}>
+          <div className="flex flex-col p-4 gap-4">
+            {claimIDs.map((claimID: string) => (
+              <ClaimBox claimID={claimID} key={claimID} />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </MathJaxContext>
   );
 }
