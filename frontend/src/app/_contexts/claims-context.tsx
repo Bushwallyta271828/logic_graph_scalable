@@ -15,7 +15,7 @@ type ClaimsContext = {
   moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
   attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
   editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
-  moveDefinition: ({claim, startDefinitionAttachmentIdentifier, endDefinitionAttachmentIdentifier}: {claim: ClaimWithDefinitions, startDefinitionAttachmentIdentifier: string, endDefinitionAttachmentIdentifier: string}) => void;
+  moveDefinition: ({claim, startDefinitionClaimID, endDefinitionClaimID}: {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -86,21 +86,13 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
 
-  const moveDefinition = ({claim, startDefinitionAttachmentIdentifier, endDefinitionAttachmentIdentifier}:
-    {claim: ClaimWithDefinitions, startDefinitionAttachmentIdentifier: string, endDefinitionAttachmentIdentifier: string}) => {
-    if (startDefinitionAttachmentIdentifier === endDefinitionAttachmentIdentifier) { return; }
-    const splitStartIdentifier = startDefinitionAttachmentIdentifier.split(".");
-    const splitEndIdentifier = endDefinitionAttachmentIdentifier.split(".");
-    if (
-      splitStartIdentifier.length !== 2 ||
-      splitEndIdentifier.length !== 2 ||
-      splitStartIdentifier[0] !== claim.claimID ||
-      splitEndIdentifier[0] !== claim.claimID)
-      {throw new Error("Unrecognized identifier format");}
+  const moveDefinition = ({claim, startDefinitionClaimID, endDefinitionClaimID}:
+    {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => {
+    if (startDefinitionClaimID === endDefinitionClaimID) { return; }
     setClaimLookup(prevClaimLookup => {
-      const startIndex = claim.definitionClaimIDs.indexOf(splitStartIdentifier[1]);
+      const startIndex = claim.definitionClaimIDs.indexOf(startDefinitionClaimID);
       if (startIndex < 0) {throw new Error("Moving unrecognized definition attachment");}
-      const endIndex = claim.definitionClaimIDs.indexOf(splitEndIdentifier[1]);
+      const endIndex = claim.definitionClaimIDs.indexOf(endDefinitionClaimID);
 
       let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
       const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);

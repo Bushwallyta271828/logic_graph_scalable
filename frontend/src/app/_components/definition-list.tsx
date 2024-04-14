@@ -64,7 +64,17 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
   function handleDragEnd(event: DragEndEvent) {
     const {active, over} = event;
     if (!over) {return;}
-    moveDefinition({claim: claim, startDefinitionClaimID: active.id, endDefinitionClaimID: over.id});
+
+    const splitActiveID = active.id.split(".");
+    const splitOverID = over.id.split(".");
+    if (
+      splitActiveID.length !== 2 ||
+      splitOverID.length !== 2 ||
+      splitActiveID[0] !== claim.claimID ||
+      splitOverID[0] !== claim.claimID)
+      {throw new Error("Unrecognized identifier format");}
+
+    moveDefinition({claim: claim, startDefinitionClaimID: splitActiveID[1], endDefinitionClaimID: splitOverID[1]});
   }
 
   const sensors = useSensors(
