@@ -7,7 +7,7 @@ function TextContentBox({textClaim} : {textClaim: TextClaim}) {
 }
 
 function DefinitionContentBox({definitionClaim} : {definitionClaim: DefinitionClaim}) {
-  return (<p className="text-white text-sm break-words">{definitionClaim.text} is a valid definition.</p>);
+  return (<p className="text-white text-sm break-words">{`"${definitionClaim.text}" is a valid definition.`}</p>);
 }
 
 function ZerothOrderContentBox({zerothOrderClaim} : {zerothOrderClaim: ZerothOrderClaim}) {
