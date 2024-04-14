@@ -13,7 +13,7 @@ type ClaimsContext = {
   newClaimID: () => string;
   addClaim: (claim: Claim) => void;
   moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
-  setClaimText: ({claim: Claim, newText: string}) => void;
+  setClaimText: ({claimID: string, newText: string}) => void;
   attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
   editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
   moveDefinition: ({claim, startDefinitionClaimID, endDefinitionClaimID}: {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => void;
@@ -62,12 +62,12 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
-  const setClaimText = ({claim, newText}: {claim: Claim, newText: string}) => {
+  const setClaimText = ({claimID, newText}: {claimID: string, newText: string}) => {
     setClaimLookup(prevClaimLookup => {
-      if (!(claim.claimID in prevClaimLookup))
+      if (!(claimID in prevClaimLookup))
         {throw new Error("Editing unrecognized claim");}
-      const updatedClaim = { ...prevClaimLookup[claim.claimID], text: newText};
-      return { ...prevClaimLookup, [claim.claimID]: updatedClaim };
+      const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
+      return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
   }
 

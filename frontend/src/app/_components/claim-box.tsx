@@ -72,7 +72,7 @@ function ClaimContentBox({claim}: {claim: Claim}) {
 
   const handleBlur = () => {
     setIsEditing(false);
-    
+    setClaimText({claimID: claim.claimID, newText: text});
   }
 
   return (
