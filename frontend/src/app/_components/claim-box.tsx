@@ -75,7 +75,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   }
 
   return (
-    <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'} text-white text-sm break-words`}>
+    <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
       {isEditing ? (
         <textarea
           ref={textareaRef}
@@ -103,7 +103,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
   }
 
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
+  const hasDefinitions = acceptsDefinitions && claim.definitionClaimIDs.length >= 1;
 
   const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: claimID});
 
