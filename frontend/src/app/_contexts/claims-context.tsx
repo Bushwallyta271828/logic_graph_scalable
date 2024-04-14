@@ -47,10 +47,13 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
   };
 
-  const moveClaim = ({startIndex, endIndex}:
-    {startIndex: number, endIndex: number}) => {
-    if (startIndex === endIndex) { return; }
+  const moveClaim = ({startClaimID, endClaimID}:
+    {startClaimID: string, endClaimID: string}) => {
+    if (startClaimID === endClaimID) { return; }
     setClaimIDs(prevClaimIDs => {
+      const startIndex = prevClaimIDs.indexOf(startClaimID);
+      if (startIndex < 0) {throw new Error("Moving unrecognized claim");}
+      const endIndex = prevClaimIDs.indexOf(endClaimID);
       let newClaimIDs = [...prevClaimIDs];
       const [removed] = newClaimIDs.splice(startIndex, 1);
       newClaimIDs.splice(endIndex, 0, removed);
@@ -64,9 +67,10 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
   
-  const editDefinitionClaimID = ({claim, index, newDefinitionClaimID}:
-    {claim: ClaimWithDefinitions, index: number, newDefinitionClaimID: string}) => {
-    if (index < 0 || index >= claim.definitionClaimIDs.length) {throw new Error("Index out of bounds");}
+  const editDefinitionClaimID = ({claim, oldDefinitionClaimID, newDefinitionClaimID}:
+    {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => {
+    const index = claim.definitionClaimIDs.indexOf(oldDefinitionClaimID);
+    if (index < 0) {throw new Error("Editing unrecognized definition attachment");}
     
     let deleteAttachment = (newDefinitionClaimID === "");
     claim.definitionClaimIDs.forEach((oldDefinitionClaimID, oldIndex) => {
@@ -82,10 +86,13 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
 
-  const moveDefinition = ({claim, startIndex, endIndex}:
-    {claim: ClaimWithDefinitions, startIndex: number, endIndex: number}) => {
-    if (startIndex === endIndex) { return; }
+  const moveDefinition = ({claim, startDefinitionClaimID, endDefinitionClaimID}:
+    {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => {
+    if (startDefinitionClaimID === endDefinitionClaimID) { return; }
     setClaimLookup(prevClaimLookup => {
+      const startIndex = claim.definitionClaimIDs.indexOf(startDefinitionClaimID);
+      if (startIndex < 0) {throw new Error("Moving unrecognized definition attachment");}
+      const endIndex = claim.definitionClaimIDs.indexOf(endDefinitionClaimID);
       let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
       const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
       newDefinitionClaimIDs.splice(endIndex, 0, removed);
