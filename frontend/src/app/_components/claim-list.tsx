@@ -33,11 +33,12 @@ export function ClaimList() {
       onDragEnd={handleDragEnd}>
       <SortableContext
         items={claimIDs}
-        strategy={verticalListSortingStrategy}
-        className="flex flex-col p-4 gap-4">
-        {claimIDs.map((claimID: string) => (
-          <ClaimBox claimID={claimID} key={claimID} />
-        ))}
+        strategy={verticalListSortingStrategy}>
+        <div className="flex flex-col p-4 gap-4">
+          {claimIDs.map((claimID: string) => (
+            <ClaimBox claimID={claimID} key={claimID} />
+          ))}
+        </div>
       </SortableContext>
     </DndContext>
   );

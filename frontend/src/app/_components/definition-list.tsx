@@ -94,18 +94,19 @@ export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
       onDragEnd={handleDragEnd}>
       <SortableContext
         items={claim.definitionClaimIDs.map((definitionClaimID) => claim.claimID+'.'+definitionClaimID)}
-        strategy={verticalListSortingStrategy}
-        className="flex flex-col rounded-b-md shadow-xl">
-        {claim.definitionClaimIDs.map((definitionClaimID: string, index: number) => (
-          <DefinitionBox
-            initialDefinitionClaimID={definitionClaimID}
-            final={index===claim.definitionClaimIDs.length - 1}
-            parentClaim={claim}
-            key={claim.claimID+'.'+definitionClaimID}
-            /**
-             * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.
-             * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
-          />))}
+        strategy={verticalListSortingStrategy}>
+        <div className="flex flex-col rounded-b-md shadow-xl">
+          {claim.definitionClaimIDs.map((definitionClaimID: string, index: number) => (
+            <DefinitionBox
+              initialDefinitionClaimID={definitionClaimID}
+              final={index===claim.definitionClaimIDs.length - 1}
+              parentClaim={claim}
+              key={claim.claimID+'.'+definitionClaimID}
+              /**
+               * Note: I'm assuming that claim.claimID and definitionClaimID are both alphanumeric.
+               * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
+            />))}
+        </div>
       </SortableContext>
     </DndContext>
   );
