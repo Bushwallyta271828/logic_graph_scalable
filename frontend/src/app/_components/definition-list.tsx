@@ -33,7 +33,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({id: parentClaim.claimID+'.'+initialDefinitionClaimID});
  
-  const style = {transition, transform: CSS.Transform.toString(transform)};
+  const style = {transition, transform: CSS.Translate.toString(transform)};
  
   return (
     <div

@@ -102,7 +102,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
 
   const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: claimID});
 
-  const style = {transition, transform: CSS.Transform.toString(transform)};
+  const style = {transition, transform: CSS.Translate.toString(transform)};
 
   //TODO: Fix shadow and simplify ClaimContentBox wrapper.
   return (
