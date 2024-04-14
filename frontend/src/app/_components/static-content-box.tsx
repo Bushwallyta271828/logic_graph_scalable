@@ -1,6 +1,7 @@
 'use client';
 
 import { Claim, TextClaim, DefinitionClaim, ZerothOrderClaim } from '@/app/_types/claim-types';
+import { useClaimsContext } from '@app/_contexts/claims-context';
 
 function TextContentBox({textClaim} : {textClaim: TextClaim}) {
   return (<p className="text-white text-sm break-words">{textClaim.text}</p>);
@@ -11,6 +12,9 @@ function DefinitionContentBox({definitionClaim} : {definitionClaim: DefinitionCl
 }
 
 function ZerothOrderContentBox({zerothOrderClaim} : {zerothOrderClaim: ZerothOrderClaim}) {
+  const { parseZerothOrder } = useClaimsContext();
+
+  parseZerothOrder(
   return (<p className="text-white text-sm break-words">{zerothOrderClaim.text} is a formula I will soon parse.</p>);
 }
 

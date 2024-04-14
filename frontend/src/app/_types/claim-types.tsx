@@ -26,8 +26,6 @@ export type ZerothOrderClaim = {
   claimType: 'zeroth-order';
   text: string;
   dependencies: Set<string>;
-  validFormula: boolean;
-  expandedText: string;
 };
 
 export type Claim =

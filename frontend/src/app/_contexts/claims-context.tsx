@@ -3,20 +3,26 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
+import { TextClaim, DefinitionClaim, ClaimWithDefinitions, ZerothOrderClaim, Claim } from '@/app/_types/claim-types';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
   claimIDs: string[]; //used for storing the order in which the claims are displayed
   setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
+  
   newClaimID: () => string;
+  
   addClaim: (claim: Claim) => void;
   moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
-  setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
   attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
   editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
   moveDefinition: ({claim, startDefinitionClaimID, endDefinitionClaimID}: {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => void;
+
+  setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
+  getInterpretedText: (claim: Claim) => string;
+  getDisplayText: (claim: Claim) => string;
+  validZerothOrderText: (claim: ZerothOrderClaim) => boolean; 
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -24,6 +30,7 @@ export const ClaimsContext = createContext<ClaimsContext | null>(null);
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
   const [claimLookup, setClaimLookup] = useState<{ [claimID: string]: Claim }>({});
   const [claimIDs, setClaimIDs] = useState<string[]>([]);
+
 
   const newClaimID = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -41,6 +48,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     }
     return uniqueID;
   };
+
 
   const addClaim = (claim: Claim) => {
     const claimID = claim.claimID;
@@ -61,15 +69,6 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       return newClaimIDs;
     });
   };
-
-  const setClaimText = ({claimID, newText}: {claimID: string, newText: string}) => {
-    setClaimLookup(prevClaimLookup => {
-      if (!(claimID in prevClaimLookup))
-        {throw new Error("Editing unrecognized claim");}
-      const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
-      return { ...prevClaimLookup, [claimID]: updatedClaim };
-    });
-  }
 
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
     const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
@@ -112,6 +111,26 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
+
+  const setClaimText = ({claimID, newText}: {claimID: string, newText: string}) => {
+    setClaimLookup(prevClaimLookup => {
+      if (!(claimID in prevClaimLookup))
+        {throw new Error("Editing unrecognized claim");}
+      const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
+      return { ...prevClaimLookup, [claimID]: updatedClaim };
+    });
+  }
+
+  const getInterpretedText = (claim: Claim) => {
+  }
+
+  const getDisplayText = (claim: Claim) => {
+  }
+
+  const validZerothOrderText = (claim: ZerothOrderClaim) => {
+  }
+
+
   return (
     <ClaimsContext.Provider
       value={{
@@ -119,13 +138,19 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         claimIDs,
         setClaimLookup,
         setClaimIDs,
+
         newClaimID,
+
         addClaim,
         moveClaim,
-        setClaimText,
         attachBlankDefinition,
         editDefinitionClaimID,
         moveDefinition,
+
+        setClaimText,
+        getInterpretedText,
+        getDisplayText,
+        validZerothOrderText,
         }}>
       {children}
     </ClaimsContext.Provider>
