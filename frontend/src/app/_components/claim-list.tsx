@@ -1,30 +1,45 @@
 'use client';
 
-import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
+import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { ClaimBox } from '@/app/_components/claim-box';
 
 export function ClaimList() {
+  //Credit to https://www.youtube.com/watch?v=dL5SOdgMbRY for helping to create some starter code!
   const { claimIDs, moveClaim } = useClaimsContext();
 
-  function onDragEnd(result : DropResult) {
-    if (!result.destination) {return;}
-    moveClaim({startIndex: result.source.index, endIndex: result.destination.index});
+  function handleDragEnd(event : DragEndEvent) {
+    const {active, over} = event;
+    if (!over) {return;}
+    if (typeof active.id !== 'string' || typeof over.id !== 'string')
+      {throw new Error("Unexpected identifier type");}
+    moveClaim({startClaimID: active.id, endClaimID: over.id});
   }
 
+  //From https://github.com/clauderic/dnd-kit/issues/591
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="list">
-        {provided => (
-          <div className="flex flex-col p-4 gap-4"
-            ref={provided.innerRef}
-            {...provided.droppableProps}>
-            {claimIDs.map((claimID: string, index: number) => (
-              <ClaimBox claimID={claimID} index={index} key={claimID} />))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragEnd={handleDragEnd}>
+      <SortableContext
+        items={claimIDs}
+        strategy={verticalListSortingStrategy}>
+        <div className="flex flex-col p-4 gap-4">
+          {claimIDs.map((claimID: string) => (
+            <ClaimBox claimID={claimID} key={claimID} />
+          ))}
+        </div>
+      </SortableContext>
+    </DndContext>
   );
 }
