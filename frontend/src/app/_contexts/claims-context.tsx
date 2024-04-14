@@ -3,7 +3,7 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { Claim, ClaimWithDefinitions, ZerothOrderClaim } from '@/app/_types/claim-types';
+import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
@@ -21,8 +21,7 @@ type ClaimsContext = {
 
   setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
   getInterpretedText: (claim: Claim) => string;
-  getDisplayText: (claim: Claim) => string;
-  validZerothOrderText: (claim: ZerothOrderClaim) => boolean; 
+  getDisplayText: (claim: Claim) => {displayText: string, validText: boolean};
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -136,13 +135,8 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   const getDisplayText = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
-      {return getInterpretedText(claim);}
-    return getInterpretedText(claim); //TODO: fix this!
-  }
-
-  const validZerothOrderText = (claim: ZerothOrderClaim) => {
-    //TODO: fix this!
-    return (claim.text.length < 5) ? false : true;
+      {return {displayText: getInterpretedText(claim), validText: true};}
+    return {displayText: getInterpretedText(claim), validText: false}; //TODO: fix this!
   }
 
 
