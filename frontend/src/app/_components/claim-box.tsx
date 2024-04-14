@@ -48,7 +48,7 @@ function ClaimTab({claim} : {claim: Claim}) {
   );
 }
 
-function ClaimContentBox({claim}: {claim: Claim}) {
+function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -75,11 +75,11 @@ function ClaimContentBox({claim}: {claim: Claim}) {
   }
 
   return (
-    <>
+    <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'} text-white text-sm break-words`}>
       {isEditing ? (
         <textarea
           ref={textareaRef}
-          className="bg-transparent text-white text-sm w-full h-full p-2 break-words outline-none"
+          className="bg-transparent w-full h-full p-2 outline-none"
           value={text}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -87,11 +87,11 @@ function ClaimContentBox({claim}: {claim: Claim}) {
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <p className="text-white text-sm w-full h-full p-2 break-words" onClick={() => setIsEditing(true)}>
+        <p className="w-full h-full p-2" onClick={() => setIsEditing(true)}>
           {getDisplayText(claim)}
         </p>
       )}
-    </>
+    </div>
   );
 }
 
@@ -109,7 +109,6 @@ export function ClaimBox({claimID} : {claimID: string}) {
 
   const style = {transition, transform: CSS.Translate.toString(transform)};
 
-  //TODO: Fix shadow and simplify ClaimContentBox wrapper.
   return (
     <div
       ref={setNodeRef}
@@ -117,12 +116,10 @@ export function ClaimBox({claimID} : {claimID: string}) {
       style={style}
       className={`flex flex-col ${isDragging ? 'z-20' : ''}`}>
       <div
-        className="flex rounded-md shadow-xl"
+        className={`flex ${hasDefinitions ? 'rounded-tr-md rounded-tl-md rounded-bl-md' : 'rounded-md'} shadow-xl`}
         {...listeners}>
         <ClaimTab claim={claim} />
-        <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
-          <ClaimContentBox claim={claim} />
-        </div>
+        <ClaimContentBox claim={claim} hasDefinitions={hasDefinitions} />
       </div>
       {acceptsDefinitions ?
         <div className="ml-20">
