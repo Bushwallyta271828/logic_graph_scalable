@@ -83,7 +83,7 @@ function ClaimContentBox({claim}: {claim: Claim}) {
           className="bg-transparent text-white text-sm w-full h-full p-2 break-words outline-none"
           value={text}
           onChange={handleChange}
-          onBlur={() => setIsEditing(false)}
+          onBlur={handleBlur}
           autoFocus
           style={{ overflow: 'hidden' }}
         />
