@@ -7,8 +7,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { ClaimWithDefinitions } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 
-function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
-  {initialDefinitionClaimID: string, index: number, final: boolean, parentClaim: ClaimWithDefinitions}) {
+function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
+  {initialDefinitionClaimID: string, final: boolean, parentClaim: ClaimWithDefinitions}) {
   /**
    * Note: I'm assuming that parentClaim.claimID and initialDefinitionClaimID are both alphanumeric.
    * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
