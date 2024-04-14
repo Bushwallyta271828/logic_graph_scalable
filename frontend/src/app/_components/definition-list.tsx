@@ -27,32 +27,31 @@ function DefinitionBox({initialDefinitionClaimID, index, final, parentClaim}:
   }
 
   const [ definitionClaimID, setDefinitionClaimID ] = useState(initialDefinitionClaimID);
-  
+
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({parentClaim.claimID+'.'+initialDefinitionClaimID});
+ 
+  const style = {transition, transform: CSS.Transform.toString(transform)};
+ 
   return (
-    <Draggable draggableId={parentClaim.claimID+"."+initialDefinitionClaimID} index={index}>
-      {provided => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className="border-t border-bright-neutral">
-          <div className="flex">
-            <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white ${validDefinition ? "bg-medium-definition" : "bg-medium-danger"} w-20 p-2`}>
-              <input
-                type="text"
-                value={definitionClaimID}
-                onChange={(e) => setDefinitionClaimID(e.target.value)}
-                onBlur={() => editDefinitionClaimID({claim: parentClaim, index: index, newDefinitionClaimID: definitionClaimID})}
-                className="text-sm truncate bg-transparent w-full outline-none"
-              />
-            </div>
-            <div className={`${final ? "rounded-br-md" : "rounded-none"} text-white ${validDefinition ? "bg-dark-definition" : "bg-dark-danger"} flex-1 p-2 min-w-0`}>
-              <p className="text-sm break-words">{definitionText}</p>
-            </div>
-          </div>
-        </div>
-      )}
-    </Draggable>
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
+      className="flex border-t border-bright-neutral">
+      <div className={`${final ? "rounded-bl-md" : "rounded-none"} text-white ${validDefinition ? "bg-medium-definition" : "bg-medium-danger"} w-20 p-2`}>
+        <input
+          type="text"
+          value={definitionClaimID}
+          onChange={(e) => setDefinitionClaimID(e.target.value)}
+          onBlur={() => editDefinitionClaimID({claim: parentClaim, index: index, newDefinitionClaimID: definitionClaimID})}
+          className="text-sm truncate bg-transparent w-full outline-none"
+        />
+      </div>
+      <div className={`${final ? "rounded-br-md" : "rounded-none"} text-white ${validDefinition ? "bg-dark-definition" : "bg-dark-danger"} flex-1 p-2 min-w-0`}>
+        <p className="text-sm break-words">{definitionText}</p>
+      </div>
+    </div>
   );
 }
 
