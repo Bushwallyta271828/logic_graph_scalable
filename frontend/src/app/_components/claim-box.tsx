@@ -53,6 +53,7 @@ function ClaimContentBox({claim}: {claim: Claim}) {
   const [text, setText] = useState(claim.text);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { setClaimText } = useClaimsContext();
 
   const adjustHeight = () => {
     if (textareaRef.current) {
@@ -68,6 +69,11 @@ function ClaimContentBox({claim}: {claim: Claim}) {
     setText(e.target.value);
     adjustHeight();
   };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    
+  }
 
   return (
     <>
