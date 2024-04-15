@@ -4,7 +4,7 @@
 
 import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
-import { ParseFormula } from '@/app/_contexts/parse-formula';
+import { parseFormula } from '@/app/_contexts/parse-formula';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
@@ -141,7 +141,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     for (let claimID in claimLookup) {
       substitutions[claimID] = getInterpretedText(claimLookup[claimID]);
     }
-    const {substitutedFormula, validFormula} = ParseFormula({formula: claim.text, substitutions: substitutions});
+    const {substitutedFormula, validFormula} = parseFormula({formula: claim.text, substitutions: substitutions});
     return {displayText: `We can assert "${substitutedFormula}"`, validText: validFormula};
   }
 
