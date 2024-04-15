@@ -1,22 +1,40 @@
 'use client';
 
-function SeparateParentheticals({formula}: {formula:string}) {
-  //This function 
-  let topLevelFormula = "";
-  let children: string[] = [];
+//function SeparateParentheticals({formula}: {formula:string}) {
+//  //This function 
+//  let topLevelFormula = "";
+//  let children: string[] = [];
+//  let depth = 0;
+//  const matching = true;
+//  for (let i = 0; i < formula.length; i++) {
+//    if (formula[i] === "(") {
+//      if (depth === 0) {children.push("");}
+//      depth += 1;
+//    }
+//    if (formula[i] === ")") {depth -= 1;}
+//    
+//    if (depth < 0) {
+//      matching = false;
+//    } else if (depth === 0) {
+//      topLevelFormula += formula[i];
+//    } else {
+//      children[children.length - 1] += formula[i];
+//    }
+//  }
+//  return {topLevelFormula: topLevelFormula, children: children, matching: matching};
+//}
+
+function FindDepths({formula}: {formula: string}) {
+  let depths: string[] = [];
   let depth = 0;
   const matching = true;
   for (let i = 0; i < formula.length; i++) {
-    if (depth >= 1) {
-      children[children.length - 1] += formula[i];
-    }
-    if (formula[i] === "(") {
-      if (depth === 0) {parentheticals.push("");}
-      depth += 1;
-    }
-    
+    if (formula[i] === "(") {depth += 1;}
+    if (formula[i] === ")") {depth -= 1;}
+    if (depth < 0) {matching = false;}
+    depths.push(formula[i] === "(" ? depth - 1 : depth);
   }
-  return {topLevelFormula: topLevelFormula, children: children, matching: matching};
+  return {depths: depths, matching: matching && depth === 0};
 }
 
 function ParseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
