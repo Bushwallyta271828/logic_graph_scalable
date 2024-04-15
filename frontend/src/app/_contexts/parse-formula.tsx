@@ -50,16 +50,16 @@ function attemptInfixSplit({formula, substitutions, divider, subParser}: {
   //cases it will return a best guess for substitutedFormula.
   //divider shouldn't have any parentheses in it.
   const {depths, matching} = FindDepths(formula);
-  if (!matching) {return {substitutedFormula: formula, status: successfulSplit: false};}
+  if (!matching) {return {substitutedFormula: formula, status: 'invalid' as const};}
   const indexDepthZero = indexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
-  if (indexDepthZero < 0) {return {substitutedFormula: formula, successfulSplit: false};}
+  if (indexDepthZero < 0) {return {substitutedFormula: formula, status: 'no split' as const};}
   const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
-    = subParser({formula: formula.splice(0, TODO), substitutions: substitutions});
+    = subParser({formula: formula.slice(0, indexDepthZero), substitutions: substitutions});
   const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-    = subParser({formula: formula.splice(TODO), substitutions: substitutions});
+    = subParser({formula: formula.slice(indexDepthZero+divider.length), substitutions: substitutions});
   return {
-    substitutedFormula: leftSubstitutedFormula+"="+rightSubstitutedFormula,
-    validFormula: leftValidFormula && rightValidFormula
+    substitutedFormula: leftSubstitutedFormula+divider+rightSubstitutedFormula,
+    status: (leftValidFormula && rightValidFormula) ? 'valid' as const : 'invalid' as const
   };
 }
 
@@ -71,11 +71,16 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
     {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
   const {depths, matching} = FindDepths(trimmedFormula);
   if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
+  
   if (depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
-    return parseLogicalFormula({
+    const innerParse = parseLogicalFormula({
       formula: trimmedFormula.slice(1, trimmedFormula.length-1),
       substitutions: substitutions
     });
+    return {
+      substitutedFormula: "("+innerParse.substitutedFormula+")",
+      validFormula: innerParse.validFormula
+    };
   }
 
   const orIndex = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:" or "});
