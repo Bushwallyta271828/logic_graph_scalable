@@ -35,31 +35,42 @@ function indexOfDepthZeroSubstring({formula, depths, substring}:
   }
 }
 
-//function infixSplit({formula, substitutions, divider, subParser}: {
-//  formula:string,
-//  substitutions:{[claimID:string]:string},
-//  divider:string,
-//  subParser: {({formula: string, substitutions:{[claimID:string]:string}})
-//    => {substitutedFormula:string, validFormula:boolean}}})
-//{
-//  const {depths, matching} = FindDepths(formula);
-//  if (!matching) {return {substitutedFormula: formula, successfulSplit: false};}
-//  const indexDepthZero = indexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
-//  if (indexDepthZero < 0) {return {substitutedFormula: formula, successfulSplit: false};}
-//  const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
-//    = subParser({formula: formula.splice(0, TODO), substitutions: substitutions});
-//  const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-//    = subParser({formula: formula.splice(TODO), substitutions: substitutions});
-//  return {
-//    substitutedFormula: leftSubstitutedFormula+"="+rightSubstitutedFormula,
-//    validFormula: leftValidFormula && rightValidFormula
-//  };
-//}
+function attemptInfixSplit({formula, substitutions, divider, subParser}: {
+  formula:string,
+  substitutions:{[claimID:string]:string},
+  divider:string,
+  leftPadding:number,
+  rightPadding:number,
+  subParser: {({formula: string, substitutions:{[claimID:string]:string}})
+    => {substitutedFormula:string, validFormula:boolean}}})
+{
+  //This helper function will attempt to split formula with a substring of divider
+  //at a depth of zero. If such a split is impossible, it will return status: 'no split' as const
+  //and substitutedFormula: something reasonable. If the split is possible and both sides can parse,
+  //it will return status: 'valid' as const and substitutedFormula: the substituted formula.
+  //If the split is possible but the sides don't parse, it will return status: 'invalid' as const
+  //and substitutedFormula: something reasonable.
+  //leftPadding and rightPadding are the 
+  const {depths, matching} = FindDepths(formula);
+  if (!matching) {return {substitutedFormula: formula, successfulSplit: false};}
+  const indexDepthZero = indexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
+  if (indexDepthZero < 0) {return {substitutedFormula: formula, successfulSplit: false};}
+  const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
+    = subParser({formula: formula.splice(0, TODO), substitutions: substitutions});
+  const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
+    = subParser({formula: formula.splice(TODO), substitutions: substitutions});
+  return {
+    substitutedFormula: leftSubstitutedFormula+"="+rightSubstitutedFormula,
+    validFormula: leftValidFormula && rightValidFormula
+  };
+}
 
 function parseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
   //NOTE: assumes formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
   if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
+  if (trimmedFormula in substitutions)
+    {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
   const {depths, matching} = FindDepths(trimmedFormula);
   if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
   if (depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
@@ -110,7 +121,7 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
 }
 
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
-  const spacedFormula = formula.replace(/[\(\)]/g, match => ` ${match} `);
+  const spacedFormula = formula.replace(/[\(\)\*\=]/g, match => ` ${match} `);
 
   if (spacedFormula.includes("=")) {
     const equationSides = spacedFormula.split("=");
