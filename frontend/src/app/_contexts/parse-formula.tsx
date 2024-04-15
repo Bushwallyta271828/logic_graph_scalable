@@ -47,7 +47,7 @@ function attemptInfixSplit({formula, substitutions, divider, subParser}: {
   //but the children don't parse, it will return status: 'invalid' as const. If divider
   //doesn't exist at depth zero, it will return status: 'no split' as const. If the split
   //is successful and the children parse, it will return status: 'valid' as const. In all
-  //cases it will return a best guess for substitutedFormula.
+  //cases it will return a best guess for substitutedFormula (if 'valid', it should be correct).
   //divider shouldn't have any parentheses in it.
   const {depths, matching} = FindDepths(formula);
   if (!matching) {return {substitutedFormula: formula, status: 'invalid' as const};}
@@ -83,33 +83,22 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
     };
   }
 
-  const orIndex = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:" or "});
-  const andIndex = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:" and "});
-  if (orIndex >= 0) {
-    const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
-      = parselogicalformula({formula: trimmedFormula.slice(0, orIndex+1), substitutions: substitutions});
-    const {substitutedformula: rightsubstitutedformula, validformula: rightvalidformula}
-      = parselogicalformula({formula: trimmedFormula.slice(orIndex+3), substitutions: substitutions});
-    return {
-      substitutedformula: leftsubstitutedformula+" or "+rightsubstitutedformula,
-      validformula: leftvalidformula && rightvalidformula
-    };
-  } else if (andIndex >= 0) {
-    const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
-      = parselogicalformula({formula: trimmedFormula.slice(0, andIndex+1), substitutions: substitutions});
-    const {substitutedformula: rightsubstitutedformula, validformula: rightvalidformula}
-      = parselogicalformula({formula: trimmedFormula.slice(andIndex+4), substitutions: substitutions});
-    return {
-      substitutedformula: leftsubstitutedformula+" and "+rightsubstitutedformula,
-      validformula: leftvalidformula && rightvalidformula
-    };
-  } else if (trimmedFormula.slice(0, 4) === "not ") {
+  const orSplit = attemptInfixSplit(
+    {formula: trimmedFormula, substitutions: substitutions, divider: " or ", subParser: parseLogicalFormula});
+  if (orSplit.status !== 'no split')
+    {return {substitutedFormula: orSplit.substitutedFormula, validFormula: orSplit.status === 'valid'};}
+
+  const andSplit = attemptInfixSplit(
+    {formula: trimmedFormula, substitutions: substitutions, divider: " and ", subParser: parseLogicalFormula});
+  if (andSplit.status !== 'no split')
+    {return {substitutedFormula: andSplit.substitutedFormula, validFormula: andSplit.status === 'valid'};}
+
+  if (trimmedFormula.slice(0, 4) === "not ") {
     const {substitutedFormula, validFormula} =
       parseLogicalFormula({formula: trimmedFormula.slice(4), substitutions: substitutions});
     return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
-  } else {
-    return {substitutedFormula: trimmedFormula, validFormula: false};
   }
+  return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
 function parseAffineFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
