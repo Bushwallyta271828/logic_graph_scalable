@@ -69,7 +69,11 @@ function parseWrapping({formula, substitutions, subParser}: {
   subParser: {({formula: string, substitutions:{[claimID:string]:string}})
     => {substitutedFormula:string, validFormula:boolean}}})
 {
-  //This helper function deals with mismatched parentheses and 
+  //This helper function deals with unwrapping parentheses and empty inputs.
+  //If the input is empty, has mismatched parentheses, or is nested inside
+  //a pair of outer parentheses then the function returns the desired
+  //substitutedFormula and validFormula. If the input is not of these forms, it
+  //returns null.
   const trimmedFormula = formula.trim();
   if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
   const {depths, matching} = FindDepths(trimmedFormula);
@@ -86,8 +90,7 @@ function parseWrapping({formula, substitutions, subParser}: {
     };
   }
 
-  //BUG: infinite loop!
-  return subParser({formula: trimmedFormula, substitutions: substitutions});
+  return null;
 }
 
 
