@@ -63,8 +63,8 @@ function attemptInfixSplit({formula, substitutions, divider, subParser}: {
   };
 }
 
-function parseWrapping({formula, substitutions, subParser}: {
-  formula:string,
+function parseWrapping({trimmedFormula, substitutions, subParser}: {
+  trimmedFormula:string,
   substitutions:{[claimID:string]:string},
   subParser: {({formula: string, substitutions:{[claimID:string]:string}})
     => {substitutedFormula:string, validFormula:boolean}}})
@@ -74,7 +74,6 @@ function parseWrapping({formula, substitutions, subParser}: {
   //a pair of outer parentheses then the function returns the desired
   //substitutedFormula and validFormula. If the input is not of these forms, it
   //returns null.
-  const trimmedFormula = formula.trim();
   if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
   const {depths, matching} = FindDepths(trimmedFormula);
   if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
@@ -96,11 +95,12 @@ function parseWrapping({formula, substitutions, subParser}: {
 
 function parseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
   //NOTE: assumes formula has had spaces added around parentheses!
+  const trimmedFormula = formula.trim();
+  
   const attemptParseWrapping = parseWrapping(
-    {formula:formula, substitutions:substitutions, subParser:parseLogicalFormula});
+    {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseLogicalFormula});
   if (attemptedParseWrapping) {return attemptedParseWrapping;}
 
-  const trimmedFormula = formula.trim();
   if (trimmedFormula in substitutions)
     {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
 
