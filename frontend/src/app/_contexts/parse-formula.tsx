@@ -16,20 +16,23 @@ function findDepths({formula}: {formula: string}) {
   return {depths: depths, matching: matching && depth === 0};
 }
 
-function indexOfDepthZeroSubstring({formula, depths, substring}:
+function lastIndexOfDepthZeroSubstring({formula, depths, substring}:
   {formula: string, depths: number[], substring: string}) {
-  //Returns the index of the first match for substring within formula
-  //that lies entirely at a depth of zero, or -1 if no such index exists.
-  const firstCandidateIndex = formula.indexOf(substring);
-  if (firstCandidateIndex < 0) {
+  //Returns the index of the last match for substring within formula
+  //that lies at a depth of zero, or -1 if no such index exists.
+  //Using the last instance is important for correctly parsing subtraction:
+  //a - b - c = (a - b) - c
+  //Assumes that substring doesn't contain "(" or ")" so the depth is
+  //constant throughout.
+  const lastCandidateIndex = formula.lastIndexOf(substring);
+  if (lastCandidateIndex < 0) {
     return -1;
-  } else if
-    (depths.slice(firstCandidateIndex, firstCandidateIndex + substring.length).every(depth => depth === 0)) {
-    return firstCandidateIndex;
+  } else if (depths[lastCandidateIndex] === 0) {
+    return lastCandidateIndex;
   } else {
-    return indexOfDepthZeroSubstring({
-      formula: formula.slice(firstCandidateIndex+1),
-      depths: depths.slice(firstCandidateIndex+1),
+    return lastIndexOfDepthZeroSubstring({
+      formula: formula.slice(0, lastCandidateIndex),
+      depths: depths.slice(0, lastCandidateIndex),
       substring: substring,
     });
   }
@@ -123,7 +126,7 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
 }
 
 function parseAffineFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
-  //NOTE: assumes formula has had spaces added around parentheses and "*" and "+"!
+  //NOTE: assumes formula has had spaces added around parentheses, "*", "+", and "-"!
   const trimmedFormula = formula.trim();
   
   const attemptParseWrapping = parseWrapping(
@@ -135,11 +138,11 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
   if (plusSplit.status !== 'no split')
     {return {substitutedFormula: plusSplit.substitutedFormula, validFormula: plusSplit.status === 'valid'};}
 
-  //TODO -- finish from here! Need to enforce linearity!
+  //TODO -- finish from here! Need to enforce linearity and subtraction!
 }
 
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
-  const spacedFormula = formula.replace(/[\(\)\*\+\=]/g, match => ` ${match} `);
+  const spacedFormula = formula.replace(/[\(\)\*\+\-\=]/g, match => ` ${match} `);
 
   const equalsSplit = attemptInfixSplit(
     {formula: spacedFormula, substitutions: substitutions, divider: " = ", subParser: parseAffineFormula});
