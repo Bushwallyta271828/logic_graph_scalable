@@ -115,21 +115,10 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
   const spacedFormula = formula.replace(/[\(\)\*\=]/g, match => ` ${match} `);
 
-  if (spacedFormula.includes("=")) {
-    const equationSides = spacedFormula.split("=");
-    if (equationSides.length !== 2) {
-      return {substitutedFormula: spacedFormula, validFormula: false};
-    } else {
-      const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
-        = parseAffineFormula({formula: equationSides[0], substitutions: substitutions});
-      const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-        = parseAffineFormula({formula: equationSides[1], substitutions: substitutions});
-      return {
-        substitutedFormula: leftSubstitutedFormula+" = "+rightSubstitutedFormula,
-        validFormula: leftValidFormula && rightValidFormula
-      };
-    }
-  } else {
-    return parseLogicalFormula({formula:spacedFormula, substitutions:substitutions});
-  }
+  const equalsSplit = attemptInfixSplit(
+    {formula: spacedFormula, substitutions: substitutions, divider: " = ", subParser: parseAffineFormula});
+  if (equalsSplit.status !== 'no split')
+    {return {substitutedFormula: equalsSplit.substitutedFormula, validFormula: equalsSplit.status === 'valid'};}
+
+  return parseLogicalFormula({formula:spacedFormula, substitutions:substitutions});
 }
