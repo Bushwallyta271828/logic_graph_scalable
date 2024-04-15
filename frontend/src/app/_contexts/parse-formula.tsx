@@ -64,7 +64,13 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
     const orIndex2 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")or "});
     const orIndex3 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" or("});
     const orIndex4 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")or("});
-    const orIndex = math.max(orIndex1, orIndex2, orIndex3, orIndex4); //non-negative if any of them are 
+    const orIndex = Math.max(orIndex1, orIndex2, orIndex3, orIndex4); //non-negative if any of them are 
+
+    const andIndex1 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and "});
+    const andIndex2 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and "});
+    const andIndex3 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and("});
+    const andIndex4 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and("});
+    const andIndex = Math.max(andIndex1, andIndex2, andIndex3, andIndex4);
     if (orIndex >= 0) {
       const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
         = parselogicalformula({formula: formula.slice(0, orIndex+1), substitutions: substitutions});
@@ -74,22 +80,16 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
         substitutedformula: leftsubstitutedformula+"or"+rightsubstitutedformula,
         validformula: leftvalidformula && rightvalidformula
       };
-    } else {
-      const andIndex1 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and "});
-      const andIndex2 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and "});
-      const andIndex3 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and("});
-      const andIndex4 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and("});
-      const andIndex = math.max(andIndex1, andIndex2, andIndex3, andIndex4);
-      if (andIndex >= 0) {
-        const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
-          = parselogicalformula({formula: formula.slice(0, andIndex+1), substitutions: substitutions});
-        const {substitutedformula: rightsubstitutedformula, validformula: rightvalidformula}
-          = parselogicalformula({formula: formula.slice(andIndex+4), substitutions: substitutions});
-        return {
-          substitutedformula: leftsubstitutedformula+"and"+rightsubstitutedformula,
-          validformula: leftvalidformula && rightvalidformula
-        };
-      } else {} 
+    } else if (andIndex >= 0) {
+      const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
+        = parselogicalformula({formula: formula.slice(0, andIndex+1), substitutions: substitutions});
+      const {substitutedformula: rightsubstitutedformula, validformula: rightvalidformula}
+        = parselogicalformula({formula: formula.slice(andIndex+4), substitutions: substitutions});
+      return {
+        substitutedformula: leftsubstitutedformula+"and"+rightsubstitutedformula,
+        validformula: leftvalidformula && rightvalidformula
+      };
+    } else { 
     }
   }
 }
