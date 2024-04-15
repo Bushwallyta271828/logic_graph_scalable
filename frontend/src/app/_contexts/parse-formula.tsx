@@ -123,18 +123,23 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
 }
 
 function parseAffineFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
-  let 
-  let parentheticalDepth = 0;
+  //NOTE: assumes formula has had spaces added around parentheses and "*" and "+"!
+  const trimmedFormula = formula.trim();
   
-  let i = 0;
-  while 
-  for (let i = 0; i < formula.length; i++) {
-    
-  }
+  const attemptParseWrapping = parseWrapping(
+    {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseAffineFormula});
+  if (attemptedParseWrapping) {return attemptedParseWrapping;}
+
+  const plusSplit = attemptInfixSplit(
+    {formula: trimmedFormula, substitutions: substitutions, divider: " + ", subParser: parseAffineFormula});
+  if (plusSplit.status !== 'no split')
+    {return {substitutedFormula: plusSplit.substitutedFormula, validFormula: plusSplit.status === 'valid'};}
+
+  //TODO -- finish from here! Need to enforce linearity!
 }
 
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
-  const spacedFormula = formula.replace(/[\(\)\*\=]/g, match => ` ${match} `);
+  const spacedFormula = formula.replace(/[\(\)\*\+\=]/g, match => ` ${match} `);
 
   const equalsSplit = attemptInfixSplit(
     {formula: spacedFormula, substitutions: substitutions, divider: " = ", subParser: parseAffineFormula});
