@@ -96,23 +96,13 @@ function parseWrapping({formula, substitutions, subParser}: {
 
 function parseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
   //NOTE: assumes formula has had spaces added around parentheses!
+  const attemptParseWrapping = parseWrapping(
+    {formula:formula, substitutions:substitutions, subParser:parseLogicalFormula});
+  if (attemptedParseWrapping) {return attemptedParseWrapping;}
+
   const trimmedFormula = formula.trim();
-  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
   if (trimmedFormula in substitutions)
     {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
-  const {depths, matching} = FindDepths(trimmedFormula);
-  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
-  
-  if (depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
-    const innerParse = parseLogicalFormula({
-      formula: trimmedFormula.slice(1, trimmedFormula.length-1),
-      substitutions: substitutions
-    });
-    return {
-      substitutedFormula: "("+innerParse.substitutedFormula+")",
-      validFormula: innerParse.validFormula
-    };
-  }
 
   const orSplit = attemptInfixSplit(
     {formula: trimmedFormula, substitutions: substitutions, divider: " or ", subParser: parseLogicalFormula});
