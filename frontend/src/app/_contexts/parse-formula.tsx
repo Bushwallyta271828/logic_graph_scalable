@@ -1,29 +1,5 @@
 'use client';
 
-//function SeparateParentheticals({formula}: {formula:string}) {
-//  //This function 
-//  let topLevelFormula = "";
-//  let children: string[] = [];
-//  let depth = 0;
-//  const matching = true;
-//  for (let i = 0; i < formula.length; i++) {
-//    if (formula[i] === "(") {
-//      if (depth === 0) {children.push("");}
-//      depth += 1;
-//    }
-//    if (formula[i] === ")") {depth -= 1;}
-//    
-//    if (depth < 0) {
-//      matching = false;
-//    } else if (depth === 0) {
-//      topLevelFormula += formula[i];
-//    } else {
-//      children[children.length - 1] += formula[i];
-//    }
-//  }
-//  return {topLevelFormula: topLevelFormula, children: children, matching: matching};
-//}
-
 function findDepths({formula}: {formula: string}) {
   //Computes how many layers of parentheses each
   //character is contained within, as well as whether
@@ -59,9 +35,63 @@ function indexOfDepthZeroSubstring({formula, depths, substring}:
   }
 }
 
+//function infixSplit({formula, substitutions, divider, subParser}: {
+//  formula:string,
+//  substitutions:{[claimID:string]:string},
+//  divider:string,
+//  subParser: {({formula: string, substitutions:{[claimID:string]:string}})
+//    => {substitutedFormula:string, validFormula:boolean}}})
+//{
+//  const {depths, matching} = FindDepths(formula);
+//  if (!matching) {return {substitutedFormula: formula, successfulSplit: false};}
+//  const indexDepthZero = indexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
+//  if (indexDepthZero < 0) {return {substitutedFormula: formula, successfulSplit: false};}
+//  const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
+//    = subParser({formula: formula.splice(0, TODO), substitutions: substitutions});
+//  const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
+//    = subParser({formula: formula.splice(TODO), substitutions: substitutions});
+//  return {
+//    substitutedFormula: leftSubstitutedFormula+"="+rightSubstitutedFormula,
+//    validFormula: leftValidFormula && rightValidFormula
+//  };
+//}
+
 function parseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
   const {depths, matching} = FindDepths(formula);
-  
+  if (!matching) {return {substitutedFormula: formula, validFormula: false};}
+  else {
+    const orIndex1 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" or "});
+    const orIndex2 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")or "});
+    const orIndex3 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" or("});
+    const orIndex4 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")or("});
+    const orIndex = math.max(orIndex1, orIndex2, orIndex3, orIndex4); //non-negative if any of them are 
+    if (orIndex >= 0) {
+      const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
+        = parselogicalformula({formula: formula.slice(0, orIndex+1), substitutions: substitutions});
+      const {substitutedformula: rightsubstitutedformula, validformula: rightvalidformula}
+        = parselogicalformula({formula: formula.slice(orIndex+3), substitutions: substitutions});
+      return {
+        substitutedformula: leftsubstitutedformula+"or"+rightsubstitutedformula,
+        validformula: leftvalidformula && rightvalidformula
+      };
+    } else {
+      const andIndex1 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and "});
+      const andIndex2 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and "});
+      const andIndex3 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and("});
+      const andIndex4 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and("});
+      const andIndex = math.max(andIndex1, andIndex2, andIndex3, andIndex4);
+      if (andIndex >= 0) {
+        const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
+          = parselogicalformula({formula: formula.slice(0, andIndex+1), substitutions: substitutions});
+        const {substitutedformula: rightsubstitutedformula, validformula: rightvalidformula}
+          = parselogicalformula({formula: formula.slice(andIndex+4), substitutions: substitutions});
+        return {
+          substitutedformula: leftsubstitutedformula+"and"+rightsubstitutedformula,
+          validformula: leftvalidformula && rightvalidformula
+        };
+      } else {} 
+    }
+  }
 }
 
 function parseAffineFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
