@@ -63,6 +63,34 @@ function attemptInfixSplit({formula, substitutions, divider, subParser}: {
   };
 }
 
+function parseWrapping({formula, substitutions, subParser}: {
+  formula:string,
+  substitutions:{[claimID:string]:string},
+  subParser: {({formula: string, substitutions:{[claimID:string]:string}})
+    => {substitutedFormula:string, validFormula:boolean}}})
+{
+  //This helper function deals with mismatched parentheses and 
+  const trimmedFormula = formula.trim();
+  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
+  const {depths, matching} = FindDepths(trimmedFormula);
+  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
+  
+  if (depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
+    const innerParse = subParser({
+      formula: trimmedFormula.slice(1, trimmedFormula.length-1),
+      substitutions: substitutions
+    });
+    return {
+      substitutedFormula: "("+innerParse.substitutedFormula+")",
+      validFormula: innerParse.validFormula
+    };
+  }
+
+  //BUG: infinite loop!
+  return subParser({formula: trimmedFormula, substitutions: substitutions});
+}
+
+
 function parseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
   //NOTE: assumes formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
