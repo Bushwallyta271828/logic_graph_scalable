@@ -39,20 +39,18 @@ function attemptInfixSplit({formula, substitutions, divider, subParser}: {
   formula:string,
   substitutions:{[claimID:string]:string},
   divider:string,
-  leftPadding:number,
-  rightPadding:number,
   subParser: {({formula: string, substitutions:{[claimID:string]:string}})
     => {substitutedFormula:string, validFormula:boolean}}})
 {
   //This helper function will attempt to split formula with a substring of divider
-  //at a depth of zero. If such a split is impossible, it will return status: 'no split' as const
-  //and substitutedFormula: something reasonable. If the split is possible and both sides can parse,
-  //it will return status: 'valid' as const and substitutedFormula: the substituted formula.
-  //If the split is possible but the sides don't parse, it will return status: 'invalid' as const
-  //and substitutedFormula: something reasonable.
-  //leftPadding and rightPadding are the 
+  //at a depth of zero. If formula's parentheses don't match or if the split is possible
+  //but the children don't parse, it will return status: 'invalid' as const. If divider
+  //doesn't exist at depth zero, it will return status: 'no split' as const. If the split
+  //is successful and the children parse, it will return status: 'valid' as const. In all
+  //cases it will return a best guess for substitutedFormula.
+  //divider shouldn't have any parentheses in it.
   const {depths, matching} = FindDepths(formula);
-  if (!matching) {return {substitutedFormula: formula, successfulSplit: false};}
+  if (!matching) {return {substitutedFormula: formula, status: successfulSplit: false};}
   const indexDepthZero = indexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
   if (indexDepthZero < 0) {return {substitutedFormula: formula, successfulSplit: false};}
   const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
