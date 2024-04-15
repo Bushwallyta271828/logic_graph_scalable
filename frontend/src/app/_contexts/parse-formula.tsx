@@ -68,16 +68,16 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
     });
   }
 
-  const orIndex1 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" or "});
-  const orIndex2 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")or "});
-  const orIndex3 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" or("});
-  const orIndex4 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")or("});
+  const orIndex1 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:" or "});
+  const orIndex2 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:")or "});
+  const orIndex3 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:" or("});
+  const orIndex4 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:")or("});
   const orIndex = Math.max(orIndex1, orIndex2, orIndex3, orIndex4); //non-negative if any of them are 
 
-  const andIndex1 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and "});
-  const andIndex2 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and "});
-  const andIndex3 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:" and("});
-  const andIndex4 = indexOfDepthZeroSubstring({formula:formula, depths:depths, substring:")and("});
+  const andIndex1 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:" and "});
+  const andIndex2 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:")and "});
+  const andIndex3 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:" and("});
+  const andIndex4 = indexOfDepthZeroSubstring({formula:trimmedFormula, depths:depths, substring:")and("});
   const andIndex = Math.max(andIndex1, andIndex2, andIndex3, andIndex4);
   if (orIndex >= 0) {
     const {substitutedformula: leftsubstitutedformula, validformula: leftvalidformula}
@@ -113,10 +113,12 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
 }
 
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
-  if (formula.includes("=")) {
-    const equationSides = formula.split("=");
+  const spacedFormula = formula.replace(/[\(\)]/g, match => ` ${match} `);
+
+  if (spacedFormula.includes("=")) {
+    const equationSides = spacedFormula.split("=");
     if (equationSides.length !== 2) {
-      return {substitutedFormula: formula, validFormula: false};
+      return {substitutedFormula: spacedFormula, validFormula: false};
     } else {
       const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
         = parseAffineFormula({formula: equationSides[0], substitutions: substitutions});
@@ -128,6 +130,6 @@ export function parseFormula({formula,substitutions}:{formula:string,substitutio
       };
     }
   } else {
-    return parseLogicalFormula({formula:formula, substitutions:substitutions});
+    return parseLogicalFormula({formula:spacedFormula, substitutions:substitutions});
   }
 }
