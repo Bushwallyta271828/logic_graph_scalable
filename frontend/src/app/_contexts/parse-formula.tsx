@@ -25,7 +25,10 @@
 //}
 
 function findDepths({formula}: {formula: string}) {
-  let depths: string[] = [];
+  //Computes how many layers of parentheses each
+  //character is contained within, as well as whether
+  //the parentheses match overall.
+  let depths: number[] = [];
   let depth = 0;
   const matching = true;
   for (let i = 0; i < formula.length; i++) {
@@ -38,7 +41,22 @@ function findDepths({formula}: {formula: string}) {
 }
 
 function indexOfDepthZeroSubstring({formula, depths, substring}:
-  {formula: string[], depths: number[], substring: string[]}) {
+  {formula: string, depths: number[], substring: string}) {
+  //Returns the index of the first match for substring within formula
+  //that lies entirely at a depth of zero, or -1 if no such index exists.
+  const firstCandidateIndex = formula.indexOf(substring);
+  if (firstCandidateIndex < 0) {
+    return -1;
+  } else if
+    (depths.slice(firstCandidateIndex, firstCandidateIndex + substring.length).every(depth => depth === 0)) {
+    return firstCandidateIndex;
+  } else {
+    return indexOfDepthZeroSubstring({
+      formula: formula.slice(firstCandidateIndex+1),
+      depths: depths.slice(firstCandidateIndex+1),
+      substring: substring,
+    });
+  }
 }
 
 function parseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
