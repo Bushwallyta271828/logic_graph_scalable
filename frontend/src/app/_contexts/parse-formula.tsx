@@ -172,7 +172,7 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
   if (trimmedFormula[0] === "P")
   {
     const afterP = trimmedFormula.slice(1).trim();
-    const { afterPDepths } = findDepths({formula: afterP});
+    const { depths: afterPDepths } = findDepths({formula: afterP});
     if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
       afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
       const {substitutedFormula, validFormula} = parseLogicalFormula(
