@@ -52,7 +52,7 @@ function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
   //and the children parse, it will return true for validFormula together with the 
   //substitutedFormula. If the split is not possible, it will return null.
   //Note: divider shouldn't have any parentheses in it.
-  const {depths, matching} = FindDepths(formula);
+  const {depths, matching} = findDepths(formula);
   if (!matching) {return {substitutedFormula: formula, validFormula: false};}
   const splitIndex = lastIndexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
   if (splitIndex < 0) {return null;}
@@ -78,7 +78,7 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
   //substitutedFormula and validFormula. If trimmedFormula is not of these forms, it
   //returns null.
   if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
-  const {depths, matching} = FindDepths(trimmedFormula);
+  const {depths, matching} = findDepths(trimmedFormula);
   if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
   
   if (depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
@@ -120,6 +120,7 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
       parseLogicalFormula({formula: trimmedFormula.slice(4), substitutions: substitutions});
     return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
   }
+
   return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
@@ -141,7 +142,28 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
     {formula: trimmedFormula, substitutions: substitutions, divider: " - ", subParser: parseAffineFormula});
   if (minusSplit) {return minusSplit;}
 
-  //TODO -- finish from here! Need to enforce linearity!
+  //NOTE: The only syntax I accept for coefficient multiplication is realNumber * affineFormula.
+  //I could probably do something fancier but I think that this is fine.
+  const splitIndex = lastIndexOfDepthZeroSubstring(
+    {formula: trimmedFormula, depths: findDepths(trimmedFormula).depths, substring: " * "});
+  if (splitIndex >= 0) {
+    const coefficient = trimmedFormula.slice(0, splitIndex);
+    const validCoefficient = ; //TODO
+    const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
+      = parseAffineFormula({formula: trimmedFormula.slice(splitIndex + 3), substitutions: substitutions});
+    return {
+      substitutedFormula: coefficient + " * " + rightSubstitutedFormula,
+      validFormula: validCoefficient && rightValidFormula,
+    };
+  }
+
+  if (trimmedFormula.slice(0, 2) === "P(" && trimmedFormula[trimmedFormula.length - 1] === ")") {
+    const {substitutedFormula, validFormula} = parseLogicalFormula(
+      {formula: trimmedFormula.slice(2, trimmedFormula.length - 1), substitutions: substitutions});
+    return {substitutedFormula: "P("+substitutedFormula+")", validFormula: validFormula};
+  }
+
+  return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
