@@ -126,9 +126,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       case 'text':
         return claim.text;
       case 'definition':
-        return `"${claim.text}" is a valid definition`;
+        return `This definition is valid: ${claim.text}`;
       case 'zeroth-order':
-        return `We can assert "${claim.text}"`;
+        return `We can assert: ${claim.text}`;
       default:
         throw new Error('Unrecognized claimType');
     }
@@ -139,10 +139,10 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       {return {displayText: getInterpretedText(claim), validText: true};}
     let substitutions: { [claimID: string]: string} = {};
     for (let claimID in claimLookup) {
-      substitutions[claimID] = getInterpretedText(claimLookup[claimID]);
+      substitutions[claimID] = "[" + getInterpretedText(claimLookup[claimID]) + "]";
     }
     const {substitutedFormula, validFormula} = parseFormula({formula: claim.text, substitutions: substitutions});
-    return {displayText: `We can assert "${substitutedFormula}"`, validText: validFormula};
+    return {displayText: `We can assert: ${substitutedFormula}`, validText: validFormula};
   }
 
 
