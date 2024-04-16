@@ -169,10 +169,16 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
     };
   }
 
-  if (trimmedFormula.slice(0, 2) === "P(" && trimmedFormula[trimmedFormula.length - 1] === ")") {
-    const {substitutedFormula, validFormula} = parseLogicalFormula(
-      {formula: trimmedFormula.slice(2, trimmedFormula.length - 1), substitutions: substitutions});
-    return {substitutedFormula: "P("+substitutedFormula+")", validFormula: validFormula};
+  if (trimmedFormula[0] === "P")
+  {
+    const afterP = trimmedFormula.slice(1).trim();
+    const { afterPDepths } = findDepths({formula: afterP});
+    if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
+      afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
+      const {substitutedFormula, validFormula} = parseLogicalFormula(
+        {formula: afterP.slice(1, afterP.length-1), substitutions: substitutions});
+      return {substitutedFormula: "P( "+substitutedFormula+" )", validFormula: validFormula};
+    }
   }
 
   if (/^(0|[1-9]\d*)(\.\d+)?$/.test(trimmedFormula)) {
