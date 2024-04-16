@@ -131,12 +131,17 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
     {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseAffineFormula});
   if (attemptedParseWrapping) {return attemptedParseWrapping;}
 
-  const plusSplit = attemptInfixSplit(
+  const plusSplit = attemptLastInfixSplit(
     {formula: trimmedFormula, substitutions: substitutions, divider: " + ", subParser: parseAffineFormula});
-  if (plusSplit.status !== 'no split')
-    {return {substitutedFormula: plusSplit.substitutedFormula, validFormula: plusSplit.status === 'valid'};}
+  if (plusSplit) {return plusSplit;}
 
-  //TODO -- finish from here! Need to enforce linearity and subtraction!
+  //NOTE: The operator tree is valid becasue we split on the last instance.
+  //For example, a - b - c will be parsed as (a - b) - c.
+  const minusSplit = attemptLastInfixSplit(
+    {formula: trimmedFormula, substitutions: substitutions, divider: " - ", subParser: parseAffineFormula});
+  if (minusSplit) {return minusSplit;}
+
+  //TODO -- finish from here! Need to enforce linearity!
 }
 
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
