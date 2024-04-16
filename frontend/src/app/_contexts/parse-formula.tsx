@@ -184,7 +184,7 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
     }
   }
 
-  if (/^(0|[1-9]\d*)(\.\d+)?$/.test(trimmedFormula)) {
+  if (/^-?\s*(0|[1-9]\d*)(\.\d+)?$/.test(trimmedFormula)) {
     return {substitutedFormula: trimmedFormula, validFormula: true};
   }
 
