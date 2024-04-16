@@ -174,6 +174,10 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
     return {substitutedFormula: "P("+substitutedFormula+")", validFormula: validFormula};
   }
 
+  if (/^(0|[1-9]\d*)(\.\d+)?$/.test(trimmedFormula)) {
+    return {substitutedFormula: trimmedFormula, validFormula: true};
+  }
+
   return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
