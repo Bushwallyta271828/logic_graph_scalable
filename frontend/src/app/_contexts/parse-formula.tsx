@@ -147,8 +147,8 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
   const splitIndex = lastIndexOfDepthZeroSubstring(
     {formula: trimmedFormula, depths: findDepths(trimmedFormula).depths, substring: " * "});
   if (splitIndex >= 0) {
-    const coefficient = trimmedFormula.slice(0, splitIndex);
-    const validCoefficient = ; //TODO
+    const coefficient = trimmedFormula.slice(0, splitIndex).trim();
+    const validCoefficient = /^(0|[1-9]\d*)(\.\d+)?$/.test(coefficient);
     const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
       = parseAffineFormula({formula: trimmedFormula.slice(splitIndex + 3), substitutions: substitutions});
     return {
