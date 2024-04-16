@@ -19,14 +19,14 @@ function findDepths({formula}: {formula: string}) {
   //the parentheses match overall.
   let depths: number[] = [];
   let depth = 0;
-  const matching = true;
+  let matching = true;
   for (let i = 0; i < formula.length; i++) {
     if (formula[i] === "(") {depth += 1;}
     if (formula[i] === ")") {depth -= 1;}
     if (depth < 0) {matching = false;}
     depths.push(formula[i] === "(" ? depth - 1 : depth);
   }
-  return {depths: depths, matching: matching && depth === 0};
+  return {depths: depths, matching: matching && (depth === 0)};
 }
 
 function lastIndexOfDepthZeroSubstring({formula, depths, substring}:
@@ -107,7 +107,7 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
 }
 
 
-function parseLogicalFormula({formula,substitutions}: ParserInput}) {
+function parseLogicalFormula({formula,substitutions}: ParserInput) {
   //NOTE: assumes formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
   
