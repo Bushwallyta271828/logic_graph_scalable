@@ -92,7 +92,8 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
   
-  if (depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
+  if (trimmedFormula[0] === "(" && trimmedFormula[trimmedFormula.length-1] === ")" &&
+    depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
     const innerParse = subParser({
       formula: trimmedFormula.slice(1, trimmedFormula.length-1),
       substitutions: substitutions
