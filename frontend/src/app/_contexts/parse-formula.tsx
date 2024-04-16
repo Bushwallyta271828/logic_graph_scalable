@@ -1,5 +1,18 @@
 'use client';
 
+type ParserInput = {
+  formula: string;
+  substitutions: {[claimID: string]: string};
+};
+
+type ParserOutput = {
+  substitutedFormula: string;
+  validFormula: boolean;
+};
+
+type Parser = ({formula, substitutions}: ParserInput) => ParserOutput;
+
+
 function findDepths({formula}: {formula: string}) {
   //Computes how many layers of parentheses each
   //character is contained within, as well as whether
@@ -42,8 +55,7 @@ function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
   formula:string,
   substitutions:{[claimID:string]:string},
   divider:string,
-  subParser: {({formula: string, substitutions:{[claimID:string]:string}})
-    => {substitutedFormula:string, validFormula:boolean}}})
+  subParser: Parser})
 {
   //This helper function will attempt to split formula with a substring of divider
   //at a depth of zero at the last possible location. If the parentheses don't match
@@ -69,8 +81,7 @@ function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
 function parseWrapping({trimmedFormula, substitutions, subParser}: {
   trimmedFormula:string,
   substitutions:{[claimID:string]:string},
-  subParser: {({formula: string, substitutions:{[claimID:string]:string}})
-    => {substitutedFormula:string, validFormula:boolean}}})
+  subParser: Parser})
 {
   //This helper function deals with unwrapping parentheses and empty inputs.
   //If trimmedFormula is empty, has mismatched parentheses, or is nested inside
@@ -96,7 +107,7 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
 }
 
 
-function parseLogicalFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
+function parseLogicalFormula({formula,substitutions}: ParserInput}) {
   //NOTE: assumes formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
   
@@ -124,7 +135,7 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
   return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
-function parseAffineFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
+function parseAffineFormula({formula,substitutions}: ParserInput) {
   //NOTE: assumes formula has had spaces added around parentheses, "*", "+", and "-"!
   const trimmedFormula = formula.trim();
   
@@ -166,7 +177,7 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
   return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
-export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
+export function parseFormula({formula,substitutions}: ParserInput) {
   const spacedFormula = formula.replace(/[\(\)\*\+\-\=]/g, match => ` ${match} `);
 
   const equalsSplit = attemptLastInfixSplit(
