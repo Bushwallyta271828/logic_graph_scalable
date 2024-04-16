@@ -64,7 +64,7 @@ function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
   //and the children parse, it will return true for validFormula together with the 
   //substitutedFormula. If the split is not possible, it will return null.
   //Note: divider shouldn't have any parentheses in it.
-  const {depths, matching} = findDepths(formula);
+  const {depths, matching} = findDepths({formula: formula});
   if (!matching) {return {substitutedFormula: formula, validFormula: false};}
   const splitIndex = lastIndexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
   if (splitIndex < 0) {return null;}
@@ -89,7 +89,7 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
   //substitutedFormula and validFormula. If trimmedFormula is not of these forms, it
   //returns null.
   if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
-  const {depths, matching} = findDepths(trimmedFormula);
+  const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
   
   if (depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
@@ -107,11 +107,11 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
 }
 
 
-function parseLogicalFormula({formula,substitutions}: ParserInput) {
+function parseLogicalFormula({formula,substitutions}: ParserInput): ParserOutput {
   //NOTE: assumes formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
   
-  const attemptParseWrapping = parseWrapping(
+  const attemptedParseWrapping = parseWrapping(
     {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseLogicalFormula});
   if (attemptedParseWrapping) {return attemptedParseWrapping;}
 
@@ -135,11 +135,11 @@ function parseLogicalFormula({formula,substitutions}: ParserInput) {
   return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
-function parseAffineFormula({formula,substitutions}: ParserInput) {
+function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput {
   //NOTE: assumes formula has had spaces added around parentheses, "*", "+", and "-"!
   const trimmedFormula = formula.trim();
   
-  const attemptParseWrapping = parseWrapping(
+  const attemptedParseWrapping = parseWrapping(
     {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseAffineFormula});
   if (attemptedParseWrapping) {return attemptedParseWrapping;}
 
@@ -156,7 +156,7 @@ function parseAffineFormula({formula,substitutions}: ParserInput) {
   //NOTE: The only syntax I accept for coefficient multiplication is realNumber * affineFormula.
   //I could probably do something fancier but I think that this is fine.
   const splitIndex = lastIndexOfDepthZeroSubstring(
-    {formula: trimmedFormula, depths: findDepths(trimmedFormula).depths, substring: " * "});
+    {formula: trimmedFormula, depths: findDepths({formula: trimmedFormula}).depths, substring: " * "});
   if (splitIndex >= 0) {
     const coefficient = trimmedFormula.slice(0, splitIndex).trim();
     const validCoefficient = /^(0|[1-9]\d*)(\.\d+)?$/.test(coefficient);
@@ -177,7 +177,7 @@ function parseAffineFormula({formula,substitutions}: ParserInput) {
   return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
-export function parseFormula({formula,substitutions}: ParserInput) {
+export function parseFormula({formula,substitutions}: ParserInput): ParserOutput {
   const spacedFormula = formula.replace(/[\(\)\*\+\-\=]/g, match => ` ${match} `);
 
   const equalsSplit = attemptLastInfixSplit(
