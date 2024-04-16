@@ -38,7 +38,7 @@ function lastIndexOfDepthZeroSubstring({formula, depths, substring}:
   }
 }
 
-function attemptInfixSplit({formula, substitutions, divider, subParser}: {
+function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
   formula:string,
   substitutions:{[claimID:string]:string},
   divider:string,
@@ -46,23 +46,23 @@ function attemptInfixSplit({formula, substitutions, divider, subParser}: {
     => {substitutedFormula:string, validFormula:boolean}}})
 {
   //This helper function will attempt to split formula with a substring of divider
-  //at a depth of zero. If formula's parentheses don't match or if the split is possible
-  //but the children don't parse, it will return status: 'invalid' as const. If divider
-  //doesn't exist at depth zero, it will return status: 'no split' as const. If the split
-  //is successful and the children parse, it will return status: 'valid' as const. In all
-  //cases it will return a best guess for substitutedFormula (if 'valid', it should be correct).
-  //divider shouldn't have any parentheses in it.
+  //at a depth of zero at the last possible location. If the parentheses don't match
+  //or if the split is possible but the children don't parse, it will return a best
+  //guess at substitutedFormula and false for validFormula. If the split is possible
+  //and the children parse, it will return true for validFormula together with the 
+  //substitutedFormula. If the split is not possible, it will return null.
+  //Note: divider shouldn't have any parentheses in it.
   const {depths, matching} = FindDepths(formula);
-  if (!matching) {return {substitutedFormula: formula, status: 'invalid' as const};}
-  const indexDepthZero = indexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
-  if (indexDepthZero < 0) {return {substitutedFormula: formula, status: 'no split' as const};}
+  if (!matching) {return {substitutedFormula: formula, validFormula: false};}
+  const splitIndex = lastIndexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
+  if (splitIndex < 0) {return null;}
   const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
-    = subParser({formula: formula.slice(0, indexDepthZero), substitutions: substitutions});
+    = subParser({formula: formula.slice(0, splitIndex), substitutions: substitutions});
   const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-    = subParser({formula: formula.slice(indexDepthZero+divider.length), substitutions: substitutions});
+    = subParser({formula: formula.slice(splitIndex + divider.length), substitutions: substitutions});
   return {
-    substitutedFormula: leftSubstitutedFormula+divider+rightSubstitutedFormula,
-    status: (leftValidFormula && rightValidFormula) ? 'valid' as const : 'invalid' as const
+    substitutedFormula: leftSubstitutedFormula + divider + rightSubstitutedFormula,
+    validFormula: leftValidFormula && rightValidFormula
   };
 }
 
