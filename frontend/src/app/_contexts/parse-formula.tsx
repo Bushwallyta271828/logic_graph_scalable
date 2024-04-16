@@ -150,17 +150,20 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
 
   //NOTE: The operator tree is valid becasue we split on the last instance.
   //For example, a - b - c will be parsed as (a - b) - c.
+  //Also note that if the original formula started with "-", the trimming
+  //will remove the left space, so iniital minus signs don't count.
   const minusSplit = attemptLastInfixSplit(
     {formula: trimmedFormula, substitutions: substitutions, divider: " - ", subParser: parseAffineFormula});
   if (minusSplit) {return minusSplit;}
 
   //NOTE: The only syntax I accept for coefficient multiplication is realNumber * affineFormula.
   //I could probably do something fancier but I think that this is fine.
+  //Note: I test for negative real numbers solely to handle the first coefficient.
   const splitIndex = lastIndexOfDepthZeroSubstring(
     {formula: trimmedFormula, depths: findDepths({formula: trimmedFormula}).depths, substring: " * "});
   if (splitIndex >= 0) {
     const coefficient = trimmedFormula.slice(0, splitIndex).trim();
-    const validCoefficient = /^(0|[1-9]\d*)(\.\d+)?$/.test(coefficient);
+    const validCoefficient = /^-?\s*(0|[1-9]\d*)(\.\d+)?$/.test(coefficient);
     const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
       = parseAffineFormula({formula: trimmedFormula.slice(splitIndex + 3), substitutions: substitutions});
     return {
