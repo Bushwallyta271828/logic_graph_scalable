@@ -62,7 +62,7 @@ function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
     = subParser({formula: formula.slice(splitIndex + divider.length), substitutions: substitutions});
   return {
     substitutedFormula: leftSubstitutedFormula + divider + rightSubstitutedFormula,
-    validFormula: leftValidFormula && rightValidFormula
+    validFormula: leftValidFormula && rightValidFormula,
   };
 }
 
@@ -73,9 +73,9 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
     => {substitutedFormula:string, validFormula:boolean}}})
 {
   //This helper function deals with unwrapping parentheses and empty inputs.
-  //If the input is empty, has mismatched parentheses, or is nested inside
-  //a pair of outer parentheses then the function returns the desired
-  //substitutedFormula and validFormula. If the input is not of these forms, it
+  //If trimmedFormula is empty, has mismatched parentheses, or is nested inside
+  //a pair of outer parentheses then the function returns the appropriate
+  //substitutedFormula and validFormula. If trimmedFormula is not of these forms, it
   //returns null.
   if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
   const {depths, matching} = FindDepths(trimmedFormula);
@@ -107,15 +107,13 @@ function parseLogicalFormula({formula,substitutions}:{formula:string,substitutio
   if (trimmedFormula in substitutions)
     {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
 
-  const orSplit = attemptInfixSplit(
+  const orSplit = attemptLastInfixSplit(
     {formula: trimmedFormula, substitutions: substitutions, divider: " or ", subParser: parseLogicalFormula});
-  if (orSplit.status !== 'no split')
-    {return {substitutedFormula: orSplit.substitutedFormula, validFormula: orSplit.status === 'valid'};}
+  if (orSplit) {return orSplit;}
 
-  const andSplit = attemptInfixSplit(
+  const andSplit = attemptLastInfixSplit(
     {formula: trimmedFormula, substitutions: substitutions, divider: " and ", subParser: parseLogicalFormula});
-  if (andSplit.status !== 'no split')
-    {return {substitutedFormula: andSplit.substitutedFormula, validFormula: andSplit.status === 'valid'};}
+  if (andSplit) {return andSplit;}
 
   if (trimmedFormula.slice(0, 4) === "not ") {
     const {substitutedFormula, validFormula} =
@@ -144,10 +142,9 @@ function parseAffineFormula({formula,substitutions}:{formula:string,substitution
 export function parseFormula({formula,substitutions}:{formula:string,substitutions:{[claimID:string]:string}}) {
   const spacedFormula = formula.replace(/[\(\)\*\+\-\=]/g, match => ` ${match} `);
 
-  const equalsSplit = attemptInfixSplit(
+  const equalsSplit = attemptLastInfixSplit(
     {formula: spacedFormula, substitutions: substitutions, divider: " = ", subParser: parseAffineFormula});
-  if (equalsSplit.status !== 'no split')
-    {return {substitutedFormula: equalsSplit.substitutedFormula, validFormula: equalsSplit.status === 'valid'};}
+  if (equalsSplit) {return equalsSplit;}
 
   return parseLogicalFormula({formula:spacedFormula, substitutions:substitutions});
 }
