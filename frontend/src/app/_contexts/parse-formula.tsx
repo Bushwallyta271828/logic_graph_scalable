@@ -144,26 +144,27 @@ function parseLogicalFormula(acceptsImplies: boolean) {
       {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
 
     if (acceptsImplies) { 
-      //Note: we correctly parse implications as a -> (b -> c)
-      //since we split as late as possible.
-      const impliesSplit = attemptLastInfixSplit({
+      const impliesSplit = attemptInfixSplit({
         formula: trimmedFormula,
         substitutions: substitutions,
+        selector: 'first' as const,
         divider: " implies ",
         subParser: parseLogicalFormula(acceptsImplies)});
       if (impliesSplit) {return impliesSplit;}
     }
  
-    const orSplit = attemptLastInfixSplit({
+    const orSplit = attemptInfixSplit({
       formula: trimmedFormula,
       substitutions: substitutions,
+      selector: 'last' as const,
       divider: " or ",
       subParser: parseLogicalFormula(acceptsImplies)});
     if (orSplit) {return orSplit;}
   
-    const andSplit = attemptLastInfixSplit({
+    const andSplit = attemptInfixSplit({
       formula: trimmedFormula,
       substitutions: substitutions,
+      selector: 'last' as const,
       divider: " and ",
       subParser: parseLogicalFormula(acceptsImplies)});
     if (andSplit) {return andSplit;}
