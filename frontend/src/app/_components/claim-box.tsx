@@ -50,8 +50,15 @@ function ClaimTab({claim} : {claim: Claim}) {
 function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
   const [editing, setEditing] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
   const { setClaimText, getDisplayData } = useClaimsContext();
   const [validText, setValidText] = useState(getDisplayData(claim).validText);
+
+  useEffect(() => {
+    if (editing && textRef.current) {
+      textRef.current.focus();
+    }
+  }, [editing]);
 
   const handleBlur = () => {
     setEditing(false);
@@ -63,6 +70,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
     <div className={`${!validText ? 'bg-dark-danger' : claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
       {editing ? (
         <p
+          ref={textRef}
           contentEditable="plaintext-only"
           className="w-full h-full p-2 outline-none"
           onInput={(e) => setText(e.currentTarget.innerText)}
