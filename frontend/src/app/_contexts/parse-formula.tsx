@@ -128,7 +128,7 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
   return null;
 }
 
-function parseLogicalFormula(acceptsImplies: boolean) {
+function parseLogicalFormula({acceptsImplies} : {acceptsImplies: boolean}) {
   return function({formula,substitutions}: ParserInput): ParserOutput {
     //NOTE: assumes formula has had spaces added around parentheses!
     const trimmedFormula = formula.trim();
@@ -136,7 +136,7 @@ function parseLogicalFormula(acceptsImplies: boolean) {
     const attemptedParseWrapping = parseWrapping({
       trimmedFormula: trimmedFormula,
       substitutions: substitutions,
-      subParser: parseLogicalFormula(acceptsImplies)
+      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies})
     });
     if (attemptedParseWrapping) {return attemptedParseWrapping;}
   
@@ -149,7 +149,8 @@ function parseLogicalFormula(acceptsImplies: boolean) {
         substitutions: substitutions,
         selector: 'first' as const,
         divider: " implies ",
-        subParser: parseLogicalFormula(acceptsImplies)});
+        subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
+      });
       if (impliesSplit) {return impliesSplit;}
     }
  
@@ -158,7 +159,8 @@ function parseLogicalFormula(acceptsImplies: boolean) {
       substitutions: substitutions,
       selector: 'last' as const,
       divider: " or ",
-      subParser: parseLogicalFormula(acceptsImplies)});
+      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
+    });
     if (orSplit) {return orSplit;}
   
     const andSplit = attemptInfixSplit({
@@ -166,7 +168,8 @@ function parseLogicalFormula(acceptsImplies: boolean) {
       substitutions: substitutions,
       selector: 'last' as const,
       divider: " and ",
-      subParser: parseLogicalFormula(acceptsImplies)});
+      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
+    });
     if (andSplit) {return andSplit;}
   
     if (trimmedFormula.slice(0, 4) === "not ") {
@@ -193,7 +196,8 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
     substitutions: substitutions,
     selector: 'last' as const,
     divider: " + ",
-    subParser: parseAffineFormula});
+    subParser: parseAffineFormula,
+  });
   if (plusSplit) {return plusSplit;}
 
   //NOTE: The operator tree is valid becasue we split on the last instance.
@@ -205,7 +209,8 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
     substitutions: substitutions,
     selector: 'last' as const,
     divider: " - ",
-    subParser: parseAffineFormula});
+    subParser: parseAffineFormula,
+  });
   if (minusSplit) {return minusSplit;}
 
   //(Dealing with minus signs for single term linear combinations)
