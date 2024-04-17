@@ -51,6 +51,28 @@ function lastIndexOfDepthZeroSubstring({formula, depths, substring}:
   }
 }
 
+function firstIndexOfDepthZeroSubstring({formula, depths, substring}:
+  {formula: string, depths: number[], substring: string}) {
+  //Returns the index of the first match for substring within formula
+  //that lies at a depth of zero, or -1 if no such index exists.
+  //Using the first instance is important for correctly parsing implication:
+  //a ==> b ==> c should be parsed as a ==> (b ==> c)
+  //Assumes that substring doesn't contain "(" or ")" so the depth is
+  //constant throughout.
+  const firstCandidateIndex = formula.indexOf(substring);
+  if (firstCandidateIndex < 0) {
+    return -1;
+  } else if (depths[firstCandidateIndex] === 0) {
+    return firstCandidateIndex;
+  } else {
+    return firstIndexOfDepthZeroSubstring({
+      formula: formula.slice(firstCandidateIndex+1),
+      depths: depths.slice(firstCandidateIndex+1),
+      substring: substring,
+    });
+  }
+}
+
 function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
   formula:string,
   substitutions:{[claimID:string]:string},
