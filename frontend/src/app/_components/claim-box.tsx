@@ -50,24 +50,15 @@ function ClaimTab({claim} : {claim: Claim}) {
 function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
   const [editing, setEditing] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
   const { setClaimText, getDisplayData } = useClaimsContext();
   const [validText, setValidText] = useState(getDisplayData(claim).validText);
 
-  const adjustHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  };
-
   useEffect(() => {
-    adjustHeight();
-  }, [text, editing]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-    adjustHeight();
-  };
+    if (editing && textRef.current) {
+      textRef.current.focus();
+    }
+  }, [editing]);
 
   const handleBlur = () => {
     setEditing(false);
@@ -78,14 +69,14 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   return (
     <div className={`${!validText ? 'bg-dark-danger' : claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
       {editing ? (
-        <textarea
-          ref={textareaRef}
-          className="bg-transparent w-full h-full p-2 outline-none resize-none overflow-hidden"
-          value={text}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          autoFocus
-        />
+        <p
+          ref={textRef}
+          contentEditable="plaintext-only"
+          className="w-full h-full p-2 outline-none"
+          onInput={(e) => setText(e.currentTarget.innerText)}
+          onBlur={handleBlur}>
+          {claim.text}
+        </p>
       ) : (
         <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
           {getDisplayData(claim).displayText}
