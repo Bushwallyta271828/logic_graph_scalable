@@ -13,6 +13,10 @@ type ParserOutput = {
 type Parser = ({formula, substitutions}: ParserInput) => ParserOutput;
 
 
+function nonNegativeReal({candidate}: {candidate: string}) {
+  return /^(0|[1-9]\d*)(\.\d+)?$/.test(candidate);
+}
+
 function findDepths({formula}: {formula: string}) {
   //Computes how many layers of parentheses each
   //character is contained within, as well as whether
@@ -230,7 +234,7 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
   });
   if (splitIndex >= 0) {
     const coefficient = trimmedFormula.slice(0, splitIndex).trim();
-    const validCoefficient = /^(0|[1-9]\d*)(\.\d+)?$/.test(coefficient);
+    const validCoefficient = nonNegativeReal({candidate: coefficient});
     const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
       = parseAffineFormula({formula: trimmedFormula.slice(splitIndex + 3), substitutions: substitutions});
     return {
@@ -251,7 +255,7 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
     }
   }
 
-  if (/^(0|[1-9]\d*)(\.\d+)?$/.test(trimmedFormula)) {
+  if (nonNegativeReal({candidate: trimmedFormula})) {
     return {substitutedFormula: trimmedFormula, validFormula: true};
   }
 
@@ -259,8 +263,37 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
 }
 
 export function parseFormula({formula,substitutions}: ParserInput): ParserOutput {
-  const spacedFormula = formula.replace(/[\(\)\*\+\-\=]/g, match => ` ${match} `);
+  const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
+  const {depths, matching} = findDepths({formula: spacedFormula});
+  if (!matching) {return {substitutedFormula: spacedFormula, validFormula: false};}
+  const equalsIndex = indexOfDepthZeroSubstring(
+    {selector: 'last' as const, formula: spacedFormula, depths: depths, substring: " = "});
+
+  if (equalsIndex < 0) {
+    return parseLogicalFormula({acceptsImplies: true})
+      ({formula:spacedFormula, substitutions:substitutions});
+  } else {
+    //First, we test to see if we have a conditional probability.
+    const rightHandSide = spacedFormula.slice(equalsIndex + 3).trim();
+    if (nonNegativeReal({candidate: rightHandSide})) {
+      const leftHandSide = spacedFormula.slice(0, equalsIndex).trim();
+      if (leftHandSide[0] === "P") {
+        //TODO: create new shared helper function to reduce code duplication!
+      }
+    }
+
+    //If we can't parse as a conditional, we parse as an affine formula.
+  const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
+    = subParser({formula: spacedFormula.slice(0, splitIndex), substitutions: substitutions});
+  const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
+    = subParser({formula: spacedFormula.slice(splitIndex + divider.length), substitutions: substitutions});
+  return {
+    substitutedFormula: leftSubstitutedFormula + divider + rightSubstitutedFormula,
+    validFormula: leftValidFormula && rightValidFormula,
+  };
+
+  
   const equalsSplit = attemptInfixSplit({
     formula: spacedFormula,
     substitutions: substitutions,
@@ -269,7 +302,4 @@ export function parseFormula({formula,substitutions}: ParserInput): ParserOutput
     subParser: parseAffineFormula,
   });
   if (equalsSplit) {return equalsSplit;}
-
-  return parseLogicalFormula({acceptsImplies: true})
-    ({formula:spacedFormula, substitutions:substitutions});
 }
