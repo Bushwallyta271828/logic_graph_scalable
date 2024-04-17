@@ -107,33 +107,55 @@ function parseWrapping({trimmedFormula, substitutions, subParser}: {
   return null;
 }
 
-
-function parseLogicalFormula({formula,substitutions}: ParserInput): ParserOutput {
-  //NOTE: assumes formula has had spaces added around parentheses!
-  const trimmedFormula = formula.trim();
+function parseLogicalFormula(acceptsImplies: boolean) {
+  return function({formula,substitutions}: ParserInput): ParserOutput {
+    //NOTE: assumes formula has had spaces added around parentheses!
+    const trimmedFormula = formula.trim();
+    
+    const attemptedParseWrapping = parseWrapping({
+      trimmedFormula: trimmedFormula,
+      substitutions: substitutions,
+      subParser: parseLogicalFormula(acceptsImplies)
+    });
+    if (attemptedParseWrapping) {return attemptedParseWrapping;}
   
-  const attemptedParseWrapping = parseWrapping(
-    {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseLogicalFormula});
-  if (attemptedParseWrapping) {return attemptedParseWrapping;}
+    if (trimmedFormula in substitutions)
+      {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
 
-  if (trimmedFormula in substitutions)
-    {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
-
-  const orSplit = attemptLastInfixSplit(
-    {formula: trimmedFormula, substitutions: substitutions, divider: " or ", subParser: parseLogicalFormula});
-  if (orSplit) {return orSplit;}
-
-  const andSplit = attemptLastInfixSplit(
-    {formula: trimmedFormula, substitutions: substitutions, divider: " and ", subParser: parseLogicalFormula});
-  if (andSplit) {return andSplit;}
-
-  if (trimmedFormula.slice(0, 4) === "not ") {
-    const {substitutedFormula, validFormula} =
-      parseLogicalFormula({formula: trimmedFormula.slice(4), substitutions: substitutions});
-    return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
+    if (acceptsImplies) { 
+      //Note: we correctly parse implications as a -> (b -> c)
+      //since we split as late as possible.
+      const impliesSplit = attemptLastInfixSplit({
+        formula: trimmedFormula,
+        substitutions: substitutions,
+        divider: " implies ",
+        subParser: parseLogicalFormula(acceptsImplies)});
+      if (impliesSplit) {return impliesSplit;}
+    }
+ 
+    const orSplit = attemptLastInfixSplit({
+      formula: trimmedFormula,
+      substitutions: substitutions,
+      divider: " or ",
+      subParser: parseLogicalFormula(acceptsImplies)});
+    if (orSplit) {return orSplit;}
+  
+    const andSplit = attemptLastInfixSplit({
+      formula: trimmedFormula,
+      substitutions: substitutions,
+      divider: " and ",
+      subParser: parseLogicalFormula(acceptsImplies)});
+    if (andSplit) {return andSplit;}
+  
+    if (trimmedFormula.slice(0, 4) === "not ") {
+      const {substitutedFormula, validFormula} =
+        parseLogicalFormula(acceptsImplies)
+          ({formula: trimmedFormula.slice(4), substitutions: substitutions});
+      return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
+    }
+  
+    return {substitutedFormula: trimmedFormula, validFormula: false};
   }
-
-  return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
 function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput {
