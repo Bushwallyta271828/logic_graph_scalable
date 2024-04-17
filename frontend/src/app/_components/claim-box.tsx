@@ -80,12 +80,11 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
       {editing ? (
         <textarea
           ref={textareaRef}
-          className="bg-transparent w-full h-full p-2 outline-none"
+          className="bg-transparent w-full h-full p-2 outline-none resize-none overflow-hidden"
           value={text}
           onChange={handleChange}
           onBlur={handleBlur}
           autoFocus
-          style={{ overflow: 'hidden' }}
         />
       ) : (
         <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
