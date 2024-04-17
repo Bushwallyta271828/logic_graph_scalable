@@ -187,6 +187,23 @@ function parseLogicalFormula({acceptsImplies} : {acceptsImplies: boolean}) {
   }
 }
 
+function attemptProbabilityUnwrap({trimmedFormula}: {trimmedFormula: string}) {
+  //This function will attempt to parse trimmedFormula as the form
+  //"P  (child)" where child never breaks out of the parentheses.
+  //If such a parsing is possible, it returns the child string.
+  //If not, it returns null.
+  if (trimmedFormula[0] === "P")
+  {
+    const afterP = trimmedFormula.slice(1).trim();
+    const { depths: afterPDepths } = findDepths({formula: afterP});
+    if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
+      afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
+      return afterP.slice(1, afterP.length-1);
+    }
+  }
+  return null;
+}
+
 function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput {
   //NOTE: assumes formula has had spaces added around parentheses, "*", "+", and "-"!
   const trimmedFormula = formula.trim();
@@ -243,16 +260,11 @@ function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput 
     };
   }
 
-  if (trimmedFormula[0] === "P")
-  {
-    const afterP = trimmedFormula.slice(1).trim();
-    const { depths: afterPDepths } = findDepths({formula: afterP});
-    if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
-      afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
-      const {substitutedFormula, validFormula} = parseLogicalFormula({acceptsImplies: false})(
-        {formula: afterP.slice(1, afterP.length-1), substitutions: substitutions});
-      return {substitutedFormula: "P( "+substitutedFormula+" )", validFormula: validFormula};
-    }
+  const possibleProbabilityUnwrap = attemptProbabilityUnwrap({trimmedFormula: trimmedFormula});
+  if (possibleProbabilityUnwrap) {
+    const {substitutedFormula, validFormula} = parseLogicalFormula({acceptsImplies: false})(
+      {formula: possibleProbabilityUnwrap, substitutions: substitutions});
+    return {substitutedFormula: "P( "+substitutedFormula+" )", validFormula: validFormula};
   }
 
   if (nonNegativeReal({candidate: trimmedFormula})) {
@@ -278,28 +290,37 @@ export function parseFormula({formula,substitutions}: ParserInput): ParserOutput
     const rightHandSide = spacedFormula.slice(equalsIndex + 3).trim();
     if (nonNegativeReal({candidate: rightHandSide})) {
       const leftHandSide = spacedFormula.slice(0, equalsIndex).trim();
-      if (leftHandSide[0] === "P") {
-        //TODO: create new shared helper function to reduce code duplication!
+      const possibleProbabilityUnwrap = attemptProbabilityUnwrap({trimmedFormula: leftHandSide});
+      if (possibleProbabilityUnwrap) { 
+        const conditionalSplit = attemptInfixSplit({
+          formula: possibleProbabilityUnwrap,
+          substitutions: substitutions,
+          selector: 'last' as const,
+          divider: " | ",
+          subParser: parseLogicalFormula({acceptsImplications: false}),
+        });
+        if (conditionalSplit) {
+          return {
+            substitutedFormula: "P( "+conditionalSplit.substitutedFormula+")", 
+            validFormula: conditionalSplit.validFormula,
+          };
+        }
       }
     }
-
+    
     //If we can't parse as a conditional, we parse as an affine formula.
-  const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
-    = subParser({formula: spacedFormula.slice(0, splitIndex), substitutions: substitutions});
-  const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-    = subParser({formula: spacedFormula.slice(splitIndex + divider.length), substitutions: substitutions});
-  return {
-    substitutedFormula: leftSubstitutedFormula + divider + rightSubstitutedFormula,
-    validFormula: leftValidFormula && rightValidFormula,
-  };
-
-  
-  const equalsSplit = attemptInfixSplit({
-    formula: spacedFormula,
-    substitutions: substitutions,
-    selector: 'last' as const,
-    divider: " = ",
-    subParser: parseAffineFormula,
-  });
-  if (equalsSplit) {return equalsSplit;}
+    const equalsSplit = attemptInfixSplit({
+      formula: spacedFormula,
+      substitutions: substitutions,
+      selector: 'last' as const,
+      divider: " = ",
+      subParser: parseAffineFormula,
+    });
+    if (equalsSplit) {return equalsSplit;}
+    else {
+      throw new Error(
+        "' = ' identified in indexOfDepthZeroSubstring but not attemptInfixSplit"
+      );
+    }
+  }
 }
