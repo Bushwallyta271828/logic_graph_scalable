@@ -13,7 +13,8 @@ export function NewClaimButton() {
       author: 'local',
       claimType: 'text' as const,
       text: '',
-      definitionClaimIDs: []
+      dependencies: new Set<string>(),
+      definitionClaimIDs: [],
     });
   }
   
@@ -24,7 +25,8 @@ export function NewClaimButton() {
       author: 'local',
       claimType: 'definition' as const,
       text: '',
-      definitionClaimIDs: []
+      dependencies: new Set<string>(),
+      definitionClaimIDs: [],
     });
   }
 
@@ -34,7 +36,8 @@ export function NewClaimButton() {
       claimID: claimID,
       author: 'local',
       claimType: 'zeroth-order' as const,
-      text: ''
+      text: '',
+      dependencies: new Set<string>(),
     });
   }
   

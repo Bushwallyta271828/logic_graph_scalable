@@ -4,19 +4,25 @@
 
 import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
+import { parseFormula } from '@/app/_contexts/parse-formula';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
   claimIDs: string[]; //used for storing the order in which the claims are displayed
   setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
   setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
+  
   newClaimID: () => string;
+  
   addClaim: (claim: Claim) => void;
   moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
-  setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
   attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
   editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
   moveDefinition: ({claim, startDefinitionClaimID, endDefinitionClaimID}: {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => void;
+
+  setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
+  getInterpretedText: (claim: Claim) => string;
+  getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -24,6 +30,7 @@ export const ClaimsContext = createContext<ClaimsContext | null>(null);
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
   const [claimLookup, setClaimLookup] = useState<{ [claimID: string]: Claim }>({});
   const [claimIDs, setClaimIDs] = useState<string[]>([]);
+
 
   const newClaimID = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -41,6 +48,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     }
     return uniqueID;
   };
+
 
   const addClaim = (claim: Claim) => {
     const claimID = claim.claimID;
@@ -61,15 +69,6 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       return newClaimIDs;
     });
   };
-
-  const setClaimText = ({claimID, newText}: {claimID: string, newText: string}) => {
-    setClaimLookup(prevClaimLookup => {
-      if (!(claimID in prevClaimLookup))
-        {throw new Error("Editing unrecognized claim");}
-      const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
-      return { ...prevClaimLookup, [claimID]: updatedClaim };
-    });
-  }
 
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
     const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
@@ -112,6 +111,41 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
+
+  const setClaimText = ({claimID, newText}: {claimID: string, newText: string}) => {
+    setClaimLookup(prevClaimLookup => {
+      if (!(claimID in prevClaimLookup))
+        {throw new Error("Editing unrecognized claim");}
+      const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
+      return { ...prevClaimLookup, [claimID]: updatedClaim };
+    });
+  }
+
+  const getInterpretedText = (claim: Claim) => {
+    switch (claim.claimType) {
+      case 'text':
+        return claim.text;
+      case 'definition':
+        return `This definition is valid: ${claim.text}`;
+      case 'zeroth-order':
+        return `We can assert: ${claim.text}`;
+      default:
+        throw new Error('Unrecognized claimType');
+    }
+  }
+
+  const getDisplayData = (claim: Claim) => {
+    if (claim.claimType !== 'zeroth-order')
+      {return {displayText: getInterpretedText(claim), validText: true};}
+    let substitutions: { [claimID: string]: string} = {};
+    for (let claimID in claimLookup) {
+      substitutions[claimID] = "[" + getInterpretedText(claimLookup[claimID]) + "]";
+    }
+    const {substitutedFormula, validFormula} = parseFormula({formula: claim.text, substitutions: substitutions});
+    return {displayText: `We can assert: ${substitutedFormula}`, validText: validFormula};
+  }
+
+
   return (
     <ClaimsContext.Provider
       value={{
@@ -119,13 +153,18 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         claimIDs,
         setClaimLookup,
         setClaimIDs,
+
         newClaimID,
+
         addClaim,
         moveClaim,
-        setClaimText,
         attachBlankDefinition,
         editDefinitionClaimID,
         moveDefinition,
+
+        setClaimText,
+        getInterpretedText,
+        getDisplayData,
         }}>
       {children}
     </ClaimsContext.Provider>

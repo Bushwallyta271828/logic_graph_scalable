@@ -7,7 +7,6 @@ import { Menu } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
-import { StaticContentBox } from '@/app/_components/static-content-box';
 
 function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
@@ -49,11 +48,12 @@ function ClaimTab({claim} : {claim: Claim}) {
   );
 }
 
-function ClaimContentBox({claim}: {claim: Claim}) {
+function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
-  const [isEditing, setIsEditing] = useState(false);
+  const [editing, setEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { setClaimText } = useClaimsContext();
+  const { setClaimText, getDisplayData } = useClaimsContext();
+  const [validText, setValidText] = useState(getDisplayData(claim).validText);
 
   const adjustHeight = () => {
     if (textareaRef.current) {
@@ -63,7 +63,7 @@ function ClaimContentBox({claim}: {claim: Claim}) {
 
   useEffect(() => {
     adjustHeight();
-  }, [text, isEditing]);
+  }, [text, editing]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
@@ -71,16 +71,17 @@ function ClaimContentBox({claim}: {claim: Claim}) {
   };
 
   const handleBlur = () => {
-    setIsEditing(false);
+    setEditing(false);
     setClaimText({claimID: claim.claimID, newText: text});
+    setValidText(getDisplayData({...claim, text:text}).validText);
   }
 
   return (
-    <>
-      {isEditing ? (
+    <div className={`${!validText ? 'bg-dark-danger' : claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
+      {editing ? (
         <textarea
           ref={textareaRef}
-          className="bg-transparent text-white text-sm w-full h-full p-2 break-words outline-none"
+          className="bg-transparent w-full h-full p-2 outline-none"
           value={text}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -88,11 +89,11 @@ function ClaimContentBox({claim}: {claim: Claim}) {
           style={{ overflow: 'hidden' }}
         />
       ) : (
-        <div className="w-full h-full p-2" onClick={() => setIsEditing(true)}>
-          <StaticContentBox claim={claim} />
-        </div>
+        <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
+          {getDisplayData(claim).displayText}
+        </p>
       )}
-    </>
+    </div>
   );
 }
 
@@ -104,13 +105,12 @@ export function ClaimBox({claimID} : {claimID: string}) {
   }
 
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const hasDefinitions = !acceptsDefinitions || claim.definitionClaimIDs.length === 0;
+  const hasDefinitions = acceptsDefinitions && claim.definitionClaimIDs.length >= 1;
 
   const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: claimID});
 
   const style = {transition, transform: CSS.Translate.toString(transform)};
 
-  //TODO: Fix shadow and simplify ClaimContentBox wrapper.
   return (
     <div
       ref={setNodeRef}
@@ -118,12 +118,10 @@ export function ClaimBox({claimID} : {claimID: string}) {
       style={style}
       className={`flex flex-col ${isDragging ? 'z-20' : ''}`}>
       <div
-        className="flex rounded-md shadow-xl"
+        className={`flex ${hasDefinitions ? 'rounded-tr-md rounded-tl-md rounded-bl-md' : 'rounded-md'} shadow-xl`}
         {...listeners}>
         <ClaimTab claim={claim} />
-        <div className={`${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-r-md' : 'rounded-tr-md'}`}>
-          <ClaimContentBox claim={claim} />
-        </div>
+        <ClaimContentBox claim={claim} hasDefinitions={hasDefinitions} />
       </div>
       {acceptsDefinitions ?
         <div className="ml-20">
