@@ -17,7 +17,6 @@ function ClaimTab({claim} : {claim: Claim}) {
       <Menu>
         <Menu.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-20 p-2 rounded-l-md`}>
           <p className="text-white text-sm truncate">{claim.claimID}</p>
-          <p className="text-white text-sm truncate">{claim.author}</p>
         </Menu.Button>
         <Menu.Items className={`absolute w-40 origin-top-right z-10 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
           <div>
