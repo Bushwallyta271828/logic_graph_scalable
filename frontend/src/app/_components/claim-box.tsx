@@ -54,19 +54,8 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   const { setClaimText, getDisplayData } = useClaimsContext();
   const [validText, setValidText] = useState(getDisplayData(claim).validText);
 
-  const adjustHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  };
-
-  useEffect(() => {
-    adjustHeight();
-  }, [text, editing]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
-    adjustHeight();
   };
 
   const handleBlur = () => {
