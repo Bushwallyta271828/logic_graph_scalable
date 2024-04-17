@@ -297,11 +297,11 @@ export function parseFormula({formula,substitutions}: ParserInput): ParserOutput
           substitutions: substitutions,
           selector: 'last' as const,
           divider: " | ",
-          subParser: parseLogicalFormula({acceptsImplications: false}),
+          subParser: parseLogicalFormula({acceptsImplies: false}),
         });
         if (conditionalSplit) {
           return {
-            substitutedFormula: "P( "+conditionalSplit.substitutedFormula+")", 
+            substitutedFormula: "P( "+conditionalSplit.substitutedFormula+" ) = "+rightHandSide, 
             validFormula: conditionalSplit.validFormula,
           };
         }
