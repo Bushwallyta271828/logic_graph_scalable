@@ -174,7 +174,7 @@ function parseLogicalFormula({acceptsImplies} : {acceptsImplies: boolean}) {
   
     if (trimmedFormula.slice(0, 4) === "not ") {
       const {substitutedFormula, validFormula} =
-        parseLogicalFormula(acceptsImplies)
+        parseLogicalFormula({acceptsImplies: acceptsImplies})
           ({formula: trimmedFormula.slice(4), substitutions: substitutions});
       return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
     }
