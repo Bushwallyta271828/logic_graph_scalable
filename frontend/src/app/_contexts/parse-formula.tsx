@@ -69,14 +69,16 @@ function indexOfDepthZeroSubstring({selector, formula, depths, substring}:
   }
 }
 
-function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
+function attemptInfixSplit({formula, substitutions, selector, divider, subParser}: {
   formula:string,
   substitutions:{[claimID:string]:string},
+  selector: 'first' | 'last',
   divider:string,
   subParser: Parser})
 {
   //This helper function will attempt to split formula with a substring of divider
-  //at a depth of zero at the last possible location. If the parentheses don't match
+  //at a depth of zero at either the first possible or the last possible location,
+  //depending on the value of selector. If the parentheses don't match
   //or if the split is possible but the children don't parse, it will return a best
   //guess at substitutedFormula and false for validFormula. If the split is possible
   //and the children parse, it will return true for validFormula together with the 
@@ -84,7 +86,8 @@ function attemptLastInfixSplit({formula, substitutions, divider, subParser}: {
   //Note: divider shouldn't have any parentheses in it.
   const {depths, matching} = findDepths({formula: formula});
   if (!matching) {return {substitutedFormula: formula, validFormula: false};}
-  const splitIndex = lastIndexOfDepthZeroSubstring({formula: formula, depths: depths, substring: divider});
+  const splitIndex = indexOfDepthZeroSubstring(
+    {selector: selector, formula: formula, depths: depths, substring: divider});
   if (splitIndex < 0) {return null;}
   const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
     = subParser({formula: formula.slice(0, splitIndex), substitutions: substitutions});
