@@ -29,47 +29,43 @@ function findDepths({formula}: {formula: string}) {
   return {depths: depths, matching: matching && (depth === 0)};
 }
 
-function lastIndexOfDepthZeroSubstring({formula, depths, substring}:
-  {formula: string, depths: number[], substring: string}) {
-  //Returns the index of the last match for substring within formula
+function indexOfDepthZeroSubstring({selector, formula, depths, substring}:
+  {selector: 'first' | 'last', formula: string, depths: number[], substring: string}) {
+  //Returns the index of a match for substring within formula
   //that lies at a depth of zero, or -1 if no such index exists.
-  //Using the last instance is important for correctly parsing subtraction:
-  //a - b - c = (a - b) - c
-  //Assumes that substring doesn't contain "(" or ")" so the depth is
+  //If selector is 'first', this function returns the first such index,
+  //and if selector is 'last', it returns the last such index.
+  //We need the first index for implications and the last index for subtraction.
+  //This function assumes that substring doesn't contain "(" or ")" so the depth is
   //constant throughout.
-  const lastCandidateIndex = formula.lastIndexOf(substring);
-  if (lastCandidateIndex < 0) {
-    return -1;
-  } else if (depths[lastCandidateIndex] === 0) {
-    return lastCandidateIndex;
+  if (selector === 'first') {
+    const firstCandidateIndex = formula.indexOf(substring);
+    if (firstCandidateIndex < 0) {
+      return -1;
+    } else if (depths[firstCandidateIndex] === 0) {
+      return firstCandidateIndex;
+    } else {
+      return indexOfDepthZeroSubstring({
+        selector: 'first' as const,
+        formula: formula.slice(firstCandidateIndex+1),
+        depths: depths.slice(firstCandidateIndex+1),
+        substring: substring,
+      });
+    }
   } else {
-    return lastIndexOfDepthZeroSubstring({
-      formula: formula.slice(0, lastCandidateIndex),
-      depths: depths.slice(0, lastCandidateIndex),
-      substring: substring,
-    });
-  }
-}
-
-function firstIndexOfDepthZeroSubstring({formula, depths, substring}:
-  {formula: string, depths: number[], substring: string}) {
-  //Returns the index of the first match for substring within formula
-  //that lies at a depth of zero, or -1 if no such index exists.
-  //Using the first instance is important for correctly parsing implication:
-  //a ==> b ==> c should be parsed as a ==> (b ==> c)
-  //Assumes that substring doesn't contain "(" or ")" so the depth is
-  //constant throughout.
-  const firstCandidateIndex = formula.indexOf(substring);
-  if (firstCandidateIndex < 0) {
-    return -1;
-  } else if (depths[firstCandidateIndex] === 0) {
-    return firstCandidateIndex;
-  } else {
-    return firstIndexOfDepthZeroSubstring({
-      formula: formula.slice(firstCandidateIndex+1),
-      depths: depths.slice(firstCandidateIndex+1),
-      substring: substring,
-    });
+    const lastCandidateIndex = formula.lastIndexOf(substring);
+    if (lastCandidateIndex < 0) {
+      return -1;
+    } else if (depths[lastCandidateIndex] === 0) {
+      return lastCandidateIndex;
+    } else {
+      return indexOfDepthZeroSubstring({
+        selector: 'last' as const,
+        formula: formula.slice(0, lastCandidateIndex),
+        depths: depths.slice(0, lastCandidateIndex),
+        substring: substring,
+      });
+    }
   }
 }
 
