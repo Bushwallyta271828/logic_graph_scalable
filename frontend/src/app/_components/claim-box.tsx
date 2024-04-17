@@ -67,7 +67,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
           className="w-full h-full p-2 outline-none"
           onInput={(e) => setText(e.currentTarget.innerText)}
           onBlur={handleBlur}>
-          {text}
+          {claim.text}
         </p>
       ) : (
         <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
