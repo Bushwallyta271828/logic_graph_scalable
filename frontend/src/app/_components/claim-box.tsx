@@ -67,21 +67,26 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   }
 
   return (
-    <div className={`${!validText ? 'bg-dark-danger' : claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
-      {editing ? (
-        <p
+    <div className={`${!validText ? 'bg-dark-danger' : claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} relative flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
+      {editing ?
+        (<p
           ref={textRef}
           contentEditable="plaintext-only"
           className="w-full h-full p-2 outline-none"
           onInput={(e) => setText(e.currentTarget.innerText)}
           onBlur={handleBlur}>
           {claim.text}
-        </p>
-      ) : (
-        <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
+        </p>) :
+        (<p className="w-full h-full p-2" onClick={() => setEditing(true)}>
           {getDisplayData(claim).displayText}
-        </p>
-      )}
+        </p>)
+      }
+      {!validText ?
+        (<p className="absolute bg-dark-danger text-white text-sm">
+          This is some text!
+        </p>) : 
+        null
+      }
     </div>
   );
 }
