@@ -32,28 +32,25 @@ export type Claim =
 
 
 export type LogicalFormula =
-  | { logicalFormulaType: 'Implies'; left: LogicalFormula; right: LogicalFormula }
-  | { logicalFormulaType: 'Or'; left: LogicalFormula; right: LogicalFormula }
-  | { logicalFormulaType: 'And'; left: LogicalFormula; right: LogicalFormula }
-  | { logicalFormulaType: 'Not'; child: LogicalFormula }
-  | { logicalFormulaType: 'ClaimID'; value: string };
+  | { parseType: 'LogicalFormulaImplies'; left: LogicalFormula; right: LogicalFormula; }
+  | { parseType: 'LogicalFormulaOr'; left: LogicalFormula; right: LogicalFormula; }
+  | { parseType: 'LogicalFormulaAnd'; left: LogicalFormula; right: LogicalFormula; }
+  | { parseType: 'LogicalFormulaNot'; child: LogicalFormula; }
+  | { parseType: 'ClaimID'; value: string; };
 
 export type LogicalFormulaWithoutImplies =
   | {
-    logicalFormulaWithoutImpliesType: 'Or';
+    parseType: 'LogicalFormulaWithoutImpliesOr';
     left: LogicalFormulaWithoutImplies;
     right: LogicalFormulaWithoutImplies;
   } | {
-    logicalFormulaWithoutImpliesType: 'And';
+    parseType: 'LogicalFormulaWithoutImpliesAnd';
     left: LogicalFormulaWithoutImplies;
     right: LogicalFormulaWithoutImplies;
   } | { 
-    logicalFormulaWithoutImpliesType: 'Not';
+    parseType: 'LogicalFormulaWithoutImpliesNot';
     child: LogicalFormulaWithoutImplies;
-  } | {
-    logicalFormulaWithoutImpliesType: 'ClaimID';
-    value: string;
-  };
+  } | { parseType: 'ClaimID'; value: string; };
 
 export type Probability = { type: 'Probability', child: LogicalFormulaWithoutImplies }
 
