@@ -18,7 +18,7 @@ function ClaimTab({claim} : {claim: Claim}) {
         <Menu.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-14 p-2 rounded-l-md`}>
           <p className="text-white text-sm truncate">{claim.claimID}</p>
         </Menu.Button>
-        <Menu.Items className={`absolute w-40 origin-top-right z-10 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
+        <Menu.Items className={`absolute w-40 origin-top-right z-20 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
           <div>
             {acceptsDefinitions ? 
               <Menu.Item>
@@ -82,7 +82,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
         </p>)
       }
       {!validText ?
-        (<p className="absolute bg-dark-danger text-white text-sm">
+        (<p className="absolute z-10 bg-dark-danger text-white text-sm">
           This is some text!
         </p>) : 
         null
@@ -110,7 +110,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className={`flex flex-col ${isDragging ? 'z-20' : ''}`}>
+      className={`flex flex-col ${isDragging ? 'z-30' : ''}`}>
       <div
         className={`flex ${hasDefinitions ? 'rounded-tr-md rounded-tl-md rounded-bl-md' : 'rounded-md'} shadow-xl`}
         {...listeners}>
