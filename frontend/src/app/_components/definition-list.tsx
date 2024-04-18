@@ -47,7 +47,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
         value={definitionClaimID}
         onChange={(e) => setDefinitionClaimID(e.target.value)}
         onBlur={() => editDefinitionClaimID({claim: parentClaim, oldDefinitionClaimID: initialDefinitionClaimID, newDefinitionClaimID: definitionClaimID})}
-        className={`${final ? "rounded-bl-md" : "rounded-none"} text-white text-sm truncate ${validDefinition ? "bg-medium-definition" : "bg-medium-danger"} outline-none w-20 p-2`}
+        className={`${final ? "rounded-bl-md" : "rounded-none"} text-white text-sm truncate ${validDefinition ? "bg-medium-definition" : "bg-medium-danger"} outline-none w-14 p-2`}
       />
       <div className={`${final ? "rounded-br-md" : "rounded-none"} text-white ${validDefinition ? "bg-dark-definition" : "bg-dark-danger"} flex-1 p-2 min-w-0`}>
         <p className="text-sm break-words">{definitionText}</p>
