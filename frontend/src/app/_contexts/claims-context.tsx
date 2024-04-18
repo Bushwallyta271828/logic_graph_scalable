@@ -25,6 +25,9 @@ type ClaimsContext = {
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 }
 
+//A valid claimID must be non-empty, alphanumeric, and not one of the following:
+const forbiddenClaimIDs = new Set(['and', 'or', 'not', 'implies', 'P']);
+
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
 
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
@@ -33,17 +36,20 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
 
   const newClaimID = () => {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
     let uniqueID;
     let attempts = 0;
     do {
       uniqueID = '';
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 3; i++) {
         uniqueID += characters.charAt(Math.floor(Math.random() * characters.length));
       }
       attempts += 1;
-    } while (claimLookup.hasOwnProperty(uniqueID) && attempts < 100);
-    if (claimLookup.hasOwnProperty(uniqueID)) {
+    } while (
+      (claimLookup.hasOwnProperty(uniqueID) || forbiddenClaimIDs.has(uniqueID))
+      && (attempts < 100)
+    );
+    if (claimLookup.hasOwnProperty(uniqueID) || forbiddenClaimIDs.has(uniqueID)) {
       throw new Error("Unable to generate new claimID");
     }
     return uniqueID;
@@ -52,6 +58,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   const addClaim = (claim: Claim) => {
     const claimID = claim.claimID;
+    if (claimLookup.hasOwnProperty(claimID) || forbiddenClaimIDs.has(claimID)) {
+      throw new Error("Invalid or already-in-use claimID");
+    }
     setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
     setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
   };
