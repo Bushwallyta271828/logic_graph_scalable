@@ -52,12 +52,21 @@ export type LogicalFormulaWithoutImplies =
     child: LogicalFormulaWithoutImplies;
   } | { parseType: 'ClaimID'; value: string; };
 
-export type Probability = { type: 'Probability', child: LogicalFormulaWithoutImplies }
+export type ConditionalProbabilityAssignment = {
+  parseType: 'ConditionalProbabilityAssignment';
+  conditionalLeftFormula: LogicalFormulaWithoutImplies;
+  conditionalRightFormula: LogicalFormulaWithoutImplies;
+  value: number;
+};
 
-export type ConditionalProbability =
-  { type: 'ConditionalProbability',
-    left: LogicalFormulaWithoutImplies,
-    right: LogicalFormulaWithoutImplies,
-  }
+export type AffineExpression = 
+  | { parseType: 'AffineExpressionAddition'; left: AffineExpression; right: AffineExpression; }
+  | { parseType: 'AffineExpressionSubtraction'; left: AffineExpression; right: AffineExpression; }
+  | { parseType: '' }; //TODO
 
-export type 
+export type AffineEquation = {
+  parseType: 'AffineEquation';
+  left: AffineExpression;
+  right: AffineExpression;
+};
+  
