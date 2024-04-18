@@ -23,6 +23,9 @@ type ClaimsContext = {
   setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
   getInterpretedText: (claim: Claim) => string;
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
+
+  getDependencies: (claim: Claim) => Set<string>;
+  deleteClaim: (claim: Claim) => void;
 }
 
 //A valid claimID must be non-empty, alphanumeric, and not one of the following:
