@@ -41,7 +41,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
       {...attributes}
       {...listeners}
       style={style}
-      className={`flex border-t border-bright-neutral ${isDragging ? 'z-20' : 'z-0'}`}>
+      className={`flex border-t border-bright-neutral ${isDragging ? 'z-30' : 'z-0'}`}>
       <input
         type="text"
         value={definitionClaimID}
