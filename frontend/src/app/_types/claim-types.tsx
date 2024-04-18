@@ -33,20 +33,18 @@ export type Claim =
 
 export type LogicalFormula =
   | { parseType: 'LogicalFormulaImplies'; left: LogicalFormula; right: LogicalFormula; }
-  | { parseType: 'LogicalFormulaOr'; left: LogicalFormula; right: LogicalFormula; }
-  | { parseType: 'LogicalFormulaAnd'; left: LogicalFormula; right: LogicalFormula; }
+  | { parseType: 'LogicalFormulaOr'; children: Array<LogicalFormula>; }
+  | { parseType: 'LogicalFormulaAnd'; children: Array<LogicalFormula>; }
   | { parseType: 'LogicalFormulaNot'; child: LogicalFormula; }
   | { parseType: 'ClaimID'; value: string; };
 
 export type LogicalFormulaWithoutImplies =
   | {
     parseType: 'LogicalFormulaWithoutImpliesOr';
-    left: LogicalFormulaWithoutImplies;
-    right: LogicalFormulaWithoutImplies;
+    children: Array<LogicalFormulaWithoutImplies>;
   } | {
     parseType: 'LogicalFormulaWithoutImpliesAnd';
-    left: LogicalFormulaWithoutImplies;
-    right: LogicalFormulaWithoutImplies;
+    children: Array<LogicalFormulaWithoutImplies>;
   } | { 
     parseType: 'LogicalFormulaWithoutImpliesNot';
     child: LogicalFormulaWithoutImplies;
@@ -60,13 +58,12 @@ export type ConditionalProbabilityAssignment = {
 };
 
 export type AffineExpression = 
-  | { parseType: 'AffineExpressionAddition'; left: AffineExpression; right: AffineExpression; }
-  | { parseType: 'AffineExpressionSubtraction'; left: AffineExpression; right: AffineExpression; }
-  | { parseType: '' }; //TODO
+  | { parseType: 'AffineExpressionAddition'; children: Array<AffineExpression>; }
+  | { parseType: 'AffineExpressionMultiplication'; coefficient: number; child: AffineExpression; }
+  | { parseType: 'AffineExpressionProbability'; child: LogicalFormulaWithoutImplies; };
 
 export type AffineEquation = {
   parseType: 'AffineEquation';
   left: AffineExpression;
   right: AffineExpression;
 };
-  
