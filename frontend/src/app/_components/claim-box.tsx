@@ -82,9 +82,12 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
         </p>)
       }
       {!validText ?
-        (<p className="absolute z-10 bg-dark-danger text-white text-sm">
-          This is some text!
-        </p>) : 
+        (<div className="absolute z-10 bg-dark-danger rounded-md p-2 text-white text-sm">
+          <p>Please enter a valid constraint.</p>
+          <p>If your constraint doesn't need to reference probabilities, you can enter a logical formula in terms of the claim ID's. For example, you could enter the constraint "(aaa and not bbb) implies (ccc or (ddd and eee))" if aaa, bbb, ccc, ddd, and eee were all claim IDs. You may use "and", "or", "not", and "implies" to build your logical formula. </p>
+          <p>More generally, if your constraint specifies a conditional probability, you can assign a conditional probability of a logical formula given another on the left hand side of an equation to a non-negative real number on the right hand side. For example, "P(ccc or (ddd and eee) | aaa and not bbb) = 0.7" is a valid constraint. You may use "and", "or", and "not" to specify your logical formula. "implies" is disallowed to avoid confusion with conditional probability. </p>
+          <p>Finally, for the most generality, you can specify a linear (affine) constraint on the probabilities of logical formulas (conditional probabilities not allowed). For example, "3.25*(P(aaa) + 0.8*P(bbb or ccc)) = 2 - P(not ddd or eee)" would be valid (always include "*" for coefficient multiplication and put coefficients on the left).</p>
+        </div>) : 
         null
       }
     </div>
