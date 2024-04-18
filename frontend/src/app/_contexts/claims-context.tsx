@@ -148,7 +148,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       {return {displayText: getInterpretedText(claim), validText: true};}
     let substitutions: { [claimID: string]: string} = {};
     for (let claimID in claimLookup) {
-      substitutions[claimID] = "[" + getInterpretedText(claimLookup[claimID]) + "]";
+      substitutions[claimID] = "[" + claimID + ": " + getInterpretedText(claimLookup[claimID]) + "]";
     }
     const {substitutedFormula, validFormula} = parseFormula({formula: claim.text, substitutions: substitutions});
     return {displayText: `We can assert: ${substitutedFormula}`, validText: validFormula};
