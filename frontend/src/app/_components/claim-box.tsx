@@ -17,7 +17,6 @@ function ClaimTab({claim} : {claim: Claim}) {
       <Menu>
         <Menu.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-20 p-2 rounded-l-md`}>
           <p className="text-white text-sm truncate">{claim.claimID}</p>
-          <p className="text-white text-sm truncate">{claim.author}</p>
         </Menu.Button>
         <Menu.Items className={`absolute w-40 origin-top-right z-10 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
           <div>
@@ -51,24 +50,15 @@ function ClaimTab({claim} : {claim: Claim}) {
 function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
   const [editing, setEditing] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
   const { setClaimText, getDisplayData } = useClaimsContext();
   const [validText, setValidText] = useState(getDisplayData(claim).validText);
 
-  const adjustHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  };
-
   useEffect(() => {
-    adjustHeight();
-  }, [text, editing]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-    adjustHeight();
-  };
+    if (editing && textRef.current) {
+      textRef.current.focus();
+    }
+  }, [editing]);
 
   const handleBlur = () => {
     setEditing(false);
@@ -79,15 +69,14 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   return (
     <div className={`${!validText ? 'bg-dark-danger' : claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} flex-1 min-w-0 ${hasDefinitions ? 'rounded-tr-md' : 'rounded-r-md'} text-white text-sm break-words`}>
       {editing ? (
-        <textarea
-          ref={textareaRef}
-          className="bg-transparent w-full h-full p-2 outline-none"
-          value={text}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          autoFocus
-          style={{ overflow: 'hidden' }}
-        />
+        <p
+          ref={textRef}
+          contentEditable="plaintext-only"
+          className="w-full h-full p-2 outline-none"
+          onInput={(e) => setText(e.currentTarget.innerText)}
+          onBlur={handleBlur}>
+          {claim.text}
+        </p>
       ) : (
         <p className="w-full h-full p-2" onClick={() => setEditing(true)}>
           {getDisplayData(claim).displayText}
