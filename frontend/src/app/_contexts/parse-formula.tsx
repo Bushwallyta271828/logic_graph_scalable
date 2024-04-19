@@ -14,10 +14,6 @@ type ParserInput = {
   claimIDs: Set<string>;
 };
 
-type ParserOutput = FormulaParse | null;
-
-type Parser = ({formula, claimIDs}: ParserInput) => ParserOutput;
-
 
 function nonNegativeReal({candidate}: {candidate: string}) {
   return /^(0|[1-9]\d*)(\.\d+)?$/.test(candidate);
@@ -105,12 +101,9 @@ function parseLogicalFormula({formula, claimIDs, acceptsImplies}:
   //NOTE: assumes formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
   
-  const attemptedParseWrapping = parseWrapping({
-    trimmedFormula: trimmedFormula,
-    substitutions: substitutions,
-    subParser: parseLogicalFormula({acceptsImplies: acceptsImplies})
-  });
-  if (attemptedParseWrapping) {return attemptedParseWrapping;}
+  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
+  const {depths, matching} = findDepths({formula: trimmedFormula});
+  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
 
   if (trimmedFormula in substitutions)
     {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
