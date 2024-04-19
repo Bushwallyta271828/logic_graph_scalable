@@ -100,59 +100,56 @@ function attemptUnwrap({trimmedFormula, depths}:
 //  return null;
 //}
 
-function parseLogicalFormula({acceptsImplies} : {acceptsImplies: boolean}) {
-  return function({formula,substitutions}: ParserInput): ParserOutput {
-    //NOTE: assumes formula has had spaces added around parentheses!
-    const trimmedFormula = formula.trim();
-    
-    const attemptedParseWrapping = parseWrapping({
-      trimmedFormula: trimmedFormula,
-      substitutions: substitutions,
-      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies})
-    });
-    if (attemptedParseWrapping) {return attemptedParseWrapping;}
+function parseLogicalFormula({formula, claimIDs, acceptsImplies}: 
+  {formula: string, claimIDs: Set<string>, acceptsImplies: boolean}) {
+  //NOTE: assumes formula has had spaces added around parentheses!
+  const trimmedFormula = formula.trim();
   
-    if (trimmedFormula in substitutions)
-      {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
+  const attemptedParseWrapping = parseWrapping({
+    trimmedFormula: trimmedFormula,
+    substitutions: substitutions,
+    subParser: parseLogicalFormula({acceptsImplies: acceptsImplies})
+  });
+  if (attemptedParseWrapping) {return attemptedParseWrapping;}
 
-    if (acceptsImplies) { 
-      const impliesSplit = attemptInfixSplit({
-        formula: trimmedFormula,
-        substitutions: substitutions,
-        selector: 'first' as const,
-        divider: " implies ",
-        subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-      });
-      if (impliesSplit) {return impliesSplit;}
-    }
- 
-    const orSplit = attemptInfixSplit({
+  if (trimmedFormula in substitutions)
+    {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
+   if (acceptsImplies) { 
+    const impliesSplit = attemptInfixSplit({
       formula: trimmedFormula,
       substitutions: substitutions,
-      selector: 'last' as const,
-      divider: " or ",
+      selector: 'first' as const,
+      divider: " implies ",
       subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
     });
-    if (orSplit) {return orSplit;}
-  
-    const andSplit = attemptInfixSplit({
-      formula: trimmedFormula,
-      substitutions: substitutions,
-      selector: 'last' as const,
-      divider: " and ",
-      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-    });
-    if (andSplit) {return andSplit;}
-  
-    if (trimmedFormula.slice(0, 4) === "not ") {
-      const {substitutedFormula, validFormula} =
-        parseLogicalFormula({acceptsImplies: acceptsImplies})
-          ({formula: trimmedFormula.slice(4), substitutions: substitutions});
-      return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
-    }
-  
-    return {substitutedFormula: trimmedFormula, validFormula: false};
+    if (impliesSplit) {return impliesSplit;}
   }
+    const orSplit = attemptInfixSplit({
+    formula: trimmedFormula,
+    substitutions: substitutions,
+    selector: 'last' as const,
+    divider: " or ",
+    subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
+  });
+  if (orSplit) {return orSplit;}
+
+ const andSplit = attemptInfixSplit({
+     formula: trimmedFormula,
+    substitutions: substitutions,
+    selector: 'last' as const,
+    divider: " and ",
+    subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
+  });
+  if (andSplit) {return andSplit;}
+
+  if (trimmedFormula.slice(0, 4) === "not ") {
+    const {substitutedFormula, validFormula} =
+      parseLogicalFormula({acceptsImplies: acceptsImplies})
+        ({formula: trimmedFormula.slice(4), substitutions: substitutions});
+    return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
+  }
+
+  return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
 function attemptProbabilityUnwrap({trimmedFormula}: {trimmedFormula: string}) {
