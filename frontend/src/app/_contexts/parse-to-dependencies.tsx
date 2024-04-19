@@ -1,22 +1,16 @@
 'use client';
 
-import {
-  LogicalFormula,
-  LogicalFormulaWithoutImplies,
-  ConditionalProbabilityAssignment,
-  AffineExpression,
-  AffineEquation,
-  FormulaParse
-} from '@/app/_types/claim-types.tsx'; 
-
 type ParserInput = {
   formula: string;
-  claimIDs: Set<string>;
+  substitutions: {[claimID: string]: string};
 };
 
-type ParserOutput = FormulaParse | null;
+type ParserOutput = {
+  substitutedFormula: string;
+  validFormula: boolean;
+};
 
-type Parser = ({formula, claimIDs}: ParserInput) => ParserOutput;
+type Parser = ({formula, substitutions}: ParserInput) => ParserOutput;
 
 
 function nonNegativeReal({candidate}: {candidate: string}) {
