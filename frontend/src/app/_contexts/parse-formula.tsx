@@ -39,76 +39,27 @@ function findDepths({formula}: {formula: string}) {
   return {depths: depths, matching: matching && (depth === 0)};
 }
 
-function indexOfDepthZeroSubstring({selector, formula, depths, substring}:
-  {selector: 'first' | 'last', formula: string, depths: number[], substring: string}) {
-  //Returns the index of a match for substring within formula
-  //that lies at a depth of zero, or -1 if no such index exists.
-  //If selector is 'first', this function returns the first such index,
-  //and if selector is 'last', it returns the last such index.
-  //We need the first index for implications and the last index for subtraction.
-  //This function assumes that substring doesn't contain "(" or ")" so the depth is
-  //constant throughout.
-  if (selector === 'first') {
-    const firstCandidateIndex = formula.indexOf(substring);
-    if (firstCandidateIndex < 0) {
-      return -1;
-    } else if (depths[firstCandidateIndex] === 0) {
-      return firstCandidateIndex;
-    } else {
-      return indexOfDepthZeroSubstring({
-        selector: 'first' as const,
-        formula: formula.slice(firstCandidateIndex+1),
-        depths: depths.slice(firstCandidateIndex+1),
-        substring: substring,
-      });
+function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
+  {formula: string, depths: number[], substring: string}) {
+  //This function behaves exactly like slicing formula with substring except that it
+  //only splits on instances of substring at a depth of zero.
+  //The function assumes that substring doesn't contain parentheses so it has constant depth.
+  //The answer only makes sense if substring doesn't share any prefixes and suffixes.
+  const fragments: Array<string> = [];
+  let fragmentStart = 0;
+  let fragmentEnd = formula.indexOf(substring);
+  while (fragmentEnd >= 0) {
+    if (depths[fragmentEnd] === 0) {
+      fragments.push(formula.slice(fragmentStart, fragmentEnd));
+      fragmentStart = fragmentEnd + substring.length;
     }
-  } else {
-    const lastCandidateIndex = formula.lastIndexOf(substring);
-    if (lastCandidateIndex < 0) {
-      return -1;
-    } else if (depths[lastCandidateIndex] === 0) {
-      return lastCandidateIndex;
-    } else {
-      return indexOfDepthZeroSubstring({
-        selector: 'last' as const,
-        formula: formula.slice(0, lastCandidateIndex),
-        depths: depths.slice(0, lastCandidateIndex),
-        substring: substring,
-      });
-    }
+    fragmentEnd = formula.slice(fragmentEnd + substring.length).indexOf(substring);
   }
+  fragments.push(formula.slice(fragmentStart));
+  return fragments;
 }
 
-function attemptInfixSplit({formula, substitutions, selector, divider, subParser}: {
-  formula:string,
-  substitutions:{[claimID:string]:string},
-  selector: 'first' | 'last',
-  divider:string,
-  subParser: Parser})
-{
-  //This helper function will attempt to split formula with a substring of divider
-  //at a depth of zero at either the first possible or the last possible location,
-  //depending on the value of selector. If the parentheses don't match
-  //or if the split is possible but the children don't parse, it will return a best
-  //guess at substitutedFormula and false for validFormula. If the split is possible
-  //and the children parse, it will return true for validFormula together with the 
-  //substitutedFormula. If the split is not possible, it will return null.
-  //Note: divider shouldn't have any parentheses in it.
-  const {depths, matching} = findDepths({formula: formula});
-  if (!matching) {return {substitutedFormula: formula, validFormula: false};}
-  const splitIndex = indexOfDepthZeroSubstring(
-    {selector: selector, formula: formula, depths: depths, substring: divider});
-  if (splitIndex < 0) {return null;}
-  const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
-    = subParser({formula: formula.slice(0, splitIndex), substitutions: substitutions});
-  const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-    = subParser({formula: formula.slice(splitIndex + divider.length), substitutions: substitutions});
-  return {
-    substitutedFormula: leftSubstitutedFormula + divider + rightSubstitutedFormula,
-    validFormula: leftValidFormula && rightValidFormula,
-  };
-}
-
+//TODO: Come back for parseWrapping!
 function parseWrapping({trimmedFormula, substitutions, subParser}: {
   trimmedFormula:string,
   substitutions:{[claimID:string]:string},
