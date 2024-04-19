@@ -47,6 +47,7 @@ export type TextClaim = {
   author: string;
   claimType: 'text';
   text: string;
+  dependencies: Set<string>; //should reflect definitionClaimIDs
   definitionClaimIDs: string[];
 };
 
@@ -55,6 +56,7 @@ export type DefinitionClaim = {
   author: string;
   claimType: 'definition';
   text: string;
+  dependencies: Set<string>; //should reflect definitionClaimIDs
   definitionClaimIDs: string[];
 };
 
@@ -67,6 +69,7 @@ export type ZerothOrderClaim = {
   author: string;
   claimType: 'zeroth-order';
   text: string;
+  dependencies: Set<string>; //should reflect parse
   parse: FormulaParse | null;
 };
 
