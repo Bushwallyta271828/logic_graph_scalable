@@ -14,9 +14,15 @@ type ParserInput = {
   claimIDs: Set<string>;
 };
 
+function signSeparatedReal({candidate}: {candidate: string}) : number | null {
+  //Detects (optional sign)(optional spaces)(non-negative real number)
+  //and returns the real number if it exists.
+  //return /^(0|[1-9]\d*)(\.\d+)?$/.test(candidate);
+  //TODO
+}
 
-function nonNegativeReal({candidate}: {candidate: string}) {
-  return /^(0|[1-9]\d*)(\.\d+)?$/.test(candidate);
+function probabilityValue({candidate}: {candidate: string}) : number | null {
+  //TODO (remember to include "-0"!)
 }
 
 function findDepths({formula}: {formula: string}) {
@@ -222,8 +228,9 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
     return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
   }
 
-  
-
+  if (signSeparatedReal({candidate: allAdditionFormula})) {
+    return { parseType: 'AffineExpressionConstant', constant: };
+  }
 
 
 
