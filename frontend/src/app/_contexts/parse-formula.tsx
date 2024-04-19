@@ -59,37 +59,46 @@ function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
   return fragments;
 }
 
-function unwrap({trimmedFormula, depths}: {trimmedFormula: string, depths: number[]
-
-//TODO: Come back for parseWrapping!
-function parseWrapping({trimmedFormula, substitutions, subParser}: {
-  trimmedFormula:string,
-  substitutions:{[claimID:string]:string},
-  subParser: Parser})
-{
-  //This helper function deals with unwrapping parentheses and empty inputs.
-  //If trimmedFormula is empty, has mismatched parentheses, or is nested inside
-  //a pair of outer parentheses then the function returns the appropriate
-  //substitutedFormula and validFormula. If trimmedFormula is not of these forms, it
-  //returns null.
-  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
-  const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
-  
+function attemptUnwrap({trimmedFormula, depths}:
+  {trimmedFormula: string, depths: number[]}) {
+  //Given trimmedFormula (no spaces at the start or end) and
+  //the depths corresponding to trimmedFormula, attemptUnwrap will
+  //return ... if trimmedFormula is of the form (...) and null otherwise.
   if (trimmedFormula[0] === "(" && trimmedFormula[trimmedFormula.length-1] === ")" &&
     depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
-    const innerParse = subParser({
-      formula: trimmedFormula.slice(1, trimmedFormula.length-1),
-      substitutions: substitutions
-    });
-    return {
-      substitutedFormula: "("+innerParse.substitutedFormula+")",
-      validFormula: innerParse.validFormula
-    };
+    return trimmedFormula.slice(1, trimmedFormula.length-1);
   }
-
   return null;
 }
+
+//function parseWrapping({trimmedFormula, substitutions, subParser}: {
+//  trimmedFormula:string,
+//  substitutions:{[claimID:string]:string},
+//  subParser: Parser})
+//{
+//  //This helper function deals with unwrapping parentheses and empty inputs.
+//  //If trimmedFormula is empty, has mismatched parentheses, or is nested inside
+//  //a pair of outer parentheses then the function returns the appropriate
+//  //substitutedFormula and validFormula. If trimmedFormula is not of these forms, it
+//  //returns null.
+//  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
+//  const {depths, matching} = findDepths({formula: trimmedFormula});
+//  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
+//  
+//  if (trimmedFormula[0] === "(" && trimmedFormula[trimmedFormula.length-1] === ")" &&
+//    depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
+//    const innerParse = subParser({
+//      formula: trimmedFormula.slice(1, trimmedFormula.length-1),
+//      substitutions: substitutions
+//    });
+//    return {
+//      substitutedFormula: "("+innerParse.substitutedFormula+")",
+//      validFormula: innerParse.validFormula
+//    };
+//  }
+//
+//  return null;
+//}
 
 function parseLogicalFormula({acceptsImplies} : {acceptsImplies: boolean}) {
   return function({formula,substitutions}: ParserInput): ParserOutput {
