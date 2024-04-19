@@ -67,35 +67,6 @@ function attemptUnwrap({trimmedFormula, depths}:
   return null;
 }
 
-//function parseWrapping({trimmedFormula, substitutions, subParser}: {
-//  trimmedFormula:string,
-//  substitutions:{[claimID:string]:string},
-//  subParser: Parser})
-//{
-//  //This helper function deals with unwrapping parentheses and empty inputs.
-//  //If trimmedFormula is empty, has mismatched parentheses, or is nested inside
-//  //a pair of outer parentheses then the function returns the appropriate
-//  //substitutedFormula and validFormula. If trimmedFormula is not of these forms, it
-//  //returns null.
-//  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
-//  const {depths, matching} = findDepths({formula: trimmedFormula});
-//  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
-//  
-//  if (trimmedFormula[0] === "(" && trimmedFormula[trimmedFormula.length-1] === ")" &&
-//    depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
-//    const innerParse = subParser({
-//      formula: trimmedFormula.slice(1, trimmedFormula.length-1),
-//      substitutions: substitutions
-//    });
-//    return {
-//      substitutedFormula: "("+innerParse.substitutedFormula+")",
-//      validFormula: innerParse.validFormula
-//    };
-//  }
-//
-//  return null;
-//}
-
 function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula | null {
   //This function will attempt to parse formula as a LogicalFormula.
   //It will return null if formula cannot be parsed.
@@ -168,51 +139,37 @@ function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return null;}
   if (claimIDs.has(trimmedFormula))
-    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormula;}
+    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormulaWithoutImplies;}
 
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap) {return parseLogicalFormula({formula: unwrap, claimIDs: claimIDs});}
-
-  const impliesFragments = splitOnAllDepthZeroSubstrings(
-    {formula: trimmedFormula, depths: depths, substring: " implies "});
-  if (impliesFragments.length >= 2) {
-    let rightTail = parseLogicalFormula(
-      {formula: impliesFragments[impliesFragments.length-1], claimIDs: claimIDs});
-    if (!rightTail) {return null;}
-    for (let i = impliesFragments.length-2; i >= 0; i--) {
-      const left = parseLogicalFormula({formula: impliesFragments[i], claimIDs: claimIDs});
-      if (!left) {return null;}
-      rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
-    }
-    return rightTail;
-  }
+  if (unwrap) {return parseLogicalFormulaWithoutImplies({formula: unwrap, claimIDs: claimIDs});}
 
   const orFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " or "});
   if (orFragments.length >= 2) {
-    const children: LogicalFormula[] = [];
+    const children: LogicalFormulaWithoutImplies[] = [];
     for (let i = 0; i < orFragments.length; i++) {
-      const child = parseLogicalFormula({formula: orFragments[i], claimIDs: claimIDs});
+      const child = parseLogicalFormulaWithoutImplies({formula: orFragments[i], claimIDs: claimIDs});
       if (child) {children.push(child);} else {return null;}
     }
-    return {parseType: 'LogicalFormulaOr' as const, children: children} as LogicalFormula;
+    return {parseType: 'LogicalFormulaWithoutImpliesOr' as const, children: children} as LogicalFormulaWithoutImplies;
   }
 
   const andFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " and "});
   if (andFragments.length >= 2) {
-    const children: LogicalFormula[] = [];
+    const children: LogicalFormulaWithoutImplies[] = [];
     for (let i = 0; i < andFragments.length; i++) {
-      const child = parseLogicalFormula({formula: andFragments[i], claimIDs: claimIDs});
+      const child = parseLogicalFormulaWithoutImplies({formula: andFragments[i], claimIDs: claimIDs});
       if (child) {children.push(child);} else {return null;}
     }
-    return {parseType: 'LogicalFormulaAnd' as const, children: children} as LogicalFormula;
+    return {parseType: 'LogicalFormulaWithoutImpliesAnd' as const, children: children} as LogicalFormulaWithoutImplies;
   }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
-    const child = parseLogicalFormula({formula: trimmedFormula.slice(4), claimIDs: claimIDs});
+    const child = parseLogicalFormulaWithoutImplies({formula: trimmedFormula.slice(4), claimIDs: claimIDs});
     if (child) {
-      return {parseType: 'LogicalFormulaNot' as const, child: child} as LogicalFormula;
+      return {parseType: 'LogicalFormulaWithoutImpliesNot' as const, child: child} as LogicalFormulaWithoutImplies;
     } else {return null;}
   }
 
