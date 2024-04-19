@@ -104,7 +104,7 @@ function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula |
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return null;}
   if (claimIDs.has(trimmedFormula))
-    {return {parseType: 'ClaimID' as const, value: trimmedFormula};}
+    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormula;}
 
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseLogicalFormula({formula: unwrap, claimIDs: claimIDs});}
@@ -119,28 +119,28 @@ function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula |
     {formula: trimmedFormula, depths: depths, substring: " or "});
   if (orFragments.length >= 2) {
     const children: LogicalFormula[] = [];
-    for (int i = 0; i < orFragments.length; i++) {
+    for (let i = 0; i < orFragments.length; i++) {
       const child = parseLogicalFormula({formula: orFragments[i], claimIDs: claimIDs});
       if (child) {children.push(child);} else {return null;}
     }
-    return {parseType: 'LogicalFormulaOr', children: children} as LogicalFormula;
+    return {parseType: 'LogicalFormulaOr' as const, children: children} as LogicalFormula;
   }
 
   const andFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " and "});
   if (andFragments.length >= 2) {
     const children: LogicalFormula[] = [];
-    for (int i = 0; i < andFragments.length; i++) {
+    for (let i = 0; i < andFragments.length; i++) {
       const child = parseLogicalFormula({formula: andFragments[i], claimIDs: claimIDs});
       if (child) {children.push(child);} else {return null;}
     }
-    return {parseType: 'LogicalFormulaAnd', children: children} as LogicalFormula;
+    return {parseType: 'LogicalFormulaAnd' as const, children: children} as LogicalFormula;
   }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
     const child = parseLogicalFormula({formula: trimmedFormula.slice(4), claimIDs: claimIDs});
     if (child) {
-      return {parseType: 'LogicalFormulaNot', child: child} as LogicalFormula;
+      return {parseType: 'LogicalFormulaNot' as const, child: child} as LogicalFormula;
     } else {return null;}
   }
 
