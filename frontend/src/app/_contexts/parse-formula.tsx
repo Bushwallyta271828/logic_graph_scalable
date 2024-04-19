@@ -71,16 +71,15 @@ function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula |
   //This function will attempt to parse formula as a LogicalFormula.
   //It will return null if formula cannot be parsed.
   //This function assumes that formula has had spaces added around parentheses!
-  const trimmedFormula = formula.trim();
-  
+  const trimmedFormula = formula.trim(); 
   if (trimmedFormula === "") {return null;}
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return null;}
-  if (claimIDs.has(trimmedFormula))
-    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormula;}
-
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseLogicalFormula({formula: unwrap, claimIDs: claimIDs});}
+
+  if (claimIDs.has(trimmedFormula))
+    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormula;}
 
   const impliesFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " implies "});
@@ -133,16 +132,15 @@ function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
   //This function will attempt to parse formula as a LogicalFormulaWithoutImplies.
   //It will return null if formula cannot be parsed.
   //This function assumes that formula has had spaces added around parentheses!
-  const trimmedFormula = formula.trim();
-  
+  const trimmedFormula = formula.trim(); 
   if (trimmedFormula === "") {return null;}
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return null;}
-  if (claimIDs.has(trimmedFormula))
-    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormulaWithoutImplies;}
-
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseLogicalFormulaWithoutImplies({formula: unwrap, claimIDs: claimIDs});}
+
+  if (claimIDs.has(trimmedFormula))
+    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormulaWithoutImplies;}
 
   const orFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " or "});
@@ -176,27 +174,40 @@ function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
   return null;
 }
 
-function attemptProbabilityUnwrap({trimmedFormula}: {trimmedFormula: string}) {
-  //This function will attempt to parse trimmedFormula as the form
-  //"P  (child)" where child never breaks out of the parentheses.
-  //If such a parsing is possible, it returns the child string.
-  //If not, it returns null.
-  if (trimmedFormula[0] === "P")
-  {
-    const afterP = trimmedFormula.slice(1).trim();
-    const { depths: afterPDepths } = findDepths({formula: afterP});
-    if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
-      afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
-      return afterP.slice(1, afterP.length-1);
-    }
-  }
-  return null;
-}
+//function attemptProbabilityUnwrap({trimmedFormula}: {trimmedFormula: string}) {
+//  //This function will attempt to parse trimmedFormula as the form
+//  //"P  (child)" where child never breaks out of the parentheses.
+//  //If such a parsing is possible, it returns the child string.
+//  //If not, it returns null.
+//  if (trimmedFormula[0] === "P")
+//  {
+//    const afterP = trimmedFormula.slice(1).trim();
+//    const { depths: afterPDepths } = findDepths({formula: afterP});
+//    if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
+//      afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
+//      return afterP.slice(1, afterP.length-1);
+//    }
+//  }
+//  return null;
+//}
 
-function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput {
-  //NOTE: assumes formula has had spaces added around parentheses, "*", "+", and "-"!
-  const trimmedFormula = formula.trim();
-  
+function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression | null {
+  //This function will attempt to parse formula as an AffineExpression.
+  //It will return null if formula cannot be parsed.
+  //This function assumes that formula has had spaces
+  //added around parentheses, "*", "+", and "-"!
+  const trimmedFormula = formula.trim(); 
+  if (trimmedFormula === "") {return null;}
+  const {depths, matching} = findDepths({formula: trimmedFormula});
+  if (!matching) {return null;}
+  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
+  if (unwrap) {return parseAffineFormula({formula: unwrap, claimIDs: claimIDs});}
+
+
+
+
+
+ 
   const attemptedParseWrapping = parseWrapping(
     {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseAffineFormula});
   if (attemptedParseWrapping) {return attemptedParseWrapping;}
