@@ -112,7 +112,15 @@ function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula |
   const impliesFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " implies "});
   if (impliesFragments.length >= 2) {
-    //TODO
+    let rightTail = parseLogicalFormula(
+      {formula: impliesFragments[impliesFragments.length-1], claimIDs: claimIDs});
+    if (!rightTail) {return null;}
+    for (let i = impliesFragments.length-2; i >= 0; i--) {
+      const left = parseLogicalFormula({formula: impliesFragments[i], claimIDs: claimIDs});
+      if (!left) {return null;}
+      rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
+    }
+    return rightTail;
   }
 
   const orFragments = splitOnAllDepthZeroSubstrings(
