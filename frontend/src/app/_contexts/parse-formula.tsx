@@ -211,30 +211,23 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
     {formula: trimmedFormula, depths: depths, substring: ' - '});
   const allAdditionFormula = ' + - '.join(minusFragments);
 
-  //TODO: only use allAdditionFormula from here on out!
- 
+  const plusFragments = splitOnAllDepthZeroSubstrings(
+    {formula: allAdditionFormula, depths: depths, substring: " + "});
+  if (plusFragments.length >= 2) {
+    const children: AffineExpression[] = [];
+    for (let i = 0; i < plusFragments.length; i++) {
+      const child = parseAffineFormula({formula: plusFragments[i], claimIDs: claimIDs});
+      if (child) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
+  }
 
-  const plusSplit = attemptInfixSplit({
-    formula: trimmedFormula,
-    substitutions: substitutions,
-    selector: 'last' as const,
-    divider: " + ",
-    subParser: parseAffineFormula,
-  });
-  if (plusSplit) {return plusSplit;}
 
-  //NOTE: The operator tree is valid becasue we split on the last instance.
-  //For example, a - b - c will be parsed as (a - b) - c.
-  //Also note that if the original formula started with "-", the trimming
-  //will remove the left space, so initial minus signs don't count.
-  const minusSplit = attemptInfixSplit({
-    formula: trimmedFormula,
-    substitutions: substitutions,
-    selector: 'last' as const,
-    divider: " - ",
-    subParser: parseAffineFormula,
-  });
-  if (minusSplit) {return minusSplit;}
+
+
+
+
+
 
   //(Dealing with minus signs for single term linear combinations)
   if (trimmedFormula[0] === "-") {
