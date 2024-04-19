@@ -36,7 +36,7 @@ function findDepths({formula}: {formula: string}) {
 }
 
 function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
-  {formula: string, depths: number[], substring: string}) {
+  {formula: string, depths: number[], substring: string}): string[] {
   //This function behaves exactly like slicing formula with substring except that it
   //only splits on instances of substring at a depth of zero.
   //The function assumes that substring doesn't contain parentheses so it has constant depth.
@@ -56,7 +56,7 @@ function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
 }
 
 function attemptUnwrap({trimmedFormula, depths}:
-  {trimmedFormula: string, depths: number[]}) {
+  {trimmedFormula: string, depths: number[]}): string | null {
   //Given trimmedFormula (no spaces at the start or end) and
   //the depths corresponding to trimmedFormula, attemptUnwrap will
   //return ... if trimmedFormula is of the form (...) and null otherwise.
@@ -96,53 +96,55 @@ function attemptUnwrap({trimmedFormula, depths}:
 //  return null;
 //}
 
-function parseLogicalFormula({formula, claimIDs, acceptsImplies}: 
-  {formula: string, claimIDs: Set<string>, acceptsImplies: boolean}) {
+function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula | null {
   //NOTE: assumes formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
   
-  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
+  if (trimmedFormula === "") {return null;}
   const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
+  if (!matching) {return null;}
+  if (claimIDs.has(trimmedFormula))
+    {return {parseType: 'ClaimID' as const, value: trimmedFormula};}
 
-  if (trimmedFormula in substitutions)
-    {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
-   if (acceptsImplies) { 
-    const impliesSplit = attemptInfixSplit({
-      formula: trimmedFormula,
-      substitutions: substitutions,
-      selector: 'first' as const,
-      divider: " implies ",
-      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-    });
-    if (impliesSplit) {return impliesSplit;}
+  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
+  if (unwrap) {return parseLogicalFormula({formula: unwrap, claimIDs: claimIDs});}
+
+  const impliesFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " implies "});
+  if (impliesFragments.length >= 2) {
+    //TODO
   }
-    const orSplit = attemptInfixSplit({
-    formula: trimmedFormula,
-    substitutions: substitutions,
-    selector: 'last' as const,
-    divider: " or ",
-    subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-  });
-  if (orSplit) {return orSplit;}
 
- const andSplit = attemptInfixSplit({
-     formula: trimmedFormula,
-    substitutions: substitutions,
-    selector: 'last' as const,
-    divider: " and ",
-    subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-  });
-  if (andSplit) {return andSplit;}
+  const orFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " or "});
+  if (orFragments.length >= 2) {
+    const children: LogicalFormula[] = [];
+    for (int i = 0; i < orFragments.length; i++) {
+      const child = parseLogicalFormula({formula: orFragments[i], claimIDs: claimIDs});
+      if (child) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'LogicalFormulaOr', children: children} as LogicalFormula;
+  }
+
+  const andFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " and "});
+  if (andFragments.length >= 2) {
+    const children: LogicalFormula[] = [];
+    for (int i = 0; i < andFragments.length; i++) {
+      const child = parseLogicalFormula({formula: andFragments[i], claimIDs: claimIDs});
+      if (child) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'LogicalFormulaAnd', children: children} as LogicalFormula;
+  }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
-    const {substitutedFormula, validFormula} =
-      parseLogicalFormula({acceptsImplies: acceptsImplies})
-        ({formula: trimmedFormula.slice(4), substitutions: substitutions});
-    return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
+    const child = parseLogicalFormula({formula: trimmedFormula.slice(4), claimIDs: claimIDs});
+    if (child) {
+      return {parseType: 'LogicalFormulaNot', child: child} as LogicalFormula;
+    } else {return null;}
   }
 
-  return {substitutedFormula: trimmedFormula, validFormula: false};
+  return null;
 }
 
 function attemptProbabilityUnwrap({trimmedFormula}: {trimmedFormula: string}) {
