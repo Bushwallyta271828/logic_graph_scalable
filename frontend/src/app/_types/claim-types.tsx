@@ -27,7 +27,8 @@ export type ConditionalProbabilityAssignment = {
 export type AffineExpression = 
   | { parseType: 'AffineExpressionAddition'; children: AffineExpression[]; }
   | { parseType: 'AffineExpressionMultiplication'; coefficient: number; child: AffineExpression; }
-  | { parseType: 'AffineExpressionProbability'; child: LogicalFormulaWithoutImplies; };
+  | { parseType: 'AffineExpressionProbability'; child: LogicalFormulaWithoutImplies; }
+  | { parseType: 'AffineExpressionConstant'; constant: number; };
 
 export type AffineEquation = {
   parseType: 'AffineEquation';
