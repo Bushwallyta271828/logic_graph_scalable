@@ -45,7 +45,7 @@ function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
   //only splits on instances of substring at a depth of zero.
   //The function assumes that substring doesn't contain parentheses so it has constant depth.
   //The answer only makes sense if substring doesn't share any prefixes and suffixes.
-  const fragments: Array<string> = [];
+  const fragments: string[] = [];
   let fragmentStart = 0;
   let fragmentEnd = formula.indexOf(substring);
   while (fragmentEnd >= 0) {
@@ -58,6 +58,8 @@ function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
   fragments.push(formula.slice(fragmentStart));
   return fragments;
 }
+
+function unwrap({trimmedFormula, depths}: {trimmedFormula: string, depths: number[]
 
 //TODO: Come back for parseWrapping!
 function parseWrapping({trimmedFormula, substitutions, subParser}: {
