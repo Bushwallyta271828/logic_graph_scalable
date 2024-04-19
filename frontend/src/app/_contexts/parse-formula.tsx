@@ -97,7 +97,71 @@ function attemptUnwrap({trimmedFormula, depths}:
 //}
 
 function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula | null {
-  //NOTE: assumes formula has had spaces added around parentheses!
+  //This function will attempt to parse formula as a LogicalFormula.
+  //It will return null if formula cannot be parsed.
+  //This function assumes that formula has had spaces added around parentheses!
+  const trimmedFormula = formula.trim();
+  
+  if (trimmedFormula === "") {return null;}
+  const {depths, matching} = findDepths({formula: trimmedFormula});
+  if (!matching) {return null;}
+  if (claimIDs.has(trimmedFormula))
+    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormula;}
+
+  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
+  if (unwrap) {return parseLogicalFormula({formula: unwrap, claimIDs: claimIDs});}
+
+  const impliesFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " implies "});
+  if (impliesFragments.length >= 2) {
+    let rightTail = parseLogicalFormula(
+      {formula: impliesFragments[impliesFragments.length-1], claimIDs: claimIDs});
+    if (!rightTail) {return null;}
+    for (let i = impliesFragments.length-2; i >= 0; i--) {
+      const left = parseLogicalFormula({formula: impliesFragments[i], claimIDs: claimIDs});
+      if (!left) {return null;}
+      rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
+    }
+    return rightTail;
+  }
+
+  const orFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " or "});
+  if (orFragments.length >= 2) {
+    const children: LogicalFormula[] = [];
+    for (let i = 0; i < orFragments.length; i++) {
+      const child = parseLogicalFormula({formula: orFragments[i], claimIDs: claimIDs});
+      if (child) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'LogicalFormulaOr' as const, children: children} as LogicalFormula;
+  }
+
+  const andFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " and "});
+  if (andFragments.length >= 2) {
+    const children: LogicalFormula[] = [];
+    for (let i = 0; i < andFragments.length; i++) {
+      const child = parseLogicalFormula({formula: andFragments[i], claimIDs: claimIDs});
+      if (child) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'LogicalFormulaAnd' as const, children: children} as LogicalFormula;
+  }
+
+  if (trimmedFormula.slice(0, 4) === "not ") {
+    const child = parseLogicalFormula({formula: trimmedFormula.slice(4), claimIDs: claimIDs});
+    if (child) {
+      return {parseType: 'LogicalFormulaNot' as const, child: child} as LogicalFormula;
+    } else {return null;}
+  }
+
+  return null;
+}
+
+function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
+  LogicalFormulaWithoutImplies | null {
+  //This function will attempt to parse formula as a LogicalFormulaWithoutImplies.
+  //It will return null if formula cannot be parsed.
+  //This function assumes that formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim();
   
   if (trimmedFormula === "") {return null;}
