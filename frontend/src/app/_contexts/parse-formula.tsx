@@ -203,14 +203,16 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseAffineFormula({formula: unwrap, claimIDs: claimIDs});}
 
+  //To handle subtraction, we're going to take all depth-zero minus signs
+  //(except for a potential first one) and add addition signs
+  //in front of them. Since we split on ' - ' and use trimmedFormula, any
+  //initial minus sign will be ignored.
+  const minusFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: ' - '});
+  const allAdditionFormula = ' + - '.join(minusFragments);
 
-
-
-
+  //TODO: only use allAdditionFormula from here on out!
  
-  const attemptedParseWrapping = parseWrapping(
-    {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseAffineFormula});
-  if (attemptedParseWrapping) {return attemptedParseWrapping;}
 
   const plusSplit = attemptInfixSplit({
     formula: trimmedFormula,
