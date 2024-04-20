@@ -10,19 +10,22 @@ import {
 } from '@/app/_types/parse-types.tsx';
 
 function logicalFormulaDependencies({parse}: {parse: LogicalFormula}): Set<string> {
-  switch (parse.parseType) {
-    case 'LogicalFormulaImplies':
-      const left = logicalFormulaDependencies({parse: parse.left});
-      const right = logicalFormulaDependencies({parse: parse.right});
-      return new Set([...left, ...right]);
-    case 'LogicalFormulaOr':
-    case 'LogicalFormulaAnd':
-    case 'LogicalFormulaNot':
-      return logicalFormulaDependencies({parse: parse.child});
-    case 'ClaimID':
-      return new Set([parse.claimID,]);
-    default: throw new Error("Unrecognized parseType");
-  }
+  if (parse.parseType === 'LogicalFormulaImplies') {
+    const left = logicalFormulaDependencies({parse: parse.left});
+    const right = logicalFormulaDependencies({parse: parse.right});
+    return new Set([...left, ...right]);
+  } else if (['LogicalFormulaOr', 'LogicalFormulaAnd'].includes(parse.parseType)) {
+    let dependenciesArray: string[] = [];
+    for (let i = 0; i < parse.children.length; i++) {
+      dependenciesArray.concat(Array.from(
+        logicalFormulaDependencies({parse: parse.children[i]})));
+    }
+    return new Set(dependenciesArray);
+  } else if (parse.parseType === 'LogicalFormulaNot') {
+    return logicalFormulaDependencies({parse: parse.child});
+  } else if (parse.parseType === 'ClaimID') {
+    return new Set([parse.claimID,]);
+  } else {throw new Error("Unrecognized parseType");}
 }
 
 function logicalFormulaWithoutImpliesDependencies({parse}:
