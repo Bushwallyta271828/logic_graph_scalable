@@ -49,10 +49,22 @@ export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
 export function displayAffineExpression({parse, substitutions}:
   {parse: AffineExpression, substitutions: {[claimID: string]: string}}) {
   switch (parse.parseType) {
-    case 'AffineExpressionAddition': 
+    case 'AffineExpressionAddition':
+      //TODO
     case 'AffineExpressionMultiplication':
+      const childDisplay = displayAffineExpression(
+        {parse: parse.child, substitutions: substitutions});
+      const wrap = ['AffineExpressionAddition',
+        'AffineExpressionMultiplication', //to handle signs
+        'AffineExpressionConstant', //to handle signs
+      ].includes(parse.child.parseType);
+      return parse.coefficient.toString() + "*" +
+        maybeWrap({wrap: wrap, text: childDisplay});
     case 'AffineExpressionProbability':
+      return "P( " + displayLogicalFormulaWithoutImplies(
+        {parse: parse.child, substitutions: substitutions}) + " )";
     case 'AffineExpressionConstant':
+      return parse.constant.toString();
     default: throw new Error('Unrecognized parseType');
   }
 }
