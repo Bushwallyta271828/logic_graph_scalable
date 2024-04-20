@@ -7,7 +7,7 @@ import {
   AffineExpression,
   AffineEquation,
   FormulaParse
-} from '@/app/_types/claim-types.tsx'; 
+} from '@/app/_types/parse-types.tsx'; 
 
 type ParserInput = {
   formula: string;
