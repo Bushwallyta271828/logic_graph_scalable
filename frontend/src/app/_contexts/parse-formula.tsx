@@ -15,10 +15,9 @@ type ParserInput = {
 };
 
 function nonNegativeReal({candidate}: {candidate: string}) : number | null {
-  //Detects (optional sign)(optional spaces)(non-negative real number)
-  //and returns the real number if it exists.
-  //return /^(0|[1-9]\d*)(\.\d+)?$/.test(candidate);
-  //TODO
+  //Tries to parse candidate as a non-negative real number, returns null if impossible.
+  if (/^(0|[1-9]\d*)(\.\d+)?$/.test(candidate)) {return Number(candidate);}
+  else {return null;}
 }
 
 function probabilityValue({candidate}: {candidate: string}) : number | null {
@@ -273,7 +272,7 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
     const rightHandSideNegation = rightHandSide.startsWith("-");
     const rightHandSideSignless = rightHandSideNegation ?
       rightHandSide.slice(1).trim() : rightHandSide;
-    const attemptRightHandSideMagnitude = nonNegativeReal(rightHandSideSignless);
+    const attemptRightHandSideMagnitude = probabilityValue(rightHandSideSignless);
     if (attemptRightHandSideMagnitude) {
       const leftHandSide = equalsFragments[0].trim();
       if (leftHandSide.startsWith("P")) {
