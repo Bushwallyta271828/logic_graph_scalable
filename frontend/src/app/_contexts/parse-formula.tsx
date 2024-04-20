@@ -14,7 +14,7 @@ type ParserInput = {
   claimIDs: Set<string>;
 };
 
-function signSeparatedReal({candidate}: {candidate: string}) : number | null {
+function nonNegativeReal({candidate}: {candidate: string}) : number | null {
   //Detects (optional sign)(optional spaces)(non-negative real number)
   //and returns the real number if it exists.
   //return /^(0|[1-9]\d*)(\.\d+)?$/.test(candidate);
@@ -241,7 +241,30 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   const rightUnwrap = attemptUnwrap(
     {trimmedFormula: allAdditionFormula.slice(openParenthesisIndex).trim(), depths: additionDepths});
   if (!rightUnwrap) {return null;}
-  const outer = allAdditionFormula //TODO
+  const outer = allAdditionFormula.slice(0, openParenthesisIndex).trim();
+  const isProbability = (outer[outer.length - 1] === "P");
+  const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
+  const outerWithoutStar = (outerWithoutP[outerWithoutP.length-1] === "*") ?
+    outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
+  const isNegated = (outerWithoutStar[0] === "-");
+  const magnitudeOrEmpty =
+    isNegated ? outerWithoutStar.slice(1).trim() : outerWithoutStar;
+  const attemptMagnitude = nonNegativeReal(magnitudeOrEmpty);
+  if (!attemptMagnitude && magnitudeOrEmpty !== "") {return null;}
+  //Note that !attemptMagnitude now implies magnitudeOrEmpty === "".
+  const coefficient = (attemptMagnitude ? attemptMagnitude : 1) * (isNegated ? -1 : 1);
+  const child = isProbability ? //TODO
+  
+  
+
+
+
+
+  let coefficient = signSeparatedReal(outerWithoutStar);
+  if (!coefficient) {
+    if outerWithout
+  }
+  const //TODO
 
 
   return null;
