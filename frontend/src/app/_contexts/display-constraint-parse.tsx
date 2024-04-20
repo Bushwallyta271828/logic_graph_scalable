@@ -107,7 +107,7 @@ export function displayConstraintParse({parse, substitutions}:
         {parse: parse.conditionalLeftFormula, substitutions: substitutions});
       const rightDisplay = displayLogicalFormulaWithoutImplies(
         {parse: parse.conditionalRightFormula, substitutions: substitutions});
-      return "P( " + leftDisplay + " | " + rightDisplay + " ) = " + parse.value.toString();
+      return "P( "+leftDisplay+" | "+rightDisplay+" ) = "+parse.probability.toString();
 
     case 'AffineEquation':
       const leftDisplay = displayAffineExpression(

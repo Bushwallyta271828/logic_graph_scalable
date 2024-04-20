@@ -88,7 +88,7 @@ function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula |
   if (unwrap) {return parseLogicalFormula({formula: unwrap, claimIDs: claimIDs});}
 
   if (claimIDs.has(trimmedFormula))
-    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormula;}
+    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
 
   const impliesFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " implies "});
@@ -149,7 +149,7 @@ function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
   if (unwrap) {return parseLogicalFormulaWithoutImplies({formula: unwrap, claimIDs: claimIDs});}
 
   if (claimIDs.has(trimmedFormula))
-    {return {parseType: 'ClaimID' as const, value: trimmedFormula} as LogicalFormulaWithoutImplies;}
+    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
 
   const orFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " or "});
@@ -297,7 +297,7 @@ export function parseFormula({formula,substitutions}: ParserInput): ConstraintPa
                 parseType: 'ConditionalProbabilityAssignment' as const,
                 conditionalLeftFormula: left,
                 conditionalRightFormula: right,
-                value: attemptRightHandSideMagnitude * (rightHandSideNegation ? -1 : 1),
+                probability: attemptRightHandSideMagnitude*(rightHandSideNegation ? -1 : 1),
               } as ConstraintParse;
             } else {return null;}
           } else if (conditionalFragments.length >= 3) {return null;}
