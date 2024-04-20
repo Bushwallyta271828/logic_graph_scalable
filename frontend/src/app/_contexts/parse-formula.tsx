@@ -7,7 +7,7 @@ import {
   AffineExpression,
   AffineEquation,
   ConstraintParse
-} from '@/app/_types/parse-types.tsx'; 
+} from '@/app/_types/parse-types'; 
 
 function signlessReal({candidate}: {candidate: string}) : number | null {
   //Tries to parse candidate as a signless real number, returns null if impossible.
