@@ -216,11 +216,12 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   const minusFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: ' - '});
   const allAdditionFormula = ' + - '.join(minusFragments);
-
-  //TODO BUG: depths matches trimmedFormula, not allAdditionFormula
+  const { depths: additionDepths, matching: additionMatching } =
+    findDepths({formula: allAdditionFormula});
+  if (!additionMatching) {return null;} //should never fire
 
   const plusFragments = splitOnAllDepthZeroSubstrings(
-    {formula: allAdditionFormula, depths: depths, substring: " + "});
+    {formula: allAdditionFormula, depths: additionDepths, substring: " + "});
   if (plusFragments.length >= 2) {
     const children: AffineExpression[] = [];
     for (let i = 0; i < plusFragments.length; i++) {
@@ -235,51 +236,15 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
     return { parseType: 'AffineExpressionConstant', constant: attemptConstant };
   }
 
-  const openParenthesisIndex = allAdditionFormula.indexOf("(");
+  const openParenthesisIndex = allAdditionFormula.indexOf("("); //first index crucial here
   if (openParenthesisIndex < 0) {return null;}
-  const rightUnwrap = attemptUnwrap({trimmedFormula: allAdditionFormula.slice(openParenthesisIndex), depths: 
-  if (depths.slice(openParenthesisIndex+1, depths.length-1).every((depth)
+  const rightUnwrap = attemptUnwrap(
+    {trimmedFormula: allAdditionFormula.slice(openParenthesisIndex).trim(), depths: additionDepths});
+  if (!rightUnwrap) {return null;}
+  const outer = allAdditionFormula //TODO
 
 
-
-  //(Dealing with minus signs for single term linear combinations)
-  if (trimmedFormula[0] === "-") {
-    const {substitutedFormula, validFormula} = parseAffineFormula(
-      {formula: trimmedFormula.slice(1), substitutions: substitutions});
-    return {substitutedFormula: "-"+substitutedFormula, validFormula: validFormula};
-  }
-
-  //NOTE: The only syntax I accept for coefficient multiplication is realNumber * affineFormula.
-  //I could probably do something fancier but I think that this is fine.
-  const splitIndex = indexOfDepthZeroSubstring({
-    selector: 'last' as const,
-    formula: trimmedFormula,
-    depths: findDepths({formula: trimmedFormula}).depths,
-    substring: " * ",
-  });
-  if (splitIndex >= 0) {
-    const coefficient = trimmedFormula.slice(0, splitIndex).trim();
-    const validCoefficient = nonNegativeReal({candidate: coefficient});
-    const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-      = parseAffineFormula({formula: trimmedFormula.slice(splitIndex + 3), substitutions: substitutions});
-    return {
-      substitutedFormula: coefficient + " * " + rightSubstitutedFormula,
-      validFormula: validCoefficient && rightValidFormula,
-    };
-  }
-
-  const possibleProbabilityUnwrap = attemptProbabilityUnwrap({trimmedFormula: trimmedFormula});
-  if (possibleProbabilityUnwrap) {
-    const {substitutedFormula, validFormula} = parseLogicalFormula({acceptsImplies: false})(
-      {formula: possibleProbabilityUnwrap, substitutions: substitutions});
-    return {substitutedFormula: "P( "+substitutedFormula+" )", validFormula: validFormula};
-  }
-
-  if (nonNegativeReal({candidate: trimmedFormula})) {
-    return {substitutedFormula: trimmedFormula, validFormula: true};
-  }
-
-  return {substitutedFormula: trimmedFormula, validFormula: false};
+  return null;
 }
 
 export function parseFormula({formula,substitutions}: ParserInput): ParserOutput {
