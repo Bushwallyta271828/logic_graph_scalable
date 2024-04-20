@@ -292,7 +292,20 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
       rightHandSide.slice(1).trim() : rightHandSide;
     const attemptRightHandSideMagnitude = nonNegativeReal(rightHandSideSignless);
     if (attemptRightHandSideMagnitude) {
-      //TODO
+      const leftHandSide = equalsFragments[0].trim();
+      if (leftHandSide.startsWith("P")) {
+        const leftNoP = leftHandSide.slice(1).trim();
+        const { depths: leftNoPDepths } = findDepths({formula: leftNoP});
+        const probUnwrap = attemptUnwrap({trimmedFormula: leftNoP, depths: leftNoPDepths});
+        if (probUnwrap) {
+          const { depths: probUnwrapDepths } = findDepths({formula: probUnwrap});
+          const conditionalFragments = splitOnAllDepthZeroSubstrings(
+            {formula: probUnwrap, depths: probUnwrapDepths, substring: " | "});
+          if (conditionalFragments.length === 2) {
+            //TODO
+          } else if (conditionalFragments.length >= 3) {return null;}
+        }
+      }
     }
 
     //Now let's parse as an affine equation.
