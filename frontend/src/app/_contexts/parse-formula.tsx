@@ -235,7 +235,7 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   const isNegated = outerWithoutStar.startsWith("-");
   const magnitudeOrEmpty =
     isNegated ? outerWithoutStar.slice(1).trim() : outerWithoutStar;
-  const attemptMagnitude = nonNegativeReal(magnitudeOrEmpty);
+  const attemptMagnitude = signlessReal(magnitudeOrEmpty);
   if (!attemptMagnitude && magnitudeOrEmpty !== "") {return null;}
   //Note that !attemptMagnitude now implies magnitudeOrEmpty === "".
   const coefficient = (attemptMagnitude ? attemptMagnitude : 1) * (isNegated ? -1 : 1);
