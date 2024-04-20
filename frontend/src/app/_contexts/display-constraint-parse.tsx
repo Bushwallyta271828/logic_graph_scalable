@@ -11,10 +11,23 @@ import {
 
 export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
   {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}) {
+  switch (parse.parseType) {
+    case 'LogicalFormulaWithoutImpliesOr':
+    case 'LogicalFormulaWithoutImpliesAnd':
+    case 'LogicalFormulaWithoutImpliesNot':
+    default: throw new Error('Unrecognized parseType');
+  }
 }
 
 export function displayAffineExpression({parse, substitutions}:
   {parse: AffineExpression, substitutions: {[claimID: string]: string}}) {
+  switch (parse.parseType) {
+    case 'AffineExpressionAddition': 
+    case 'AffineExpressionMultiplication':
+    case 'AffineExpressionProbability':
+    case 'AffineExpressionConstant':
+    default: throw new Error('Unrecognized parseType');
+  }
 }
 
 export function displayConstraintParse({parse, substitutions}: 
@@ -27,5 +40,6 @@ export function displayConstraintParse({parse, substitutions}:
     case 'ClaimID': 
     case 'ConditionalProbabilityAssignment':
     case 'AffineEquation':
+    default: throw new Error('Unrecognized parseType');
   }
 }
