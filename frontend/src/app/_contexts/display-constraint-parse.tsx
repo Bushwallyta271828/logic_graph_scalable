@@ -23,7 +23,36 @@ function displayClaim({claimID, substitutions}:
   return "["+claimID+": "+substitutions[claimID]+"]";
 }
 
-export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
+function displayLogicalFormula({parse, substitutions}:
+  {parse: LogicalFormula, substitutions: {[claimID: string]: string}}) {
+  //TODO: Make correct!
+  switch (parse.parseType) {
+    case 'LogicalFormulaWithoutImpliesOr':
+      const subDisplays = parse.children.map((child) =>
+        displayLogicalFormulaWithoutImplies(
+          {parse: child, substitutions: substitutions}));
+      return subDisplays.join(' or ');
+    case 'LogicalFormulaWithoutImpliesAnd':
+      const subDisplays = parse.children.map((child) => maybeWrap({
+        wrap: (child.parseType === 'LogicalFormulaWithoutImpliesOr'),
+        text: displayLogicalFormulaWithoutImplies(
+          {parse: child, substitutions: substitutions}),
+      }));
+      return subDisplays.join(' and ');
+    case 'LogicalFormulaWithoutImpliesNot':
+      return "not " + maybeWrap({
+        wrap: ['LogicalFormulaWithoutImpliesOr', 'LogicalFormulaWithoutImpliesAnd']
+          .includes(parse.child.parseType),
+        text: displayLogicalFormulaWithoutImplies(
+          {parse: parse.child, substitutions: substitutions}),
+      });
+    case 'ClaimID':
+      return displayClaim({claimID: parse.claimID, substitutions: substitutions});
+    default: throw new Error('Unrecognized parseType');
+  }
+}
+
+function displayLogicalFormulaWithoutImplies({parse, substitutions}:
   {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}) {
   switch (parse.parseType) {
     case 'LogicalFormulaWithoutImpliesOr':
@@ -94,27 +123,25 @@ export function displayAffineExpression({parse, substitutions}:
 
 export function displayConstraintParse({parse, substitutions}: 
   {parse: ConstraintParse, substitutions: {[claimID: string]: string}}) {
-  switch (parse.parseType) {
-    case 'LogicalFormulaImplies':
-    case 'LogicalFormulaOr':
-    case 'LogicalFormulaAnd':
-    case 'LogicalFormulaNot':
-    case 'ClaimID': 
-      return displayClaim({claimID: parse.claimID, substitutions: substitutions});
-
-    case 'ConditionalProbabilityAssignment':
-      const leftDisplay = displayLogicalFormulaWithoutImplies(
-        {parse: parse.conditionalLeftFormula, substitutions: substitutions});
-      const rightDisplay = displayLogicalFormulaWithoutImplies(
-        {parse: parse.conditionalRightFormula, substitutions: substitutions});
-      return "P( "+leftDisplay+" | "+rightDisplay+" ) = "+parse.probability.toString();
-
-    case 'AffineEquation':
-      const leftDisplay = displayAffineExpression(
-        {parse: parse.left, substitutions: substitutions});
-      const rightDisplay = displayAffineExpression(
-        {parse: parse.right, substitutions: substitutions});
-      return leftDisplay + " = " + rightDisplay;
-    default: throw new Error('Unrecognized parseType');
-  }
+  if ([
+    'LogicalFormulaImplies',
+    'LogicalFormulaOr',
+    'LogicalFormulaAnd',
+    'LogicalFormulaNot',
+    'ClaimID',
+  ].includes(parse.parseType)) {
+    return displayLogicalFormula({parse: parse, substitutions: substitutions});
+  } else if (parse.parseType === 'ConditionalProbabilityAssignment') {
+    const leftDisplay = displayLogicalFormulaWithoutImplies(
+      {parse: parse.conditionalLeftFormula, substitutions: substitutions});
+    const rightDisplay = displayLogicalFormulaWithoutImplies(
+      {parse: parse.conditionalRightFormula, substitutions: substitutions});
+    return "P( "+leftDisplay+" | "+rightDisplay+" ) = "+parse.probability.toString();
+  } else if (parse.parseType === 'AffineEquation') {
+    const leftDisplay = displayAffineExpression(
+      {parse: parse.left, substitutions: substitutions});
+    const rightDisplay = displayAffineExpression(
+      {parse: parse.right, substitutions: substitutions});
+    return leftDisplay + " = " + rightDisplay;
+  } else {throw new Error('Unrecognized parseType');}
 }
