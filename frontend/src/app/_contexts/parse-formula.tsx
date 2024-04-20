@@ -14,14 +14,18 @@ type ParserInput = {
   claimIDs: Set<string>;
 };
 
-function nonNegativeReal({candidate}: {candidate: string}) : number | null {
-  //Tries to parse candidate as a non-negative real number, returns null if impossible.
+function signlessReal({candidate}: {candidate: string}) : number | null {
+  //Tries to parse candidate as a signless real number, returns null if impossible.
+  //(The only difference between signless and non-negative is that "-0" has a sign.)
   if (/^(0|[1-9]\d*)(\.\d+)?$/.test(candidate)) {return Number(candidate);}
   else {return null;}
 }
 
 function probabilityValue({candidate}: {candidate: string}) : number | null {
-  //TODO (remember to include "-0"!)
+  //Tries to parse candidate as a real number in [0, 1], returns null if impossible.
+  if (/^(-0(?:\.0+)?|0(?:\.\d+)?|1(?:\.0+)?)$/.test(candidate))
+    {return Number(candidate);}
+  else {return null;}
 }
 
 function findDepths({formula}: {formula: string}) {
