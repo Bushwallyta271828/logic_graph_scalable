@@ -242,12 +242,11 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
     {trimmedFormula: allAdditionFormula.slice(openParenthesisIndex).trim(), depths: additionDepths});
   if (!rightUnwrap) {return null;}
   const outer = allAdditionFormula.slice(0, openParenthesisIndex).trim();
-  //TODO: there are bugs where index accessing might be looking at empty string!
-  const isProbability = (outer[outer.length - 1] === "P");
+  const isProbability = outer.endsWith("P");
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
-  const outerWithoutStar = (outerWithoutP[outerWithoutP.length-1] === "*") ?
+  const outerWithoutStar = outerWithoutP.endsWith("*") ?
     outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
-  const isNegated = (outerWithoutStar[0] === "-");
+  const isNegated = outerWithoutStar.startsWith("-");
   const magnitudeOrEmpty =
     isNegated ? outerWithoutStar.slice(1).trim() : outerWithoutStar;
   const attemptMagnitude = nonNegativeReal(magnitudeOrEmpty);
