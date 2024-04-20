@@ -18,7 +18,7 @@ function maybeWrap({wrap, text}: {wrap: boolean, text: string}) {
 function displayClaim({claimID, substitutions}:
   {claimID: string, substitutions: {[claimID: string]: string}}) {
   //This function attempts to perform a substitution.
-  if (!substitutions.has(claimID)) {throw new Error("Unrecognized claim ID");}
+  if (!substitutions.hasOwnProperty(claimID)) {throw new Error("Unrecognized claim ID");}
   return "["+claimID+": "+substitutions[claimID]+"]";
 }
 
