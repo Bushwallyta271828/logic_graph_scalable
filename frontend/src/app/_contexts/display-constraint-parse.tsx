@@ -24,108 +24,102 @@ function displayClaim({claimID, substitutions}:
 
 function displayLogicalFormula({parse, substitutions}:
   {parse: LogicalFormula, substitutions: {[claimID: string]: string}}) {
-  switch (parse.parseType) {
-    case 'LogicalFormulaImplies':
-      const left = maybeWrap({
-        wrap: parse.left.parseType === 'LogicalFormulaImplies',
-        text: displayLogicalFormula({parse: parse.left, substitutions: substitutions}),
-      });
-      const right = maybeWrap({
-        wrap: parse.right.parseType === 'LogicalFormulaImplies',
-        text: displayLogicalFormula({parse: parse.right, substitutions: substitutions}),
-      });
-      return left + " implies " + right;
-    case 'LogicalFormulaOr':
-      const subDisplays = parse.children.map((child) => maybeWrap({
-        wrap: child.parseType === 'LogicalFormulaImplies',
-        text: displayLogicalFormula({parse: child, substitutions: substitutions}),
-      }));
-      return subDisplays.join(" or ");
-    case 'LogicalFormulaAnd':
-      const subDisplays = parse.children.map((child) => maybeWrap({
-        wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr'].includes(child.parseType),
-        text: displayLogicalFormula({parse: child, substitutions: substitutions}),
-      }));
-      return subDisplays.join(" and ");
-    case 'LogicalFormulaNot':
-      return "not " + maybeWrap({
-        wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr', 'LogicalFormulaAnd']
-          .includes(parse.child.parseType),
-        text: displayLogicalFormula({parse: parse.child, substitutions: substitutions}),
-      });
-    case 'ClaimID':
-      return displayClaim({claimID: parse.claimID, substitutions: substitutions});
-    default: throw new Error('Unrecognized parseType');
-  }
+  if (parse.parseType === 'LogicalFormulaImplies') {
+    const left = maybeWrap({
+      wrap: parse.left.parseType === 'LogicalFormulaImplies',
+      text: displayLogicalFormula({parse: parse.left, substitutions: substitutions}),
+    });
+    const right = maybeWrap({
+      wrap: parse.right.parseType === 'LogicalFormulaImplies',
+      text: displayLogicalFormula({parse: parse.right, substitutions: substitutions}),
+    });
+    return left + " implies " + right;
+  } else if (parse.parseType === 'LogicalFormulaOr') {
+    const subDisplays = parse.children.map((child) => maybeWrap({
+      wrap: child.parseType === 'LogicalFormulaImplies',
+      text: displayLogicalFormula({parse: child, substitutions: substitutions}),
+    }));
+    return subDisplays.join(" or ");
+  } else if (parse.parseType === 'LogicalFormulaAnd') {
+    const subDisplays = parse.children.map((child) => maybeWrap({
+      wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr'].includes(child.parseType),
+      text: displayLogicalFormula({parse: child, substitutions: substitutions}),
+    }));
+    return subDisplays.join(" and ");
+  } else if (parse.parseType === 'LogicalFormulaNot') {
+    return "not " + maybeWrap({
+      wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr', 'LogicalFormulaAnd']
+        .includes(parse.child.parseType),
+      text: displayLogicalFormula({parse: parse.child, substitutions: substitutions}),
+    });
+  else if (parse.parseType === 'ClaimID') {
+    return displayClaim({claimID: parse.claimID, substitutions: substitutions});
+  } else {throw new Error('Unrecognized parseType');}
 }
 
 function displayLogicalFormulaWithoutImplies({parse, substitutions}:
   {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}) {
-  switch (parse.parseType) {
-    case 'LogicalFormulaWithoutImpliesOr':
-      const subDisplays = parse.children.map((child) =>
-        displayLogicalFormulaWithoutImplies(
-          {parse: child, substitutions: substitutions}));
-      return subDisplays.join(' or ');
-    case 'LogicalFormulaWithoutImpliesAnd':
-      const subDisplays = parse.children.map((child) => maybeWrap({
-        wrap: (child.parseType === 'LogicalFormulaWithoutImpliesOr'),
-        text: displayLogicalFormulaWithoutImplies(
-          {parse: child, substitutions: substitutions}),
-      }));
-      return subDisplays.join(' and ');
-    case 'LogicalFormulaWithoutImpliesNot':
-      return "not " + maybeWrap({
-        wrap: ['LogicalFormulaWithoutImpliesOr', 'LogicalFormulaWithoutImpliesAnd']
-          .includes(parse.child.parseType),
-        text: displayLogicalFormulaWithoutImplies(
-          {parse: parse.child, substitutions: substitutions}),
-      });
-    case 'ClaimID':
-      return displayClaim({claimID: parse.claimID, substitutions: substitutions});
-    default: throw new Error('Unrecognized parseType');
-  }
+  if (parse.parseType === 'LogicalFormulaWithoutImpliesOr') {
+    const subDisplays = parse.children.map((child) =>
+      displayLogicalFormulaWithoutImplies(
+        {parse: child, substitutions: substitutions}));
+    return subDisplays.join(' or ');
+  } else if (parse.parseType === 'LogicalFormulaWithoutImpliesAnd') {
+    const subDisplays = parse.children.map((child) => maybeWrap({
+      wrap: (child.parseType === 'LogicalFormulaWithoutImpliesOr'),
+      text: displayLogicalFormulaWithoutImplies(
+        {parse: child, substitutions: substitutions}),
+    }));
+    return subDisplays.join(' and ');
+  } else if (parse.parseType === 'LogicalFormulaWithoutImpliesNot') {
+    return "not " + maybeWrap({
+      wrap: ['LogicalFormulaWithoutImpliesOr', 'LogicalFormulaWithoutImpliesAnd']
+        .includes(parse.child.parseType),
+      text: displayLogicalFormulaWithoutImplies(
+        {parse: parse.child, substitutions: substitutions}),
+    });
+  } else if (parse.parseType === 'ClaimID') {
+    return displayClaim({claimID: parse.claimID, substitutions: substitutions});
+  } else {throw new Error('Unrecognized parseType');}
 }
 
 export function displayAffineExpression({parse, substitutions}:
   {parse: AffineExpression, substitutions: {[claimID: string]: string}}) {
-  switch (parse.parseType) {
-    case 'AffineExpressionAddition':
-      const subDisplays = parse.children.map((child) => 
-        displayAffineExpression({parse: child, substitutions: substitutions}));
-      if (subDisplays.length === 0) {throw new Error("no children");}
-      let display = subDisplays[0];
-      for (let i = 1; i < subDisplays.length; i++) {
-        const trimmedSubDisplay = subDisplays[i].trim(); //Trimming probably not needed
-        if (trimmedSubDisplay.startsWith('-')) {
-          display += " - " + trimmedSubDisplay.slice(1);
-        } else {
-          display += " + " + trimmedSubDisplay;
-        }
-      }
-      return display;
-    case 'AffineExpressionMultiplication':
-      const childDisplay = displayAffineExpression(
-        {parse: parse.child, substitutions: substitutions});
-      const wrap = ['AffineExpressionAddition',
-        'AffineExpressionMultiplication', //to handle signs
-        'AffineExpressionConstant', //to handle signs
-      ].includes(parse.child.parseType);
-      const maybeWrapped = maybeWrap({wrap: wrap, text: childDisplay});
-      if (parse.coefficient === 1) {
-        return maybeWrapped;
-      } else if (parse.coefficient === -1) {
-        return "-" + maybeWrapped;
+  if (parse.parseType === 'AffineExpressionAddition') {
+    const subDisplays = parse.children.map((child) => 
+      displayAffineExpression({parse: child, substitutions: substitutions}));
+    if (subDisplays.length === 0) {throw new Error("no children");}
+    let display = subDisplays[0];
+    for (let i = 1; i < subDisplays.length; i++) {
+      const trimmedSubDisplay = subDisplays[i].trim(); //Trimming probably not needed
+      if (trimmedSubDisplay.startsWith('-')) {
+        display += " - " + trimmedSubDisplay.slice(1);
       } else {
-        return parse.coefficient.toString() + "*" + maybeWrapped;
+        display += " + " + trimmedSubDisplay;
       }
-    case 'AffineExpressionProbability':
-      return "P( " + displayLogicalFormulaWithoutImplies(
-        {parse: parse.child, substitutions: substitutions}) + " )";
-    case 'AffineExpressionConstant':
-      return parse.constant.toString();
-    default: throw new Error('Unrecognized parseType');
-  }
+    }
+    return display;
+  } else if (parse.parseType === 'AffineExpressionMultiplication') {
+    const childDisplay = displayAffineExpression(
+      {parse: parse.child, substitutions: substitutions});
+    const wrap = ['AffineExpressionAddition',
+      'AffineExpressionMultiplication', //to handle signs
+      'AffineExpressionConstant', //to handle signs
+    ].includes(parse.child.parseType);
+    const maybeWrapped = maybeWrap({wrap: wrap, text: childDisplay});
+    if (parse.coefficient === 1) {
+      return maybeWrapped;
+    } else if (parse.coefficient === -1) {
+      return "-" + maybeWrapped;
+    } else {
+      return parse.coefficient.toString() + "*" + maybeWrapped;
+    }
+  } else if (parse.parseType === 'AffineExpressionProbability') {
+    return "P( " + displayLogicalFormulaWithoutImplies(
+      {parse: parse.child, substitutions: substitutions}) + " )";
+  } else if (parse.parseType === 'AffineExpressionConstant') {
+    return parse.constant.toString();
+  } else {throw new Error('Unrecognized parseType');}
 }
 
 export function displayConstraintParse({parse, substitutions}: 
