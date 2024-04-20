@@ -302,7 +302,18 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
           const conditionalFragments = splitOnAllDepthZeroSubstrings(
             {formula: probUnwrap, depths: probUnwrapDepths, substring: " | "});
           if (conditionalFragments.length === 2) {
-            //TODO
+            const left = parseLogicalFormulaWithoutImplies(
+              {formula: conditionalFragments[0], claimIDs: claimIDs});
+            const right = parseLogicalFormulaWithoutImplies(
+              {formula: conditionalFragments[1], claimIDs: claimIDs});
+            if (left && right) {
+              return {
+                parseType: 'ConditionalProbabilityAssignment' as const,
+                conditionalLeftFormula: left,
+                conditionalRightFormula: right,
+                value: attemptRightHandSideMagnitude * (rightHandSideNegation ? -1 : 1),
+              } as FormulaParse;
+            } else {return null;}
           } else if (conditionalFragments.length >= 3) {return null;}
         }
       }
