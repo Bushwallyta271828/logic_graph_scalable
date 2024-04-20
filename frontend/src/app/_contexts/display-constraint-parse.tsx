@@ -12,13 +12,14 @@ import {
 //TODO: only show parentheses when order of operations demands it!
 
 function maybeWrap({wrap, text}: {wrap: boolean, text: string}) {
-  //Potentially wraps text in a pair of parentheses,
+  //This function potentially wraps text in a pair of parentheses,
   //depending on the value of wrap.
   if (wrap) {return "( "+text+" )";} else {return text;}
 }
 
 function displayClaim({claimID, substitutions}:
   {claimID: string, substitutions: {[claimID: string]: string}}) {
+  //This function attempts to perform a substitution.
   if (!substitutions.has(claimID)) {throw new Error("Unrecognized claim ID");}
   return "["+claimID+": "+substitutions[claimID]+"]";
 }
@@ -27,19 +28,29 @@ function displayLogicalFormula({parse, substitutions}:
   {parse: LogicalFormula, substitutions: {[claimID: string]: string}}) {
   //TODO: Make correct!
   switch (parse.parseType) {
-    case 'LogicalFormulaWithoutImpliesOr':
+    case 'LogicalFormulaImplies':
+      const left = maybeWrap({
+        wrap: parse.left.parseType === 'LogicalFormulaImplies',
+        text: displayLogicalFormula({parse: parse.left, substitutions: substitutions}),
+      });
+      const right = maybeWrap({
+        wrap: parse.right.parseType === 'LogicalFormulaImplies',
+        text: displayLogicalFormula({parse: parse.right, substitutions: substitutions}),
+      });
+      return left + " implies " + right;
+    case 'LogicalFormulaOr':
       const subDisplays = parse.children.map((child) =>
         displayLogicalFormulaWithoutImplies(
           {parse: child, substitutions: substitutions}));
       return subDisplays.join(' or ');
-    case 'LogicalFormulaWithoutImpliesAnd':
+    case 'LogicalFormulaAnd':
       const subDisplays = parse.children.map((child) => maybeWrap({
         wrap: (child.parseType === 'LogicalFormulaWithoutImpliesOr'),
         text: displayLogicalFormulaWithoutImplies(
           {parse: child, substitutions: substitutions}),
       }));
       return subDisplays.join(' and ');
-    case 'LogicalFormulaWithoutImpliesNot':
+    case 'LogicalFormulaNot':
       return "not " + maybeWrap({
         wrap: ['LogicalFormulaWithoutImpliesOr', 'LogicalFormulaWithoutImpliesAnd']
           .includes(parse.child.parseType),
