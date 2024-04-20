@@ -26,6 +26,7 @@ export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
           {parse: child, substitutions: substitutions})+" )");
       return subDisplays.join(' and ');
     case 'LogicalFormulaWithoutImpliesNot':
+    case 'ClaimID': 
       
     default: throw new Error('Unrecognized parseType');
   }
