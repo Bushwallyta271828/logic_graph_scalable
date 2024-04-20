@@ -46,7 +46,12 @@ function logicalFormulaWithoutImpliesDependencies({parse}:
 }
 
 function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<string> {
-  
+  if (parse.parseType === 'AffineExpressionAddition') {
+  } else if (['AffineExpressionMultiplication', 'AffineExpressionProbability']
+    .includes(parse.parseType)) {
+  } else if (parseType === 'AffineExpressionConstant') {
+    return new Set([]);
+  } else {throw new Error("Unrecognized parseType");}
 }
 
 export function immediateConstraintDependencies({parse}: {parse: ConstraintParse}): Set<string> {
