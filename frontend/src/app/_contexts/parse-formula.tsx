@@ -27,6 +27,11 @@ function probabilityValue({candidate}: {candidate: string}) : number | null {
   else {return null;}
 }
 
+function isAlphanumeric({candidate}: {candidate: string}) : boolean {
+  //Used for determining if a string is a valid Claim ID.
+  return /^[a-z0-9]+$/i.test(candidate);
+}
+
 function findDepths({formula}: {formula: string}) {
   //Computes how many layers of parentheses each
   //character is contained within, as well as whether
@@ -86,7 +91,7 @@ function parseLogicalFormula({formula, claimIDs}: ParserInput): LogicalFormula |
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseLogicalFormula({formula: unwrap, claimIDs: claimIDs});}
 
-  if (claimIDs.has(trimmedFormula))
+  if (isAlphanumeric(trimmedFormula))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
 
   const impliesFragments = splitOnAllDepthZeroSubstrings(
@@ -147,7 +152,7 @@ function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseLogicalFormulaWithoutImplies({formula: unwrap, claimIDs: claimIDs});}
 
-  if (claimIDs.has(trimmedFormula))
+  if (isAlphanumeric(trimmedFormula))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
 
   const orFragments = splitOnAllDepthZeroSubstrings(
