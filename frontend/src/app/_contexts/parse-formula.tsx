@@ -6,7 +6,7 @@ import {
   ConditionalProbabilityAssignment,
   AffineExpression,
   AffineEquation,
-  FormulaParse
+  ConstraintParse
 } from '@/app/_types/parse-types.tsx'; 
 
 type ParserInput = {
@@ -257,7 +257,7 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   }
 }
 
-export function parseFormula({formula,substitutions}: ParserInput): FormulaParse | null {
+export function parseFormula({formula,substitutions}: ParserInput): ConstraintParse | null {
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
@@ -269,7 +269,7 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
   if (equalsFragments.length === 1) {
     const logicalAttempt = parseLogicalFormula(
       {formula:spacedFormula, claimIDs: claimIDs});
-    return logicalAttempt ? (logicalAttempt as FormulaParse) : null;
+    return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
     const rightHandSide = equalsFragments[1].trim();
@@ -298,7 +298,7 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
                 conditionalLeftFormula: left,
                 conditionalRightFormula: right,
                 value: attemptRightHandSideMagnitude * (rightHandSideNegation ? -1 : 1),
-              } as FormulaParse;
+              } as ConstraintParse;
             } else {return null;}
           } else if (conditionalFragments.length >= 3) {return null;}
         }
@@ -309,7 +309,7 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
     const left = parseAffineEquation({formula: equalsFragments[0], claimIDs: claimIDs});
     const right = parseAffineEquation({formula: equalsFragments[1], claimIDs: claimIDs});
     if (left && right) {
-      return { parseType: 'AffineEquation' as const, left: left, right: right } as FormulaParse;
+      return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
     } else {return null;}
   } else {
     return null;
