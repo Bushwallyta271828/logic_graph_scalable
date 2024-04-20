@@ -124,13 +124,13 @@ export function displayAffineExpression({parse, substitutions}:
 
 export function displayConstraintParse({parse, substitutions}: 
   {parse: ConstraintParse, substitutions: {[claimID: string]: string}}): string {
-  if ([
-    'LogicalFormulaImplies',
-    'LogicalFormulaOr',
-    'LogicalFormulaAnd',
-    'LogicalFormulaNot',
-    'ClaimID',
-  ].includes(parse.parseType)) {
+  if (
+    (parse.parseType === 'LogicalFormulaImplies') ||
+    (parse.parseType === 'LogicalFormulaOr') ||
+    (parse.parseType === 'LogicalFormulaAnd') ||
+    (parse.parseType === 'LogicalFormulaNot') ||
+    (parse.parseType === 'ClaimID')
+  ) {
     return displayLogicalFormula({parse: parse, substitutions: substitutions});
   }
   else if (parse.parseType === 'ConditionalProbabilityAssignment') {

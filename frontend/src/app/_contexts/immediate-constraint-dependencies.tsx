@@ -62,13 +62,13 @@ function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<s
 }
 
 export function immediateConstraintDependencies({parse}: {parse: ConstraintParse}): Set<string> {
-  if ([
-    'LogicalFormulaImplies',
-    'LogicalFormulaOr',
-    'LogicalFormulaAnd',
-    'LogicalFormulaNot',
-    'ClaimID',
-  ].includes(parse.parseType)) {
+  if (
+    (parse.parseType === 'LogicalFormulaImplies') ||
+    (parse.parseType === 'LogicalFormulaOr') ||
+    (parse.parseType === 'LogicalFormulaAnd') ||
+    (parse.parseType === 'LogicalFormulaNot') ||
+    (parse.parseType === 'ClaimID')
+  ) {
     return logicalFormulaDependencies({parse: parse});
   } else if (parse.parseType === 'ConditionalProbabilityAssignment') {
     const left = logicalFormulaWithoutImpliesDependencies({parse: parse.conditionalLeftFormula});
