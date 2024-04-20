@@ -36,7 +36,7 @@ export type AffineEquation = {
   right: AffineExpression;
 };
 
-export type FormulaParse =
+export type ConstraintParse =
   | LogicalFormula
   | ConditionalProbabilityAssignment
   | AffineEquation;
