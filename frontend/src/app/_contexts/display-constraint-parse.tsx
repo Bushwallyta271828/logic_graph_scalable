@@ -131,17 +131,20 @@ export function displayConstraintParse({parse, substitutions}:
     'ClaimID',
   ].includes(parse.parseType)) {
     return displayLogicalFormula({parse: parse, substitutions: substitutions});
-  } else if (parse.parseType === 'ConditionalProbabilityAssignment') {
+  }
+  else if (parse.parseType === 'ConditionalProbabilityAssignment') {
     const leftDisplay = displayLogicalFormulaWithoutImplies(
       {parse: parse.conditionalLeftFormula, substitutions: substitutions});
     const rightDisplay = displayLogicalFormulaWithoutImplies(
       {parse: parse.conditionalRightFormula, substitutions: substitutions});
     return "P( "+leftDisplay+" | "+rightDisplay+" ) = "+parse.probability.toString();
-  } else if (parse.parseType === 'AffineEquation') {
+  }
+  else if (parse.parseType === 'AffineEquation') {
     const leftDisplay = displayAffineExpression(
       {parse: parse.left, substitutions: substitutions});
     const rightDisplay = displayAffineExpression(
       {parse: parse.right, substitutions: substitutions});
     return leftDisplay + " = " + rightDisplay;
-  } else {throw new Error('Unrecognized parseType');}
+  }
+  else {throw new Error('Unrecognized parseType');}
 }
