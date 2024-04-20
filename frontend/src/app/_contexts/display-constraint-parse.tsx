@@ -9,12 +9,24 @@ import {
   ConstraintParse
 } from '@/app/_types/parse-types.tsx'; 
 
+//TODO: only show parentheses when order of operations demands it!
+
 export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
   {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}) {
   switch (parse.parseType) {
     case 'LogicalFormulaWithoutImpliesOr':
+      //Since or has the lowest precedence, we can safely omit parentheses.
+      const subDisplays = parse.children.map((child) =>
+        displayLogicalFormulaWithoutImplies(
+          {parse: child, substitutions: substitutions}));
+      return subDisplays.join(' or ');
     case 'LogicalFormulaWithoutImpliesAnd':
+      const subDisplays = parse.children.map((child) =>
+        "( "+displayLogicalFormulaWithoutImplies(
+          {parse: child, substitutions: substitutions})+" )");
+      return subDisplays.join(' and ');
     case 'LogicalFormulaWithoutImpliesNot':
+      
     default: throw new Error('Unrecognized parseType');
   }
 }
