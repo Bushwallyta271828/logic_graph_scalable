@@ -5,6 +5,8 @@
 import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
 import { parseFormula } from '@/app/_contexts/parse-formula';
+import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
+import { dislayConstraintParse } from '@/app/_contexts/display-constraint-parse';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
@@ -24,8 +26,8 @@ type ClaimsContext = {
   getInterpretedText: (claim: Claim) => string;
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 
-  getDependencies: (claim: Claim) => Set<string>;
-  deleteClaim: (claim: Claim) => void;
+  //getDependencies: (claim: Claim) => Set<string>;
+  //deleteClaim: (claim: Claim) => void;
 }
 
 //A valid claimID must be non-empty, alphanumeric, and not one of the following:
@@ -138,9 +140,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       case 'text':
         return claim.text;
       case 'definition':
-        return `This definition is valid: ${claim.text}`;
+        return `\"${claim.text}\" is a valid definition.`;
       case 'zeroth-order':
-        return `We can assert: ${claim.text}`;
+        return claim.text;
       default:
         throw new Error('Unrecognized claimType');
     }
@@ -149,12 +151,21 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
       {return {displayText: getInterpretedText(claim), validText: true};}
+    const parse = parseFormula({formula: claim.text});
+    if (!parse) {return {displayText: "Please enter a valid constraint.", validText: false};}
+    const immediateDependencies = immediateConstraintDependencies({parse: parse});
     let substitutions: { [claimID: string]: string} = {};
-    for (let claimID in claimLookup) {
-      substitutions[claimID] = "[" + claimID + ": " + getInterpretedText(claimLookup[claimID]) + "]";
+    for (let claimID of immediateDependencies) {
+      if (!(claimID in claimLookup)) {
+        return {
+          displayText: "This constraint seems to be referencing an unrecognized claim ID.",
+          validText: false,
+        };
+      }
+      substitutions[claimID] = getInterpretedText(claimLookup[claimID]);
     }
-    const {substitutedFormula, validFormula} = parseFormula({formula: claim.text, substitutions: substitutions});
-    return {displayText: `We can assert: ${substitutedFormula}`, validText: validFormula};
+    const displayText = displayConstraintParse({parse: parse, substitutions: substitutions});
+    return {displayText: displayText, validText: true};
   }
 
 
