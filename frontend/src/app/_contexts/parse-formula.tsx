@@ -286,12 +286,29 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
     return logicalAttempt ? (logicalAttempt as FormulaParse) : null;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
-    //TODO: fix bug where [0] index might not exist if empty!
-    rightHandSideNegation = (equalsFragments[1].trim()[0] === "-");
-    const rightHandSideMagnitude = 
+    const rightHandSide = equalsFragments[1].trim();
+    const rightHandSideNegation = rightHandSide.startsWith("-");
+    const rightHandSideSignless = rightHandSideNegation ?
+      rightHandSide.slice(1).trim() : rightHandSide;
+    const attemptRightHandSideMagnitude = nonNegativeReal(rightHandSideSignless);
+    if (attemptRightHandSideMagnitude) {
+      //TODO
+    }
+
+    //Now let's parse as an affine equation.
+    const left = parseAffineEquation({formula: equalsFragments[0], claimIDs: claimIDs});
+    const right = parseAffineEquation({formula: equalsFragments[1], claimIDs: claimIDs});
+    if (left && right) {
+      return { parseType: 'AffineEquation' as const, left: left, right: right } as FormulaParse;
+    } else {return null;}
   } else {
     return null;
   }
+
+
+
+
+
 
   } else {
     //First, we test to see if we have a conditional probability.
