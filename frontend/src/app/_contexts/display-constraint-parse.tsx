@@ -9,21 +9,21 @@ import {
   ConstraintParse
 } from '@/app/_types/parse-types'; 
 
-function maybeWrap({wrap, text}: {wrap: boolean, text: string}) {
+function maybeWrap({wrap, text}: {wrap: boolean, text: string}): string {
   //This function potentially wraps text in a pair of parentheses,
   //depending on the value of wrap.
   if (wrap) {return "( "+text+" )";} else {return text;}
 }
 
 function displayClaim({claimID, substitutions}:
-  {claimID: string, substitutions: {[claimID: string]: string}}) {
+  {claimID: string, substitutions: {[claimID: string]: string}}): string {
   //This function attempts to perform a substitution.
   if (!substitutions.hasOwnProperty(claimID)) {throw new Error("Unrecognized claim ID");}
   return "["+claimID+": "+substitutions[claimID]+"]";
 }
 
 function displayLogicalFormula({parse, substitutions}:
-  {parse: LogicalFormula, substitutions: {[claimID: string]: string}}) {
+  {parse: LogicalFormula, substitutions: {[claimID: string]: string}}): string {
   if (parse.parseType === 'LogicalFormulaImplies') {
     const left = maybeWrap({
       wrap: parse.left.parseType === 'LogicalFormulaImplies',
@@ -58,7 +58,7 @@ function displayLogicalFormula({parse, substitutions}:
 }
 
 function displayLogicalFormulaWithoutImplies({parse, substitutions}:
-  {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}) {
+  {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}): string {
   if (parse.parseType === 'LogicalFormulaWithoutImpliesOr') {
     const subDisplays = parse.children.map((child) =>
       displayLogicalFormulaWithoutImplies(
@@ -84,7 +84,7 @@ function displayLogicalFormulaWithoutImplies({parse, substitutions}:
 }
 
 export function displayAffineExpression({parse, substitutions}:
-  {parse: AffineExpression, substitutions: {[claimID: string]: string}}) {
+  {parse: AffineExpression, substitutions: {[claimID: string]: string}}): string {
   if (parse.parseType === 'AffineExpressionAddition') {
     const subDisplays = parse.children.map((child) => 
       displayAffineExpression({parse: child, substitutions: substitutions}));
@@ -123,7 +123,7 @@ export function displayAffineExpression({parse, substitutions}:
 }
 
 export function displayConstraintParse({parse, substitutions}: 
-  {parse: ConstraintParse, substitutions: {[claimID: string]: string}}) {
+  {parse: ConstraintParse, substitutions: {[claimID: string]: string}}): string {
   if ([
     'LogicalFormulaImplies',
     'LogicalFormulaOr',
