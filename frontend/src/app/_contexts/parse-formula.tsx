@@ -242,6 +242,7 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
     {trimmedFormula: allAdditionFormula.slice(openParenthesisIndex).trim(), depths: additionDepths});
   if (!rightUnwrap) {return null;}
   const outer = allAdditionFormula.slice(0, openParenthesisIndex).trim();
+  //TODO: there are bugs where index accessing might be looking at empty string!
   const isProbability = (outer[outer.length - 1] === "P");
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
   const outerWithoutStar = (outerWithoutP[outerWithoutP.length-1] === "*") ?
@@ -285,13 +286,14 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
       {formula:spacedFormula, claimIDs: claimIDs});
     return logicalAttempt ? (logicalAttempt as FormulaParse) : null;
   } else if (equalsFragments.length === 2) {
+    //First, let's attempt to parse as a conditional probability.
+    //TODO: fix bug where [0] index might not exist if empty!
+    rightHandSideNegation = (equalsFragments[1].trim()[0] === "-");
+    const rightHandSideMagnitude = 
   } else {
     return null;
   }
 
-  if (equalsIndex < 0) {
-    return parseLogicalFormula({acceptsImplies: true})
-      ({formula:spacedFormula, substitutions:substitutions});
   } else {
     //First, we test to see if we have a conditional probability.
     const rightHandSide = spacedFormula.slice(equalsIndex + 3).trim();
