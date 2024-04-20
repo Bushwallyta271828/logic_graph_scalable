@@ -62,4 +62,21 @@ function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<s
 }
 
 export function immediateConstraintDependencies({parse}: {parse: ConstraintParse}): Set<string> {
+  if ([
+    'LogicalFormulaImplies',
+    'LogicalFormulaOr',
+    'LogicalFormulaAnd',
+    'LogicalFormulaNot',
+    'ClaimID',
+  ].includes(parse.parseType)) {
+    return logicalFormulaDependencies({parse: parse});
+  } else if (parse.parseType === 'ConditionalProbabilityAssignment') {
+    const left = logicalFormulaWithoutImpliesDependencies({parse: parse.conditionalLeftFormula});
+    const right = logicalFormulaWithoutImpliesDependencies({parse: parse.conditionalRightFormula});
+    return new Set([...left, ...right]);
+  } else if (parse.parseType === 'AffineEquation') {
+    const left = affineExpressionDependencies({parse: parse.left});
+    const right = affineExpressionDependencies({parse: parse.right});
+    return new Set([...left, ...right]);
+  } else {throw new Error("Unrecognized parseType");}
 }
