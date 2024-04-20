@@ -29,7 +29,7 @@ type ClaimsContext = {
 }
 
 //A valid claimID must be non-empty, alphanumeric, and not one of the following:
-const forbiddenClaimIDs = new Set(['and', 'or', 'not', 'implies', 'P']);
+const forbiddenClaimIDs = new Set(['implies', 'or', 'and', 'not']);
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
 
