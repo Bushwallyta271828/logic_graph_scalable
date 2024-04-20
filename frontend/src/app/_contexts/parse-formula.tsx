@@ -217,6 +217,8 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
     {formula: trimmedFormula, depths: depths, substring: ' - '});
   const allAdditionFormula = ' + - '.join(minusFragments);
 
+  //TODO BUG: depths matches trimmedFormula, not allAdditionFormula
+
   const plusFragments = splitOnAllDepthZeroSubstrings(
     {formula: allAdditionFormula, depths: depths, substring: " + "});
   if (plusFragments.length >= 2) {
@@ -228,11 +230,15 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
     return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
   }
 
-  if (signSeparatedReal({candidate: allAdditionFormula})) {
-    return { parseType: 'AffineExpressionConstant', constant: };
+  const attemptConstant = signSeparatedReal({candidate: allAdditionFormula});
+  if (attemptConstant) {
+    return { parseType: 'AffineExpressionConstant', constant: attemptConstant };
   }
 
-
+  const openParenthesisIndex = allAdditionFormula.indexOf("(");
+  if (openParenthesisIndex < 0) {return null;}
+  const rightUnwrap = attemptUnwrap({trimmedFormula: allAdditionFormula.slice(openParenthesisIndex), depths: 
+  if (depths.slice(openParenthesisIndex+1, depths.length-1).every((depth)
 
 
 
