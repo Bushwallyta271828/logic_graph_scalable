@@ -328,48 +328,4 @@ export function parseFormula({formula,substitutions}: ParserInput): FormulaParse
   } else {
     return null;
   }
-
-
-
-
-
-
-  } else {
-    //First, we test to see if we have a conditional probability.
-    const rightHandSide = spacedFormula.slice(equalsIndex + 3).trim();
-    if (nonNegativeReal({candidate: rightHandSide})) {
-      const leftHandSide = spacedFormula.slice(0, equalsIndex).trim();
-      const possibleProbabilityUnwrap = attemptProbabilityUnwrap({trimmedFormula: leftHandSide});
-      if (possibleProbabilityUnwrap) { 
-        const conditionalSplit = attemptInfixSplit({
-          formula: possibleProbabilityUnwrap,
-          substitutions: substitutions,
-          selector: 'last' as const,
-          divider: " | ",
-          subParser: parseLogicalFormula({acceptsImplies: false}),
-        });
-        if (conditionalSplit) {
-          return {
-            substitutedFormula: "P( "+conditionalSplit.substitutedFormula+" ) = "+rightHandSide, 
-            validFormula: conditionalSplit.validFormula,
-          };
-        }
-      }
-    }
-    
-    //If we can't parse as a conditional, we parse as an affine formula.
-    const equalsSplit = attemptInfixSplit({
-      formula: spacedFormula,
-      substitutions: substitutions,
-      selector: 'last' as const,
-      divider: " = ",
-      subParser: parseAffineFormula,
-    });
-    if (equalsSplit) {return equalsSplit;}
-    else {
-      throw new Error(
-        "' = ' identified in indexOfDepthZeroSubstring but not attemptInfixSplit"
-      );
-    }
-  }
 }
