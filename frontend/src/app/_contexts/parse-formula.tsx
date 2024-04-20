@@ -11,7 +11,6 @@ import {
 
 type ParserInput = {
   formula: string;
-  claimIDs: Set<string>;
 };
 
 function signlessReal({candidate}: {candidate: string}) : number | null {
@@ -257,11 +256,11 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   }
 }
 
-export function parseFormula({formula,substitutions}: ParserInput): ConstraintParse | null {
+export function parseFormula({formula}: ParserInput): ConstraintParse | null {
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
-  if (!matching) {return {substitutedFormula: spacedFormula, validFormula: false};}
+  if (!matching) {return null;}
 
   const equalsFragments = splitOnAllDepthZeroSubstrings(
     {formula: spacedFormula, depths: depths, substring: " = "});
