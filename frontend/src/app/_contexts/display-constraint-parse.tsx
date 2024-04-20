@@ -52,7 +52,7 @@ function displayLogicalFormula({parse, substitutions}:
         .includes(parse.child.parseType),
       text: displayLogicalFormula({parse: parse.child, substitutions: substitutions}),
     });
-  else if (parse.parseType === 'ClaimID') {
+  } else if (parse.parseType === 'ClaimID') {
     return displayClaim({claimID: parse.claimID, substitutions: substitutions});
   } else {throw new Error('Unrecognized parseType');}
 }
