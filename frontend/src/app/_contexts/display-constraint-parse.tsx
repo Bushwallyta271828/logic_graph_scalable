@@ -11,19 +11,26 @@ import {
 
 //TODO: only show parentheses when order of operations demands it!
 
+function maybeWrap({wrap, text}: {wrap: boolean, text: string}) {
+  //Potentially wraps text in a pair of parentheses,
+  //depending on the value of wrap.
+  if (wrap) {return "( "+text+" )";} else {return text;}
+}
+
 export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
   {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}) {
   switch (parse.parseType) {
     case 'LogicalFormulaWithoutImpliesOr':
-      //Since or has the lowest precedence, we can safely omit parentheses.
       const subDisplays = parse.children.map((child) =>
         displayLogicalFormulaWithoutImplies(
           {parse: child, substitutions: substitutions}));
       return subDisplays.join(' or ');
     case 'LogicalFormulaWithoutImpliesAnd':
-      const subDisplays = parse.children.map((child) =>
-        "( "+displayLogicalFormulaWithoutImplies(
-          {parse: child, substitutions: substitutions})+" )");
+      const subDisplays = parse.children.map((child) => maybeWrap({
+        wrap: (child.parseType === 'LogicalFormulaWithoutImpliesOr'),
+        text: displayLogicalFormulaWithoutImplies(
+          {parse: child, substitutions: substitutions}),
+        });
       return subDisplays.join(' and ');
     case 'LogicalFormulaWithoutImpliesNot':
     case 'ClaimID': 
