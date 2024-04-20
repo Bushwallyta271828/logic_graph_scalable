@@ -271,13 +271,23 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   }
 }
 
-export function parseFormula({formula,substitutions}: ParserInput): ParserOutput {
+export function parseFormula({formula,substitutions}: ParserInput): FormulaParse | null {
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
   if (!matching) {return {substitutedFormula: spacedFormula, validFormula: false};}
-  const equalsIndex = indexOfDepthZeroSubstring(
-    {selector: 'last' as const, formula: spacedFormula, depths: depths, substring: " = "});
+
+  const equalsFragments = splitOnAllDepthZeroSubstrings(
+    {formula: spacedFormula, depths: depths, substring: " = "});
+
+  if (equalsFragments.length === 1) {
+    const logicalAttempt = parseLogicalFormula(
+      {formula:spacedFormula, claimIDs: claimIDs});
+    return logicalAttempt ? (logicalAttempt as FormulaParse) : null;
+  } else if (equalsFragments.length === 2) {
+  } else {
+    return null;
+  }
 
   if (equalsIndex < 0) {
     return parseLogicalFormula({acceptsImplies: true})
