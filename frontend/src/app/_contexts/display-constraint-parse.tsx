@@ -50,7 +50,19 @@ export function displayAffineExpression({parse, substitutions}:
   {parse: AffineExpression, substitutions: {[claimID: string]: string}}) {
   switch (parse.parseType) {
     case 'AffineExpressionAddition':
-      //TODO
+      const subDisplays = parse.children.map((child) => 
+        displayAffineExpression({parse: child, substitutions: substitutions}));
+      if (subDisplays.length === 0) {throw new Error("no children");}
+      let display = subDisplays[0];
+      for (let i = 1; i < subDisplays.length; i++) {
+        const trimmedSubDisplay = subDisplays[i].trim(); //Trimming probably not needed
+        if (trimmedSubDisplay.startsWith('-')) {
+          display += " - " + trimmedSubDisplay.slice(1);
+        } else {
+          display += " + " + trimmedSubDisplay;
+        }
+      }
+      return display;
     case 'AffineExpressionMultiplication':
       const childDisplay = displayAffineExpression(
         {parse: parse.child, substitutions: substitutions});
