@@ -38,6 +38,7 @@ export function NewClaimButton() {
       claimType: 'zeroth-order' as const,
       text: '',
       dependencies: new Set<string>(),
+      parse: null,
     });
   }
   

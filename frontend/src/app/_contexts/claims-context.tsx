@@ -6,7 +6,7 @@ import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
 import { parseFormula } from '@/app/_contexts/parse-formula';
 import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
-import { dislayConstraintParse } from '@/app/_contexts/display-constraint-parse';
+import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse';
 
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
