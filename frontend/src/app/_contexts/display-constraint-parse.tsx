@@ -70,8 +70,14 @@ export function displayAffineExpression({parse, substitutions}:
         'AffineExpressionMultiplication', //to handle signs
         'AffineExpressionConstant', //to handle signs
       ].includes(parse.child.parseType);
-      return parse.coefficient.toString() + "*" +
-        maybeWrap({wrap: wrap, text: childDisplay});
+      const maybeWrapped = maybeWrap({wrap: wrap, text: childDisplay});
+      if (parse.coefficient === 1) {
+        return maybeWrapped;
+      } else if (parse.coefficient === -1) {
+        return "-" + maybeWrapped;
+      } else {
+        return parse.coefficient.toString() + "*" + maybeWrapped;
+      }
     case 'AffineExpressionProbability':
       return "P( " + displayLogicalFormulaWithoutImplies(
         {parse: parse.child, substitutions: substitutions}) + " )";
