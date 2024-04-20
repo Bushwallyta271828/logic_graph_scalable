@@ -9,8 +9,6 @@ import {
   ConstraintParse
 } from '@/app/_types/parse-types.tsx'; 
 
-//TODO: only show parentheses when order of operations demands it!
-
 function maybeWrap({wrap, text}: {wrap: boolean, text: string}) {
   //This function potentially wraps text in a pair of parentheses,
   //depending on the value of wrap.
@@ -26,7 +24,6 @@ function displayClaim({claimID, substitutions}:
 
 function displayLogicalFormula({parse, substitutions}:
   {parse: LogicalFormula, substitutions: {[claimID: string]: string}}) {
-  //TODO: Make correct!
   switch (parse.parseType) {
     case 'LogicalFormulaImplies':
       const left = maybeWrap({
