@@ -253,10 +253,23 @@ function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression 
   if (!attemptMagnitude && magnitudeOrEmpty !== "") {return null;}
   //Note that !attemptMagnitude now implies magnitudeOrEmpty === "".
   const coefficient = (attemptMagnitude ? attemptMagnitude : 1) * (isNegated ? -1 : 1);
-  const child = isProbability ? //TODO
+  if (isProbability) {
+    const probabilityChild = parseLogicalFormulaWithoutImplies(
+      {formula: rightUnwrap, claimIDs: claimIDs});
+    if (!probabilityChild) {return null;}
+    const child = { parseType: 'AffineExpressionProbability' as const,
+      child: probabilityChild } as AffineExpression;
+    if (coefficient === 1) {return child;}
+    else {
+      return { parseType: 'AffineExpressionMultiplication' as const,
+        coefficient: coefficient, child: child } as AffineExpression;
+    }
+  } else {
+  }
   
   
-
+function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
+function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression | null {
 
 
 
