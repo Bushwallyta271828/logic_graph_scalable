@@ -180,23 +180,6 @@ function parseLogicalFormulaWithoutImplies({formula, claimIDs}: ParserInput):
   return null;
 }
 
-//function attemptProbabilityUnwrap({trimmedFormula}: {trimmedFormula: string}) {
-//  //This function will attempt to parse trimmedFormula as the form
-//  //"P  (child)" where child never breaks out of the parentheses.
-//  //If such a parsing is possible, it returns the child string.
-//  //If not, it returns null.
-//  if (trimmedFormula[0] === "P")
-//  {
-//    const afterP = trimmedFormula.slice(1).trim();
-//    const { depths: afterPDepths } = findDepths({formula: afterP});
-//    if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
-//      afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
-//      return afterP.slice(1, afterP.length-1);
-//    }
-//  }
-//  return null;
-//}
-
 function parseAffineFormula({formula, claimIDs}: ParserInput): AffineExpression | null {
   //This function will attempt to parse formula as an AffineExpression.
   //It will return null if formula cannot be parsed.
