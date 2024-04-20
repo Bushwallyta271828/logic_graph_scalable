@@ -17,6 +17,12 @@ function maybeWrap({wrap, text}: {wrap: boolean, text: string}) {
   if (wrap) {return "( "+text+" )";} else {return text;}
 }
 
+function displayClaim({claimID, substitutions}:
+  {claimID: string, substitutions: {[claimID: string]: string}}) {
+  if (!substitutions.has(claimID)) {throw new Error("Unrecognized claim ID");}
+  return "["+claimID+": "+substitutions[claimID]+"]";
+}
+
 export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
   {parse: LogicalFormulaWithoutImplies, substitutions: {[claimID: string]: string}}) {
   switch (parse.parseType) {
@@ -40,8 +46,7 @@ export function displayLogicalFormulaWithoutImplies({parse, substitutions}:
           {parse: parse.child, substitutions: substitutions}),
       });
     case 'ClaimID':
-      if (!substitutions.has(claim.value)) {throw new Error("Unrecognized claim ID");}
-      return "["+claim.value+": "+substitutions[claim.value]+"]";
+      return displayClaim({claimID: parse.claimID, substitutions: substitutions});
     default: throw new Error('Unrecognized parseType');
   }
 }
@@ -95,8 +100,21 @@ export function displayConstraintParse({parse, substitutions}:
     case 'LogicalFormulaAnd':
     case 'LogicalFormulaNot':
     case 'ClaimID': 
+      return displayClaim({claimID: parse.claimID, substitutions: substitutions});
+
     case 'ConditionalProbabilityAssignment':
+      const leftDisplay = displayLogicalFormulaWithoutImplies(
+        {parse: parse.conditionalLeftFormula, substitutions: substitutions});
+      const rightDisplay = displayLogicalFormulaWithoutImplies(
+        {parse: parse.conditionalRightFormula, substitutions: substitutions});
+      return "P( " + leftDisplay + " | " + rightDisplay + " ) = " + parse.value.toString();
+
     case 'AffineEquation':
+      const leftDisplay = displayAffineExpression(
+        {parse: parse.left, substitutions: substitutions});
+      const rightDisplay = displayAffineExpression(
+        {parse: parse.right, substitutions: substitutions});
+      return leftDisplay + " = " + rightDisplay;
     default: throw new Error('Unrecognized parseType');
   }
 }

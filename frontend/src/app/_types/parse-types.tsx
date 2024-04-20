@@ -3,7 +3,7 @@ export type LogicalFormula =
   | { parseType: 'LogicalFormulaOr'; children: LogicalFormula[]; }
   | { parseType: 'LogicalFormulaAnd'; children: LogicalFormula[]; }
   | { parseType: 'LogicalFormulaNot'; child: LogicalFormula; }
-  | { parseType: 'ClaimID'; value: string; };
+  | { parseType: 'ClaimID'; claimID: string; };
 
 export type LogicalFormulaWithoutImplies =
   | {
@@ -15,13 +15,13 @@ export type LogicalFormulaWithoutImplies =
   } | { 
     parseType: 'LogicalFormulaWithoutImpliesNot';
     child: LogicalFormulaWithoutImplies;
-  } | { parseType: 'ClaimID'; value: string; };
+  } | { parseType: 'ClaimID'; claimID: string; };
 
 export type ConditionalProbabilityAssignment = {
   parseType: 'ConditionalProbabilityAssignment';
   conditionalLeftFormula: LogicalFormulaWithoutImplies;
   conditionalRightFormula: LogicalFormulaWithoutImplies;
-  value: number;
+  probability: number;
 };
 
 export type AffineExpression = 
