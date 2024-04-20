@@ -11,8 +11,8 @@ import {
 
 function logicalFormulaDependencies({parse}: {parse: LogicalFormula}): Set<string> {
   if (parse.parseType === 'LogicalFormulaImplies') {
-    const left = logicalFormulaDependencies({parse: parse.left});
-    const right = logicalFormulaDependencies({parse: parse.right});
+    const left = Array.from(logicalFormulaDependencies({parse: parse.left}));
+    const right = Array.from(logicalFormulaDependencies({parse: parse.right}));
     return new Set([...left, ...right]);
   } else if (['LogicalFormulaOr', 'LogicalFormulaAnd'].includes(parse.parseType)) {
     let dependenciesArray: string[] = [];
@@ -71,12 +71,14 @@ export function immediateConstraintDependencies({parse}: {parse: ConstraintParse
   ) {
     return logicalFormulaDependencies({parse: parse});
   } else if (parse.parseType === 'ConditionalProbabilityAssignment') {
-    const left = logicalFormulaWithoutImpliesDependencies({parse: parse.conditionalLeftFormula});
-    const right = logicalFormulaWithoutImpliesDependencies({parse: parse.conditionalRightFormula});
+    const left = Array.from(logicalFormulaWithoutImpliesDependencies(
+      {parse: parse.conditionalLeftFormula}));
+    const right = Array.from(logicalFormulaWithoutImpliesDependencies(
+      {parse: parse.conditionalRightFormula}));
     return new Set([...left, ...right]);
   } else if (parse.parseType === 'AffineEquation') {
-    const left = affineExpressionDependencies({parse: parse.left});
-    const right = affineExpressionDependencies({parse: parse.right});
+    const left = Array.from(affineExpressionDependencies({parse: parse.left}));
+    const right = Array.from(affineExpressionDependencies({parse: parse.right}));
     return new Set([...left, ...right]);
   } else {throw new Error("Unrecognized parseType");}
 }
