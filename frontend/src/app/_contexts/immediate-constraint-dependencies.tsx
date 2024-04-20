@@ -54,9 +54,10 @@ function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<s
         affineExpressionDependencies({parse: parse.children[i]})));
     }
     return new Set(dependenciesArray);
-  } else if (parse.parseType === 'AffineExpressionMultiplication'
-    || parse.parseType === 'AffineExpressionProbability') {
+  } else if (parse.parseType === 'AffineExpressionMultiplication') {
     return affineExpressionDependencies({parse: parse.child});
+  } else if (parse.parseType === 'AffineExpressionProbability') {
+    return logicalFormulaWithoutImpliesDependencies({parse: parse.child});
   } else if (parseType === 'AffineExpressionConstant') {
     return new Set([]);
   } else {throw new Error("Unrecognized parseType");}
