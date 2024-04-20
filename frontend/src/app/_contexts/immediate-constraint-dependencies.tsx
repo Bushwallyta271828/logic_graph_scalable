@@ -30,9 +30,23 @@ function logicalFormulaDependencies({parse}: {parse: LogicalFormula}): Set<strin
 
 function logicalFormulaWithoutImpliesDependencies({parse}:
   {parse: LogicalFormulaWithoutImplies}): Set<string> {
+  if (['LogicalFormulaWithoutImpliesOr', 'LogicalFormulaWithoutImpliesAnd']
+    .includes(parse.parseType)) {
+    let dependenciesArray: string[] = [];
+    for (let i = 0; i < parse.children.length; i++) {
+      dependenciesArray.concat(Array.from(
+        logicalFormulaWithoutImpliesDependencies({parse: parse.children[i]})));
+    }
+    return new Set(dependenciesArray);
+  } else if (parse.parseType === 'LogicalFormulaWithoutImpliesNot') {
+    return logicalFormulaWithoutImpliesDependencies({parse: parse.child});
+  } else if (parse.parseType === 'ClaimID') {
+    return new Set([parse.claimID,]);
+  } else {throw new Error("Unrecognized parseType");}
 }
 
 function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<string> {
+  
 }
 
 export function immediateConstraintDependencies({parse}: {parse: ConstraintParse}): Set<string> {
