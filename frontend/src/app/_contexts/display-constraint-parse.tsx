@@ -39,23 +39,22 @@ function displayLogicalFormula({parse, substitutions}:
       });
       return left + " implies " + right;
     case 'LogicalFormulaOr':
-      const subDisplays = parse.children.map((child) =>
-        displayLogicalFormulaWithoutImplies(
-          {parse: child, substitutions: substitutions}));
-      return subDisplays.join(' or ');
+      const subDisplays = parse.children.map((child) => maybeWrap({
+        wrap: child.parseType === 'LogicalFormulaImplies',
+        text: displayLogicalFormula({parse: child, substitutions: substitutions}),
+      }));
+      return subDisplays.join(" or ");
     case 'LogicalFormulaAnd':
       const subDisplays = parse.children.map((child) => maybeWrap({
-        wrap: (child.parseType === 'LogicalFormulaWithoutImpliesOr'),
-        text: displayLogicalFormulaWithoutImplies(
-          {parse: child, substitutions: substitutions}),
+        wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr'].includes(child.parseType),
+        text: displayLogicalFormula({parse: child, substitutions: substitutions}),
       }));
-      return subDisplays.join(' and ');
+      return subDisplays.join(" and ");
     case 'LogicalFormulaNot':
       return "not " + maybeWrap({
-        wrap: ['LogicalFormulaWithoutImpliesOr', 'LogicalFormulaWithoutImpliesAnd']
+        wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr', 'LogicalFormulaAnd']
           .includes(parse.child.parseType),
-        text: displayLogicalFormulaWithoutImplies(
-          {parse: parse.child, substitutions: substitutions}),
+        text: displayLogicalFormula({parse: parse.child, substitutions: substitutions}),
       });
     case 'ClaimID':
       return displayClaim({claimID: parse.claimID, substitutions: substitutions});
