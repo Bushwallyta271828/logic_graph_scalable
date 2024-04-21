@@ -87,7 +87,7 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | nul
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseLogicalFormula({formula: unwrap});}
 
-  if (isAlphanumeric(trimmedFormula))
+  if (isAlphanumeric({candidate: trimmedFormula}))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
 
   const impliesFragments = splitOnAllDepthZeroSubstrings(
@@ -147,7 +147,7 @@ function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap) {return parseLogicalFormulaWithoutImplies({formula: unwrap});}
 
-  if (isAlphanumeric(trimmedFormula))
+  if (isAlphanumeric({candidate: trimmedFormula}))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
 
   const orFragments = splitOnAllDepthZeroSubstrings(
@@ -273,7 +273,7 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     const rightHandSideNegation = rightHandSide.startsWith("-");
     const rightHandSideSignless = rightHandSideNegation ?
       rightHandSide.slice(1).trim() : rightHandSide;
-    const attemptRightHandSideMagnitude = probabilityValue(rightHandSideSignless);
+    const attemptRightHandSideMagnitude = probabilityValue({candidate: rightHandSideSignless});
     if (attemptRightHandSideMagnitude) {
       const leftHandSide = equalsFragments[0].trim();
       if (leftHandSide.startsWith("P")) {
