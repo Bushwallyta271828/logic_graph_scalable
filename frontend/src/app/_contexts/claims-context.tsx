@@ -163,7 +163,10 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
       if (updatedClaim.claimType === 'zeroth-order') {
         updatedClaim.parse = parseFormula({formula: newText});
-        updatedClaim.dependencies = immediateConstraintDependencies({parse: updatedClaim.parse});
+        updatedClaim.dependencies = 
+          (updatedClaim.parse !== null) ?
+          immediateConstraintDependencies({parse: updatedClaim.parse}) :
+          new Set<string>();
       }
       return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
