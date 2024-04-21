@@ -9,8 +9,6 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
   claimsToDelete: Claim[],
 }) {
-  //Assumes claimsToDelete doesn't have any duplicates --
-  //otherwise we could get duplicate keys!
   return (
     <Dialog
       open={dialogOpen}
@@ -24,8 +22,13 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
             By deleting this claim, you will also be deleting the following claims which depend on it:
           </p>
           <div className="p-2">
-            {claimsToDelete.map((claimToDelete) => 
-              (<p key={claimToDelete.claimID}>{claimToDelete.text}</p>))}
+            { claimsToDelete.slice(0, 10).map((claimToDelete, index) => (
+                <p key={index}>
+                  {claimToDelete.claimID}: {claimToDelete.text}
+                </p>
+              ))
+            }
+            {(claimsToDelete.length > 10) ? <p key={10}>...</p> : null}
           </div>
           <p>Are you sure you want to proceed?</p>
         </Dialog.Panel>
