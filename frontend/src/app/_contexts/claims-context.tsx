@@ -11,8 +11,8 @@ import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
   claimIDs: string[]; //used for storing the order in which the claims are displayed
-  setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
-  setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
+  //I don't return the setClaimLookup or setClaimIDs functions so that
+  //other parts of the code can't break the data invariants.
   
   newClaimID: () => string;
   
@@ -174,8 +174,6 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       value={{
         claimLookup,
         claimIDs,
-        setClaimLookup,
-        setClaimIDs,
 
         newClaimID,
 
