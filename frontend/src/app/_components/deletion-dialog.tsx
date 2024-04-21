@@ -16,10 +16,10 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
       className="relative z-50">
-      <div className="fixed inset-0 bg-black/30 backdrop-blur" aria-hidden="true" />
+      <div className="fixed inset-0 backdrop-brightness-50 backdrop-blur" aria-hidden="true" />
       <div className="fixed inset-0 flex w-screen items-center justify-center">
-        <Dialog.Panel className="mx-auto max-w-sm rounded-md bg-bright-neutral text-white p-2">
-          <Dialog.Title>Deleting Additional Claims</Dialog.Title>
+        <Dialog.Panel className="mx-auto max-w-sm rounded-md outline-white bg-dark-neutral text-white p-2">
+          <Dialog.Title className="text-center text-lg font-bold">Deleting Additional Claims</Dialog.Title>
           <p>
             By deleting this claim, you will also be deleting the following claims which depend on it:
           </p>
