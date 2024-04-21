@@ -90,6 +90,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
       setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
     } else {const exhaustive: never = claimType;}
+    return claimID;
   };
 
   const moveClaim = ({startClaimID, endClaimID}:
