@@ -165,9 +165,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
       {return {displayText: getInterpretedText(claim), validText: true};}
-    const parse = parseFormula({formula: claim.text});
-    if (parse === null) {return {displayText: "Please enter a valid constraint.", validText: false};}
-    const referencedIDs = Array.from(immediateConstraintDependencies({parse: parse}));
+    if (claim.parse === null)
+      {return {displayText: "Please enter a valid constraint.", validText: false};}
+    const referencedIDs = Array.from(claim.dependencies);
     let substitutions: { [claimID: string]: string} = {};
     for (let i = 0; i < referencedIDs.length; i++) {
       if (!(referencedIDs[i] in claimLookup)) {
