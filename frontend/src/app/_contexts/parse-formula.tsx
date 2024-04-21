@@ -18,7 +18,7 @@ function signlessReal({candidate}: {candidate: string}) : number | null {
 
 function probabilityValue({candidate}: {candidate: string}) : number | null {
   //Tries to parse candidate as a real number in [0, 1], returns null if impossible.
-  if (/^(-?0(\.0+)?|1(\.0+)?|0\.\d+)$/.test(candidate))
+  if (/^((-\s*)?0(\.0+)?|1(\.0+)?|0\.\d+)$/.test(candidate))
     {return Number(candidate);}
   else {return null;}
 }
