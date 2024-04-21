@@ -73,12 +73,11 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       text: text,
     };
     if (claimType === 'text' || claimType === 'definition') {
-      claim['dependencies'] = new Set<string>();
-      claim['definitionClaimIDs'] = [] as string[];
+      claim.dependencies = new Set<string>();
+      claim.definitionClaimIDs: string[] = [];
     } else if (claimType === 'zeroth-order') { 
-      const parse = parseFormula({formula: text});
-      claim['parse'] = parse;
-      claim['dependencies'] = immediateConstraintDependencies({parse: parse});
+      claim.parse = parseFormula({formula: text});
+      claim.dependencies = immediateConstraintDependencies({parse: claim.parse});
     } else {const exhaustive: never = claimType;}
     setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim as Claim }));
     setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
