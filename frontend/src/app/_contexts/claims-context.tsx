@@ -121,8 +121,12 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
  
     let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
     if (deleteAttachment) {newDefinitionClaimIDs.splice(index, 1);}
-      else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
-    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
+    const updatedClaim = {
+      ...claim,
+      definitionClaimIDs: newDefinitionClaimIDs,
+      dependencies: Set(newDefinitionClaimIDs),
+    };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
 
