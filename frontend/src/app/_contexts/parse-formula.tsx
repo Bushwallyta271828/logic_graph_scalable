@@ -238,9 +238,9 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
   const outerWithoutStar = outerWithoutP.endsWith("*") ?
     outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
-  const attemptMagnitude = signlessReal({candidate: outerWithoutP});
-  if (!attemptMagnitude && outerWithoutP !== "") {return null;}
-  //Note that !attemptMagnitude now implies outerWithoutP === "".
+  const attemptMagnitude = signlessReal({candidate: outerWithoutStar});
+  if (!attemptMagnitude && outerWithoutStar !== "") {return null;}
+  //Note that !attemptMagnitude now implies outerWithoutStar === "".
   const coefficient = (attemptMagnitude ? attemptMagnitude : 1) * signFactor;
   let child: AffineExpression | null;
   if (isProbability) {
