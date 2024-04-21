@@ -154,6 +154,8 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     const parse = parseFormula({formula: claim.text});
     if (!parse) {return {displayText: "Please enter a valid constraint.", validText: false};}
     const referencedIDs = Array.from(immediateConstraintDependencies({parse: parse}));
+    console.log(referencedIDs);
+    console.log(parse);
     let substitutions: { [claimID: string]: string} = {};
     for (let i = 0; i < referencedIDs.length; i++) {
       if (!(referencedIDs[i] in claimLookup)) {

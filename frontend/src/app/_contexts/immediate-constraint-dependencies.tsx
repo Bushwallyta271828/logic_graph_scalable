@@ -16,9 +16,9 @@ function logicalFormulaDependencies({parse}: {parse: LogicalFormula}): Set<strin
     return new Set([...left, ...right]);
   } else if (parse.parseType === 'LogicalFormulaOr'
     || parse.parseType === 'LogicalFormulaAnd') {
-    let dependenciesArray: string[] = [];
+    const dependenciesArray: string[] = [];
     for (let i = 0; i < parse.children.length; i++) {
-      dependenciesArray.concat(Array.from(
+      dependenciesArray.push(...Array.from(
         logicalFormulaDependencies({parse: parse.children[i]})));
     }
     return new Set(dependenciesArray);
@@ -33,9 +33,9 @@ function logicalFormulaWithoutImpliesDependencies({parse}:
   {parse: LogicalFormulaWithoutImplies}): Set<string> {
   if (parse.parseType === 'LogicalFormulaWithoutImpliesOr'
     || parse.parseType === 'LogicalFormulaWithoutImpliesAnd') {
-    let dependenciesArray: string[] = [];
+    const dependenciesArray: string[] = [];
     for (let i = 0; i < parse.children.length; i++) {
-      dependenciesArray.concat(Array.from(
+      dependenciesArray.push(...Array.from(
         logicalFormulaWithoutImpliesDependencies({parse: parse.children[i]})));
     }
     return new Set(dependenciesArray);
@@ -48,9 +48,9 @@ function logicalFormulaWithoutImpliesDependencies({parse}:
 
 function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<string> {
   if (parse.parseType === 'AffineExpressionAddition') {
-    let dependenciesArray: string[] = [];
+    const dependenciesArray: string[] = [];
     for (let i = 0; i < parse.children.length; i++) {
-      dependenciesArray.concat(Array.from(
+      dependenciesArray.push(...Array.from(
         affineExpressionDependencies({parse: parse.children[i]})));
     }
     return new Set(dependenciesArray);
