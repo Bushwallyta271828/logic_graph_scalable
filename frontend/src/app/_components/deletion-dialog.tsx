@@ -2,26 +2,29 @@
 
 import { Dialog } from '@headlessui/react'
 
+
 export function DeletionDialog({dialogOpen, setDialogOpen}: {
   dialogOpen: boolean,
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   return (
-    <Dialog className="fixed inset-1/4 bg-medium-danger rounded-md text-white" open={dialogOpen} onClose={() => setDialogOpen(false)}>
-      <Dialog.Panel>
-        <Dialog.Title>Deactivate account</Dialog.Title>
-        <Dialog.Description>
-          This will permanently deactivate your account
-        </Dialog.Description>
+    <Dialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+      className="relative z-50"
+    >
+      {/* The backdrop, rendered as a fixed sibling to the panel container */}
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-        <p>
-          Are you sure you want to deactivate your account? All of your data
-          will be permanently removed. This action cannot be undone.
-        </p>
+      {/* Full-screen container to center the panel */}
+      <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+        {/* The actual dialog panel  */}
+        <Dialog.Panel className="mx-auto max-w-sm rounded bg-white">
+          <Dialog.Title>Complete your order</Dialog.Title>
 
-        <button onClick={() => setDialogOpen(false)}>Deactivate</button>
-        <button onClick={() => setDialogOpen(false)}>Cancel</button>
-      </Dialog.Panel>
+          {/* ... */}
+        </Dialog.Panel>
+      </div>
     </Dialog>
-  );
+  )
 }
