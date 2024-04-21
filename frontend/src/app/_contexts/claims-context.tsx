@@ -63,21 +63,33 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const addClaim = ({author, claimType, text}:
     {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string}) => {
     const claimID = newClaimID();
-    const claim = {
-      claimID: claimID,
-      author: author,
-      claimType: claimType,
-      text: text,
-    };
     if (claimType === 'text' || claimType === 'definition') {
-      claim.dependencies = new Set<string>();
-      claim.definitionClaimIDs: string[] = [];
-    } else if (claimType === 'zeroth-order') { 
-      claim.parse = parseFormula({formula: text});
-      claim.dependencies = immediateConstraintDependencies({parse: claim.parse});
+      const claim = {
+        claimID: claimID,
+        author: author,
+        claimType: claimType,
+        text: text,
+        dependencies: new Set<string>(),
+        definitionClaimIDs: [] as string[],
+      } as Claim;
+      setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
+      setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
+    } else if (claimType === 'zeroth-order') {
+      const parse = parseFormula({formula: text});
+      const claim = {
+        claimID: claimID,
+        author: author,
+        claimType: claimType,
+        text: text,
+        dependencies:
+          (parse !== null) ?
+          immediateConstraintDependencies({parse: parse}) :
+          new Set<string>(),
+        parse: parse,
+      } as Claim;
+      setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
+      setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
     } else {const exhaustive: never = claimType;}
-    setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim as Claim }));
-    setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
   };
 
   const moveClaim = ({startClaimID, endClaimID}:
