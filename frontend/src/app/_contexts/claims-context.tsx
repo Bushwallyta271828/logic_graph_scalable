@@ -99,7 +99,11 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
     const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
-    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    const updatedClaim = {
+      ...claim,
+      definitionClaimIDs: newDefinitionClaimIDs,
+      dependencies: Set(newDefinitionClaimIDs),
+    };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
   
