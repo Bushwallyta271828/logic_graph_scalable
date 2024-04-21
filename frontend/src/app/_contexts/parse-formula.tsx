@@ -200,7 +200,7 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
   //initial minus sign will be ignored.
   const minusFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: ' - '});
-  const allAdditionFormula = ' + - '.join(minusFragments);
+  const allAdditionFormula = minusFragments.join(' + - ');
   const { depths: additionDepths, matching: additionMatching } =
     findDepths({formula: allAdditionFormula});
   if (!additionMatching) {return null;} //should never fire
