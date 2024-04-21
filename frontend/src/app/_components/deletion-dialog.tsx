@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 
-export function deleteDialog() {
+export function DeletionDialog() {
   const [isOpen, setIsOpen] = useState(true);
 
   return (

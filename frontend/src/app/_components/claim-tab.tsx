@@ -3,7 +3,7 @@
 import { Menu } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
-import { deleteDialog } from '@/app/_components/delete-dialog';
+import { DeletionDialog } from '@/app/_components/deletion-dialog';
 
 
 export function ClaimTab({claim} : {claim: Claim}) {
