@@ -31,7 +31,7 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
             {(claimsToDelete.length > 8) ? <p key={8}>...</p> : null}
           </div>
           <p>Are you sure you wish to proceed?</p>
-          <div className="min-w-full flex-row justify-between">
+          <div className="container mx-auto flex justify-between items-center p-2">
             <button className="bg-medium-neutral hover:bg-light-neutral text-lg font-bold px-2 py-1 rounded-md">
               Cancel
             </button>
