@@ -51,10 +51,10 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       }
       attempts += 1;
     } while (
-      (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID(uniqueID))
+      (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID({candidate: uniqueID}))
       && (attempts < 100)
     );
-    if (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID(uniqueID)) {
+    if (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID({candidate: uniqueID})) {
       throw new Error("Unable to generate new claimID");
     }
     return uniqueID;
