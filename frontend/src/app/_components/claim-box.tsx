@@ -55,7 +55,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   const [validText, setValidText] = useState(getDisplayData(claim).validText);
 
   useEffect(() => {
-    if (editing && textRef.current) {
+    if (editing && textRef.current !== null) {
       textRef.current.focus();
     }
   }, [editing]);
@@ -98,7 +98,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
 export function ClaimBox({claimID} : {claimID: string}) {
   const { claimLookup } = useClaimsContext();
   const claim = claimLookup[claimID];
-  if (!claim) {
+  if (claim === null) {
     throw new Error("claimID not present in claimLookup");
   }
 
