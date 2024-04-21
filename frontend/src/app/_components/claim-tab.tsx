@@ -3,8 +3,10 @@
 import { Menu } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
+import { deleteDialog } from '@/app/_components/delete-dialog';
 
-function ClaimTab({claim} : {claim: Claim}) {
+
+export function ClaimTab({claim} : {claim: Claim}) {
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const { attachBlankDefinition } = useClaimsContext();
 

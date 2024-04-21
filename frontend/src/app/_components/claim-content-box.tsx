@@ -5,7 +5,7 @@ import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 
 
-function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
+export function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
   const [editing, setEditing] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
