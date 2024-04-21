@@ -222,8 +222,8 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
 
   const isNegated = allAdditionFormula.startsWith("-");
   const signFactor = isNegated ? -1 : 1;
-  const signless = isNegated ? allAdditionFormula.slice(1) : allAdditionFormula;
-  const signlessDepths = isNegated ? additionDepths.slice(1) : additionDepths;
+  const signless = isNegated ? allAdditionFormula.slice(1).trim() : allAdditionFormula;
+  const { depths: signlessDepths } = findDepths({formula: signless});
 
   const attemptConstant = signlessReal({candidate: signless});
   if (attemptConstant !== null) {
