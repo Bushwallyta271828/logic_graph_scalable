@@ -15,6 +15,7 @@ type ClaimsContext = {
   //other parts of the code can't break the data invariants.
   
   addClaim: ({author, claimType, text}: {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string}) => string;
+  //addClaim returns the claimID assigned to the new claim.
   //To add a claim with definitions, first add the claim without definitions and then
   //add the definitions individually by creating blank definitions and then editing them.
   //This way, definitionClaimIDs[] cannot get duplicates by accident.
