@@ -52,7 +52,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   const [editing, setEditing] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
   const { setClaimText, getDisplayData } = useClaimsContext();
-  const [validText, setValidText] = useState(getDisplayData(claim).validText);
+  const { validText, displayText } = getDisplayData(claim);
 
   useEffect(() => {
     if (editing && textRef.current !== null) {
@@ -63,7 +63,6 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
   const handleBlur = () => {
     setEditing(false);
     setClaimText({claimID: claim.claimID, newText: text});
-    setValidText(getDisplayData({...claim, text:text}).validText);
   }
 
   return (
@@ -78,7 +77,7 @@ function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions:
           {claim.text}
         </p>) :
         (<p className="w-full h-full p-2" onClick={() => setEditing(true)}>
-          {getDisplayData(claim).displayText}
+          {displayText}
         </p>)
       }
       {(!validText && editing) ?

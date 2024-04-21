@@ -7,7 +7,8 @@ import {
   AffineExpression,
   AffineEquation,
   ConstraintParse
-} from '@/app/_types/parse-types'; 
+} from '@/app/_types/parse-types';
+import { potentialClaimID } from '@/app/_types/claim-types';
 
 function signlessReal({candidate}: {candidate: string}) : number | null {
   //Tries to parse candidate as a signless real number, returns null if impossible.
@@ -25,11 +26,6 @@ function probabilityValue({candidate}: {candidate: string}) : number | null {
   if ((magnitudeValid && !isNegative) || isZero) {
     return Number(nonNegative);
   } else {return null;}
-}
-
-function isAlphanumeric({candidate}: {candidate: string}) : boolean {
-  //Used for determining if a string is a valid Claim ID.
-  return /^[a-z0-9]+$/i.test(candidate);
 }
 
 function findDepths({formula}: {formula: string}) {
@@ -97,7 +93,7 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | nul
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap !== null) {return parseLogicalFormula({formula: unwrap});}
 
-  if (isAlphanumeric({candidate: trimmedFormula}))
+  if (potentialClaimID({candidate: trimmedFormula}))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
 
   const impliesFragments = splitOnAllDepthZeroSubstrings(
@@ -157,7 +153,7 @@ function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap !== null) {return parseLogicalFormulaWithoutImplies({formula: unwrap});}
 
-  if (isAlphanumeric({candidate: trimmedFormula}))
+  if (potentialClaimID({candidate: trimmedFormula}))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
 
   const orFragments = splitOnAllDepthZeroSubstrings(

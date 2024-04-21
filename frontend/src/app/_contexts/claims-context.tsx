@@ -3,7 +3,7 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
+import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/_types/claim-types';
 import { parseFormula } from '@/app/_contexts/parse-formula';
 import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
 import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse';
@@ -11,12 +11,14 @@ import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse
 type ClaimsContext = {
   claimLookup: { [claimID: string]: Claim };
   claimIDs: string[]; //used for storing the order in which the claims are displayed
-  setClaimLookup: React.Dispatch<React.SetStateAction<{ [claimID: string]: Claim }>>;
-  setClaimIDs: React.Dispatch<React.SetStateAction<string[]>>;
+  //I don't return the setClaimLookup or setClaimIDs functions so that
+  //other parts of the code can't break the data invariants.
   
-  newClaimID: () => string;
-  
-  addClaim: (claim: Claim) => void;
+  addClaim: ({author, claimType, text}: {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string}) => string;
+  //addClaim returns the claimID assigned to the new claim.
+  //To add a claim with definitions, first add the claim without definitions and then
+  //add the definitions individually by creating blank definitions and then editing them.
+  //This way, definitionClaimIDs[] cannot get duplicates by accident.
   moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
   attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
   editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
@@ -30,9 +32,6 @@ type ClaimsContext = {
   //deleteClaim: (claim: Claim) => void;
 }
 
-//A valid claimID must be non-empty, alphanumeric, and not one of the following:
-const forbiddenClaimIDs = new Set(['implies', 'or', 'and', 'not']);
-
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
 
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
@@ -41,6 +40,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
 
   const newClaimID = () => {
+    //Helper function for addClaim
     const characters = 'abcdefghijklmnopqrstuvwxyz';
     let uniqueID;
     let attempts = 0;
@@ -51,23 +51,46 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       }
       attempts += 1;
     } while (
-      (claimLookup.hasOwnProperty(uniqueID) || forbiddenClaimIDs.has(uniqueID))
+      (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID({candidate: uniqueID}))
       && (attempts < 100)
     );
-    if (claimLookup.hasOwnProperty(uniqueID) || forbiddenClaimIDs.has(uniqueID)) {
+    if (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID({candidate: uniqueID})) {
       throw new Error("Unable to generate new claimID");
     }
     return uniqueID;
   };
 
-
-  const addClaim = (claim: Claim) => {
-    const claimID = claim.claimID;
-    if (claimLookup.hasOwnProperty(claimID) || forbiddenClaimIDs.has(claimID)) {
-      throw new Error("Invalid or already-in-use claimID");
-    }
-    setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
-    setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
+  const addClaim = ({author, claimType, text}:
+    {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string}) => {
+    const claimID = newClaimID();
+    if (claimType === 'text' || claimType === 'definition') {
+      const claim = {
+        claimID: claimID,
+        author: author,
+        claimType: claimType,
+        text: text,
+        dependencies: new Set<string>(),
+        definitionClaimIDs: [] as string[],
+      } as Claim;
+      setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
+      setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
+    } else if (claimType === 'zeroth-order') {
+      const parse = parseFormula({formula: text});
+      const claim = {
+        claimID: claimID,
+        author: author,
+        claimType: claimType,
+        text: text,
+        dependencies:
+          (parse !== null) ?
+          immediateConstraintDependencies({parse: parse}) :
+          new Set<string>(),
+        parse: parse,
+      } as Claim;
+      setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
+      setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
+    } else {const exhaustive: never = claimType;}
+    return claimID;
   };
 
   const moveClaim = ({startClaimID, endClaimID}:
@@ -86,7 +109,11 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
     const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
-    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    const updatedClaim = {
+      ...claim,
+      definitionClaimIDs: newDefinitionClaimIDs,
+      dependencies: new Set(newDefinitionClaimIDs),
+    };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
   
@@ -104,8 +131,12 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
  
     let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
     if (deleteAttachment) {newDefinitionClaimIDs.splice(index, 1);}
-      else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
-    const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+    else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
+    const updatedClaim = {
+      ...claim,
+      definitionClaimIDs: newDefinitionClaimIDs,
+      dependencies: new Set(newDefinitionClaimIDs),
+    };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
 
@@ -131,6 +162,13 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       if (!(claimID in prevClaimLookup))
         {throw new Error("Editing unrecognized claim");}
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
+      if (updatedClaim.claimType === 'zeroth-order') {
+        updatedClaim.parse = parseFormula({formula: newText});
+        updatedClaim.dependencies = 
+          (updatedClaim.parse !== null) ?
+          immediateConstraintDependencies({parse: updatedClaim.parse}) :
+          new Set<string>();
+      }
       return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
   }
@@ -151,9 +189,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
       {return {displayText: getInterpretedText(claim), validText: true};}
-    const parse = parseFormula({formula: claim.text});
-    if (parse === null) {return {displayText: "Please enter a valid constraint.", validText: false};}
-    const referencedIDs = Array.from(immediateConstraintDependencies({parse: parse}));
+    if (claim.parse === null)
+      {return {displayText: "Please enter a valid constraint.", validText: false};}
+    const referencedIDs = Array.from(claim.dependencies);
     let substitutions: { [claimID: string]: string} = {};
     for (let i = 0; i < referencedIDs.length; i++) {
       if (!(referencedIDs[i] in claimLookup)) {
@@ -164,7 +202,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       }
       substitutions[referencedIDs[i]] = getInterpretedText(claimLookup[referencedIDs[i]]);
     }
-    const displayText = displayConstraintParse({parse: parse, substitutions: substitutions});
+    const displayText = displayConstraintParse({parse: claim.parse, substitutions: substitutions});
     return {displayText: displayText, validText: true};
   }
 
@@ -174,10 +212,6 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       value={{
         claimLookup,
         claimIDs,
-        setClaimLookup,
-        setClaimIDs,
-
-        newClaimID,
 
         addClaim,
         moveClaim,
