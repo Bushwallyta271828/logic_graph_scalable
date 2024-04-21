@@ -56,14 +56,16 @@ function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
   //Be careful if substring shares prefixes and suffixes!
   const fragments: string[] = [];
   let fragmentStart = 0;
-  let fragmentEnd = formula.indexOf(substring);
-  while (fragmentEnd >= 0) {
-    const substringEnd = fragmentEnd + substring.length;
+  let nextFragmentSize = formula.indexOf(substring);
+  while (nextFragmentSize >= 0) {
+    const fragmentEnd = fragmentStart + nextFragmentSize;
     if (depths[fragmentEnd] === 0) {
       fragments.push(formula.slice(fragmentStart, fragmentEnd));
-      fragmentStart = substringEnd;
+      fragmentStart = fragmentEnd + substring.length;
+      nextFragmentSize = formula.slice(fragmentStart).indexOf(substring);
+    } else {
+      nextFragmentSize = formula.slice(fragmentEnd + substring.length).indexOf(substring);
     }
-    fragmentEnd = substringEnd + formula.slice(substringEnd).indexOf(substring);
   }
   fragments.push(formula.slice(fragmentStart));
   return fragments;
