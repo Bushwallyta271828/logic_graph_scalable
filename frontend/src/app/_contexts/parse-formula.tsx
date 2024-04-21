@@ -273,12 +273,8 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
-    const rightHandSide = equalsFragments[1].trim();
-    const rightHandSideNegation = rightHandSide.startsWith("-");
-    const rightHandSideSignless = rightHandSideNegation ?
-      rightHandSide.slice(1).trim() : rightHandSide;
-    const attemptRightHandSideMagnitude = probabilityValue({candidate: rightHandSideSignless});
-    if (attemptRightHandSideMagnitude) {
+    const rightHandSideConstant = probabilityValue({candidate: equalsFragments[1].trim()});
+    if (rightHandSideConstant) {
       const leftHandSide = equalsFragments[0].trim();
       if (leftHandSide.startsWith("P")) {
         const leftNoP = leftHandSide.slice(1).trim();
@@ -296,7 +292,7 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
                 parseType: 'ConditionalProbabilityAssignment' as const,
                 conditionalLeftFormula: left,
                 conditionalRightFormula: right,
-                probability: attemptRightHandSideMagnitude*(rightHandSideNegation ? -1 : 1),
+                probability: rightHandSideConstant,
               } as ConstraintParse;
             } else {return null;}
           } else if (conditionalFragments.length >= 3) {return null;}
