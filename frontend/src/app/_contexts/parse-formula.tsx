@@ -18,9 +18,13 @@ function signlessReal({candidate}: {candidate: string}) : number | null {
 
 function probabilityValue({candidate}: {candidate: string}) : number | null {
   //Tries to parse candidate as a real number in [0, 1], returns null if impossible.
-  if (/^((-\s*)?0(\.0+)?|1(\.0+)?|0\.\d+)$/.test(candidate))
-    {return Number(candidate);}
-  else {return null;}
+  const isNegative = candidate.startsWith("-");
+  const nonNegative = isNegative ? candidate.slice(1).trim() : candidate;
+  const isZero = /^0(\.0+)?$/.test(nonNegative);
+  const magnitudeValid = /^1(\.0+)?|0(\.\d+)?$/.test(nonNegative);
+  if ((magnitudeValid && !isNegative) || isZero) {
+    return Number(nonNegative);
+  } else {return null;}
 }
 
 function isAlphanumeric({candidate}: {candidate: string}) : boolean {
@@ -273,7 +277,7 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
-    console.log(equalsFragment[1].trim());
+    console.log(equalsFragments[1].trim());
     const rightHandSideConstant = probabilityValue({candidate: equalsFragments[1].trim()});
     console.log(rightHandSideConstant);
     if (rightHandSideConstant) {
@@ -301,6 +305,7 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
         }
       }
     }
+    console.log("HERE");
 
     //Now let's parse as an affine equation.
     const left = parseAffineFormula({formula: equalsFragments[0]});
