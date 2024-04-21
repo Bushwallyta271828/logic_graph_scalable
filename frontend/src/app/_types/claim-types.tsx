@@ -5,8 +5,8 @@ export type TextClaim = {
   author: string;
   claimType: 'text';
   text: string;
-  dependencies: Set<string>;
-  definitionClaimIDs: string[];
+  dependencies: Set<string>; //Can include invalid Claim IDs
+  definitionClaimIDs: string[]; //Can include invalid Claim IDs
 };
 
 export type DefinitionClaim = {
@@ -14,8 +14,8 @@ export type DefinitionClaim = {
   author: string;
   claimType: 'definition';
   text: string;
-  dependencies: Set<string>;
-  definitionClaimIDs: string[];
+  dependencies: Set<string>; //Can include invalid Claim IDs
+  definitionClaimIDs: string[]; //Can include invalid Claim IDs
 };
 
 export type ClaimWithDefinitions = 
@@ -27,8 +27,8 @@ export type ZerothOrderClaim = {
   author: string;
   claimType: 'zeroth-order';
   text: string;
-  dependencies: Set<string>;
-  parse: ConstraintParse | null;
+  dependencies: Set<string>; //Can include invalid Claim IDs
+  parse: ConstraintParse | null; //Can reference invalid Claim IDs
 };
 
 export type Claim =
