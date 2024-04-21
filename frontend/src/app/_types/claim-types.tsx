@@ -1,7 +1,12 @@
 import { ConstraintParse } from '@/app/_types/parse-types';
 
+export function potentialClaimID({candidate}: {candidate: string}): boolean {
+  //Specifies whether a string would make a valid Claim ID.
+  return /^[a-z0-9]+$/i.test(candidate) && !['implies', 'or', 'and', 'not'].includes(candidate);
+}
+
 export type TextClaim = {
-  claimID: string;
+  claimID: string; //Must satisfy potentialClaimID
   author: string;
   claimType: 'text';
   text: string;
@@ -10,7 +15,7 @@ export type TextClaim = {
 };
 
 export type DefinitionClaim = {
-  claimID: string;
+  claimID: string; //Must satisfy potentialClaimID
   author: string;
   claimType: 'definition';
   text: string;
@@ -23,12 +28,12 @@ export type ClaimWithDefinitions =
   | DefinitionClaim;
 
 export type ZerothOrderClaim = {
-  claimID: string;
+  claimID: string; //Must satisfy potentialClaimID
   author: string;
   claimType: 'zeroth-order';
   text: string;
-  dependencies: Set<string>; //Can include invalid Claim IDs
-  parse: ConstraintParse | null; //Can reference invalid Claim IDs
+  dependencies: Set<string>; //Can include unrecognized Claim IDs
+  parse: ConstraintParse | null; //Can reference unrecognized Claim IDs
 };
 
 export type Claim =
