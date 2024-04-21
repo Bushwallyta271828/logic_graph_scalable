@@ -89,7 +89,7 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | nul
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return null;}
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap) {return parseLogicalFormula({formula: unwrap});}
+  if (unwrap !== null) {return parseLogicalFormula({formula: unwrap});}
 
   if (isAlphanumeric({candidate: trimmedFormula}))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
@@ -98,10 +98,10 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | nul
     {formula: trimmedFormula, depths: depths, substring: " implies "});
   if (impliesFragments.length >= 2) {
     let rightTail = parseLogicalFormula({formula: impliesFragments[impliesFragments.length-1]});
-    if (!rightTail) {return null;}
+    if (rightTail === null) {return null;}
     for (let i = impliesFragments.length-2; i >= 0; i--) {
       const left = parseLogicalFormula({formula: impliesFragments[i]});
-      if (!left) {return null;}
+      if (left === null) {return null;}
       rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
     }
     return rightTail;
@@ -113,7 +113,7 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | nul
     const children: LogicalFormula[] = [];
     for (let i = 0; i < orFragments.length; i++) {
       const child = parseLogicalFormula({formula: orFragments[i]});
-      if (child) {children.push(child);} else {return null;}
+      if (child !== null) {children.push(child);} else {return null;}
     }
     return {parseType: 'LogicalFormulaOr' as const, children: children} as LogicalFormula;
   }
@@ -124,14 +124,14 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | nul
     const children: LogicalFormula[] = [];
     for (let i = 0; i < andFragments.length; i++) {
       const child = parseLogicalFormula({formula: andFragments[i]});
-      if (child) {children.push(child);} else {return null;}
+      if (child !== null) {children.push(child);} else {return null;}
     }
     return {parseType: 'LogicalFormulaAnd' as const, children: children} as LogicalFormula;
   }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
     const child = parseLogicalFormula({formula: trimmedFormula.slice(4)});
-    if (child) {
+    if (child !== null) {
       return {parseType: 'LogicalFormulaNot' as const, child: child} as LogicalFormula;
     } else {return null;}
   }
@@ -149,7 +149,7 @@ function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return null;}
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap) {return parseLogicalFormulaWithoutImplies({formula: unwrap});}
+  if (unwrap !== null) {return parseLogicalFormulaWithoutImplies({formula: unwrap});}
 
   if (isAlphanumeric({candidate: trimmedFormula}))
     {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
@@ -160,7 +160,7 @@ function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
     const children: LogicalFormulaWithoutImplies[] = [];
     for (let i = 0; i < orFragments.length; i++) {
       const child = parseLogicalFormulaWithoutImplies({formula: orFragments[i]});
-      if (child) {children.push(child);} else {return null;}
+      if (child !== null) {children.push(child);} else {return null;}
     }
     return {parseType: 'LogicalFormulaWithoutImpliesOr' as const, children: children} as LogicalFormulaWithoutImplies;
   }
@@ -171,14 +171,14 @@ function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
     const children: LogicalFormulaWithoutImplies[] = [];
     for (let i = 0; i < andFragments.length; i++) {
       const child = parseLogicalFormulaWithoutImplies({formula: andFragments[i]});
-      if (child) {children.push(child);} else {return null;}
+      if (child !== null) {children.push(child);} else {return null;}
     }
     return {parseType: 'LogicalFormulaWithoutImpliesAnd' as const, children: children} as LogicalFormulaWithoutImplies;
   }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
     const child = parseLogicalFormulaWithoutImplies({formula: trimmedFormula.slice(4)});
-    if (child) {
+    if (child !== null) {
       return {parseType: 'LogicalFormulaWithoutImpliesNot' as const, child: child} as LogicalFormulaWithoutImplies;
     } else {return null;}
   }
@@ -196,7 +196,7 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {return null;}
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap) {return parseAffineFormula({formula: unwrap});}
+  if (unwrap !== null) {return parseAffineFormula({formula: unwrap});}
 
   //To handle subtraction, we're going to take all depth-zero minus signs
   //(except for a potential first one) and add addition signs
@@ -215,7 +215,7 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
     const children: AffineExpression[] = [];
     for (let i = 0; i < plusFragments.length; i++) {
       const child = parseAffineFormula({formula: plusFragments[i]});
-      if (child) {children.push(child);} else {return null;}
+      if (child !== null) {children.push(child);} else {return null;}
     }
     return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
   }
@@ -226,7 +226,7 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
   const signlessDepths = isNegated ? additionDepths.slice(1) : additionDepths;
 
   const attemptConstant = signlessReal({candidate: signless});
-  if (attemptConstant) {
+  if (attemptConstant !== null) {
     return { parseType: 'AffineExpressionConstant', constant: signFactor * attemptConstant };
   }
 
@@ -236,26 +236,26 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
     trimmedFormula: signless.slice(openParenthesisIndex), //Note that we preserve trimming!
     depths: signlessDepths.slice(openParenthesisIndex),
   });
-  if (!rightUnwrap) {return null;}
+  if (rightUnwrap === null) {return null;}
   const outer = signless.slice(0, openParenthesisIndex).trim();
   const isProbability = outer.endsWith("P");
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
   const outerWithoutStar = outerWithoutP.endsWith("*") ?
     outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
   const attemptMagnitude = signlessReal({candidate: outerWithoutStar});
-  if (!attemptMagnitude && outerWithoutStar !== "") {return null;}
-  //Note that !attemptMagnitude now implies outerWithoutStar === "".
-  const coefficient = (attemptMagnitude ? attemptMagnitude : 1) * signFactor;
+  if (attemptMagnitude === null && outerWithoutStar !== "") {return null;}
+  //Note that attemptMagnitude === null now implies outerWithoutStar === "".
+  const coefficient = (attemptMagnitude !== null ? attemptMagnitude : 1) * signFactor;
   let child: AffineExpression | null;
   if (isProbability) {
     const probabilityChild = parseLogicalFormulaWithoutImplies({formula: rightUnwrap});
-    if (!probabilityChild) {return null;}
+    if (probabilityChild === null) {return null;}
     child = { parseType: 'AffineExpressionProbability' as const,
       child: probabilityChild } as AffineExpression;
   } else {
     child = parseAffineFormula({formula: rightUnwrap});
   }
-  if (!child) {return null;}
+  if (child === null) {return null;}
   if (coefficient === 1) {return child;}
   else {
     return { parseType: 'AffineExpressionMultiplication' as const,
@@ -280,20 +280,20 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     console.log(equalsFragments[1].trim());
     const rightHandSideConstant = probabilityValue({candidate: equalsFragments[1].trim()});
     console.log(rightHandSideConstant);
-    if (rightHandSideConstant) {
+    if (rightHandSideConstant !== null) {
       const leftHandSide = equalsFragments[0].trim();
       if (leftHandSide.startsWith("P")) {
         const leftNoP = leftHandSide.slice(1).trim();
         const { depths: leftNoPDepths } = findDepths({formula: leftNoP});
         const probUnwrap = attemptUnwrap({trimmedFormula: leftNoP, depths: leftNoPDepths});
-        if (probUnwrap) {
+        if (probUnwrap !== null) {
           const { depths: probUnwrapDepths } = findDepths({formula: probUnwrap});
           const conditionalFragments = splitOnAllDepthZeroSubstrings(
             {formula: probUnwrap, depths: probUnwrapDepths, substring: " | "});
           if (conditionalFragments.length === 2) {
             const left = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[0]});
             const right = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[1]});
-            if (left && right) {
+            if (left !== null && right !== null) {
               return {
                 parseType: 'ConditionalProbabilityAssignment' as const,
                 conditionalLeftFormula: left,
@@ -310,7 +310,7 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     //Now let's parse as an affine equation.
     const left = parseAffineFormula({formula: equalsFragments[0]});
     const right = parseAffineFormula({formula: equalsFragments[1]});
-    if (left && right) {
+    if (left !== null && right !== null) {
       return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
     } else {return null;}
   } else {

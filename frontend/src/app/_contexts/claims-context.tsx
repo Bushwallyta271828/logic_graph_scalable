@@ -152,7 +152,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     if (claim.claimType !== 'zeroth-order')
       {return {displayText: getInterpretedText(claim), validText: true};}
     const parse = parseFormula({formula: claim.text});
-    if (!parse) {return {displayText: "Please enter a valid constraint.", validText: false};}
+    if (parse === null) {return {displayText: "Please enter a valid constraint.", validText: false};}
     const referencedIDs = Array.from(immediateConstraintDependencies({parse: parse}));
     console.log(referencedIDs);
     console.log(parse);
@@ -198,7 +198,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
 export function useClaimsContext() {
   const context = useContext(ClaimsContext);
-  if (!context) {
+  if (context === null) {
     throw new Error("useClaimsContext must be used within a ClaimsContextProvider!");
   }
   return context;
