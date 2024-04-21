@@ -22,13 +22,13 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
             By deleting this claim, you will also be deleting the following claims which depend on it:
           </p>
           <div className="p-2">
-            { claimsToDelete.slice(0, 10).map((claimToDelete, index) => (
-                <p key={index}>
+            { claimsToDelete.slice(0, 8).map((claimToDelete, index) => (
+                <p className="text-nowrap truncate" key={index}>
                   {claimToDelete.claimID}: {claimToDelete.text}
                 </p>
               ))
             }
-            {(claimsToDelete.length > 10) ? <p key={10}>...</p> : null}
+            {(claimsToDelete.length > 8) ? <p key={8}>...</p> : null}
           </div>
           <p>Are you sure you want to proceed?</p>
         </Dialog.Panel>
