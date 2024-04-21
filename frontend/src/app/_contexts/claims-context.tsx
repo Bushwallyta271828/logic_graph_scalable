@@ -144,6 +144,10 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       if (!(claimID in prevClaimLookup))
         {throw new Error("Editing unrecognized claim");}
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
+      if (updatedClaim.claimType === 'zeroth-order') {
+        updatedClaim.parse = parseFormula({formula: newText});
+        updatedClaim.dependencies = immediateConstraintDependencies({parse: updatedClaim.parse});
+      }
       return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
   }
