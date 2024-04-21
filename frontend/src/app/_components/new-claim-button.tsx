@@ -22,7 +22,7 @@ export function NewClaimButton() {
               {({ active }) => (
                 <a
                   className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-text' : 'bg-medium-text'}`}
-                  onClick={addClaim({author: 'local', claimType: 'text' as const, text: ''})}>
+                  onClick={() => addClaim({author: 'local', claimType: 'text' as const, text: ''})}>
                   Text Claim
                 </a>
               )}
@@ -31,7 +31,7 @@ export function NewClaimButton() {
               {({ active }) => (
                 <a
                   className={`block px-4 py-2 ${active ? 'bg-bright-definition' : 'bg-medium-definition'}`}
-                  onClick={addClaim({author: 'local', claimType: 'definition' as const, text: ''})}>
+                  onClick={() => addClaim({author: 'local', claimType: 'definition' as const, text: ''})}>
                   Definition Claim
                 </a>
               )}
@@ -40,7 +40,7 @@ export function NewClaimButton() {
               {({ active }) => (
                 <a
                   className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-zeroth-order' : 'bg-medium-zeroth-order'}`}
-                  onClick={addClaim({author: 'local', claimType: 'zeroth-order' as const, text: ''})}>
+                  onClick={() => addClaim({author: 'local', claimType: 'zeroth-order' as const, text: ''})}>
                   Zeroth Order Claim
                 </a>
               )}

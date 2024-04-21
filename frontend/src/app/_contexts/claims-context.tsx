@@ -111,7 +111,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     const updatedClaim = {
       ...claim,
       definitionClaimIDs: newDefinitionClaimIDs,
-      dependencies: Set(newDefinitionClaimIDs),
+      dependencies: new Set(newDefinitionClaimIDs),
     };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
@@ -134,7 +134,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     const updatedClaim = {
       ...claim,
       definitionClaimIDs: newDefinitionClaimIDs,
-      dependencies: Set(newDefinitionClaimIDs),
+      dependencies: new Set(newDefinitionClaimIDs),
     };
     setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
   };
@@ -201,7 +201,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       }
       substitutions[referencedIDs[i]] = getInterpretedText(claimLookup[referencedIDs[i]]);
     }
-    const displayText = displayConstraintParse({parse: parse, substitutions: substitutions});
+    const displayText = displayConstraintParse({parse: claim.parse, substitutions: substitutions});
     return {displayText: displayText, validText: true};
   }
 
