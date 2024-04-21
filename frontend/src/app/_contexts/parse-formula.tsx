@@ -21,7 +21,7 @@ function probabilityValue({candidate}: {candidate: string}) : number | null {
   const isNegative = candidate.startsWith("-");
   const nonNegative = isNegative ? candidate.slice(1).trim() : candidate;
   const isZero = /^0(\.0+)?$/.test(nonNegative);
-  const magnitudeValid = /^1(\.0+)?|0(\.\d+)?$/.test(nonNegative);
+  const magnitudeValid = /^(1(\.0+)?|0(\.\d+)?)$/.test(nonNegative);
   if ((magnitudeValid && !isNegative) || isZero) {
     return Number(nonNegative);
   } else {return null;}
