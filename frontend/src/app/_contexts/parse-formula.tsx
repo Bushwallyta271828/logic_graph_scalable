@@ -301,8 +301,8 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     }
 
     //Now let's parse as an affine equation.
-    const left = parseAffineEquation({formula: equalsFragments[0]});
-    const right = parseAffineEquation({formula: equalsFragments[1]});
+    const left = parseAffineFormula({formula: equalsFragments[0]});
+    const right = parseAffineFormula({formula: equalsFragments[1]});
     if (left && right) {
       return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
     } else {return null;}

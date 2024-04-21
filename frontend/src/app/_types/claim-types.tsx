@@ -1,4 +1,4 @@
-import { FormulaParse } from '@/app/_types/parse-types';
+import { ConstraintParse } from '@/app/_types/parse-types';
 
 export type TextClaim = {
   claimID: string;
@@ -28,7 +28,7 @@ export type ZerothOrderClaim = {
   claimType: 'zeroth-order';
   text: string;
   dependencies: Set<string>; //should reflect parse
-  parse: FormulaParse | null;
+  parse: ConstraintParse | null;
 };
 
 export type Claim =
