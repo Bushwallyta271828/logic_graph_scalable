@@ -19,7 +19,7 @@ function displayClaim({claimID, substitutions}:
   {claimID: string, substitutions: {[claimID: string]: string}}): string {
   //This function attempts to perform a substitution.
   if (!substitutions.hasOwnProperty(claimID)) {throw new Error("Unrecognized claim ID");}
-  return "["+claimID+": "+substitutions[claimID]+"]";
+  return "\""+substitutions[claimID]+"\"("+claimID+")";
 }
 
 function displayLogicalFormula({parse, substitutions}:

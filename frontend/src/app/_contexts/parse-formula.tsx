@@ -273,7 +273,9 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
+    console.log(equalsFragment[1].trim());
     const rightHandSideConstant = probabilityValue({candidate: equalsFragments[1].trim()});
+    console.log(rightHandSideConstant);
     if (rightHandSideConstant) {
       const leftHandSide = equalsFragments[0].trim();
       if (leftHandSide.startsWith("P")) {
