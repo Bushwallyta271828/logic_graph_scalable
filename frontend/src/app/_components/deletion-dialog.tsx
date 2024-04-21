@@ -7,7 +7,7 @@ export function DeletionDialog({dialogOpen, setDialogOpen}: {
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   return (
-    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+    <Dialog className="fixed inset-1/4 bg-medium-danger rounded-md text-white" open={dialogOpen} onClose={() => setDialogOpen(false)}>
       <Dialog.Panel>
         <Dialog.Title>Deactivate account</Dialog.Title>
         <Dialog.Description>
