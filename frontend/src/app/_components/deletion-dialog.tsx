@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 
-export function DeletionDialog() {
-  const [isOpen, setIsOpen] = useState(true);
-
+export function DeletionDialog({dialogOpen, setDialogOpen}: {
+  dialogOpen: boolean,
+  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) {
   return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
       <Dialog.Panel>
         <Dialog.Title>Deactivate account</Dialog.Title>
         <Dialog.Description>
@@ -19,8 +19,8 @@ export function DeletionDialog() {
           will be permanently removed. This action cannot be undone.
         </p>
 
-        <button onClick={() => setIsOpen(false)}>Deactivate</button>
-        <button onClick={() => setIsOpen(false)}>Cancel</button>
+        <button onClick={() => setDialogOpen(false)}>Deactivate</button>
+        <button onClick={() => setDialogOpen(false)}>Cancel</button>
       </Dialog.Panel>
     </Dialog>
   );
