@@ -3,7 +3,7 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { Claim, ClaimWithDefinitions } from '@/app/_types/claim-types';
+import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/_types/claim-types';
 import { parseFormula } from '@/app/_contexts/parse-formula';
 import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
 import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse';
@@ -32,9 +32,6 @@ type ClaimsContext = {
   //deleteClaim: (claim: Claim) => void;
 }
 
-//A valid claimID must be non-empty, alphanumeric, and not one of the following:
-const forbiddenClaimIDs = new Set(['implies', 'or', 'and', 'not']);
-
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
 
 export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
@@ -54,10 +51,10 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       }
       attempts += 1;
     } while (
-      (claimLookup.hasOwnProperty(uniqueID) || forbiddenClaimIDs.has(uniqueID))
+      (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID(uniqueID))
       && (attempts < 100)
     );
-    if (claimLookup.hasOwnProperty(uniqueID) || forbiddenClaimIDs.has(uniqueID)) {
+    if (claimLookup.hasOwnProperty(uniqueID) || !potentialClaimID(uniqueID)) {
       throw new Error("Unable to generate new claimID");
     }
     return uniqueID;
