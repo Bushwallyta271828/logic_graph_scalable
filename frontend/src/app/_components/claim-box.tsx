@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Menu } from '@headlessui/react';
+import { Menu, Dialog } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DefinitionList } from '@/app/_components/definition-list';
