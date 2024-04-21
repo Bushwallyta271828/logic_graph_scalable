@@ -216,28 +216,32 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
     return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
   }
 
-  const attemptConstant = signSeparatedReal({candidate: allAdditionFormula});
+  const isNegated = allAdditionFormula.startsWith("-");
+  const signFactor = isNegated ? -1 : 1;
+  const signless = isNegated ? allAdditionFormula.slice(1) : allAdditionFormula;
+  const signlessDepths = isNegated ? additionDepths.slice(1) : additionDepths;
+
+  const attemptConstant = signlessReal({candidate: signless});
   if (attemptConstant) {
-    return { parseType: 'AffineExpressionConstant', constant: attemptConstant };
+    return { parseType: 'AffineExpressionConstant', constant: signFactor * attemptConstant };
   }
 
-  const openParenthesisIndex = allAdditionFormula.indexOf("("); //first index crucial here
+  const openParenthesisIndex = signless.indexOf("("); //first index crucial here
   if (openParenthesisIndex < 0) {return null;}
-  const rightUnwrap = attemptUnwrap(
-    {trimmedFormula: allAdditionFormula.slice(openParenthesisIndex).trim(), depths: additionDepths});
+  const rightUnwrap = attemptUnwrap({
+    trimmedFormula: signless.slice(openParenthesisIndex), //Note that we preserve trimming!
+    depths: signlessDepths.slice(openParenthesisIndex),
+  });
   if (!rightUnwrap) {return null;}
-  const outer = allAdditionFormula.slice(0, openParenthesisIndex).trim();
+  const outer = signless.slice(0, openParenthesisIndex).trim();
   const isProbability = outer.endsWith("P");
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
   const outerWithoutStar = outerWithoutP.endsWith("*") ?
     outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
-  const isNegated = outerWithoutStar.startsWith("-");
-  const magnitudeOrEmpty =
-    isNegated ? outerWithoutStar.slice(1).trim() : outerWithoutStar;
-  const attemptMagnitude = signlessReal(magnitudeOrEmpty);
-  if (!attemptMagnitude && magnitudeOrEmpty !== "") {return null;}
-  //Note that !attemptMagnitude now implies magnitudeOrEmpty === "".
-  const coefficient = (attemptMagnitude ? attemptMagnitude : 1) * (isNegated ? -1 : 1);
+  const attemptMagnitude = signlessReal({candidate: outerWithoutP});
+  if (!attemptMagnitude && outerWithoutP !== "") {return null;}
+  //Note that !attemptMagnitude now implies outerWithoutP === "".
+  const coefficient = (attemptMagnitude ? attemptMagnitude : 1) * signFactor;
   let child: AffineExpression | null;
   if (isProbability) {
     const probabilityChild = parseLogicalFormulaWithoutImplies({formula: rightUnwrap});
