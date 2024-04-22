@@ -20,13 +20,16 @@ type ClaimsContext = {
   //add the definitions individually by creating blank definitions and then editing them.
   //This way, definitionClaimIDs[] cannot get duplicates by accident.
   moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
-  attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
-  editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
-  moveDefinition: ({claim, startDefinitionClaimID, endDefinitionClaimID}: {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => void;
 
   setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
   getInterpretedText: (claim: Claim) => string;
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
+
+  setConditioning: ({claimID, newConditioning}: {claimID: string, newConditioning: boolean | null}) => void;
+
+  attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
+  editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
+  moveDefinition: ({claim, startDefinitionClaimID, endDefinitionClaimID}: {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => void;
 
   getAncestors: (claim: Claim) => Set<string>;
   deleteClaim: (claim: Claim) => void;
@@ -109,55 +112,6 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
-  const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
-    const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
-    const updatedClaim = {
-      ...claim,
-      definitionClaimIDs: newDefinitionClaimIDs,
-      dependencies: new Set(newDefinitionClaimIDs),
-    };
-    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
-  };
-  
-  const editDefinitionClaimID = ({claim, oldDefinitionClaimID, newDefinitionClaimID}:
-    {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => {
-    const index = claim.definitionClaimIDs.indexOf(oldDefinitionClaimID);
-    if (index < 0) {throw new Error("Editing unrecognized definition attachment");}
-    
-    let deleteAttachment = (newDefinitionClaimID === "");
-    claim.definitionClaimIDs.forEach((oldDefinitionClaimID, oldIndex) => {
-      if (newDefinitionClaimID === oldDefinitionClaimID && index !== oldIndex) {
-        deleteAttachment = true;
-      }
-    });
- 
-    let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
-    if (deleteAttachment) {newDefinitionClaimIDs.splice(index, 1);}
-    else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
-    const updatedClaim = {
-      ...claim,
-      definitionClaimIDs: newDefinitionClaimIDs,
-      dependencies: new Set(newDefinitionClaimIDs),
-    };
-    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
-  };
-
-  const moveDefinition = ({claim, startDefinitionClaimID, endDefinitionClaimID}:
-    {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => {
-    if (startDefinitionClaimID === endDefinitionClaimID) { return; }
-    setClaimLookup(prevClaimLookup => {
-      const startIndex = claim.definitionClaimIDs.indexOf(startDefinitionClaimID);
-      if (startIndex < 0) {throw new Error("Moving unrecognized definition attachment");}
-      const endIndex = claim.definitionClaimIDs.indexOf(endDefinitionClaimID);
-
-      let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
-      const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
-      newDefinitionClaimIDs.splice(endIndex, 0, removed);
-      const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
-      return { ...prevClaimLookup, [claim.claimID]: updatedClaim };
-    });
-  };
-
 
   const setClaimText = ({claimID, newText}: {claimID: string, newText: string}) => {
     setClaimLookup(prevClaimLookup => {
@@ -209,6 +163,61 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   }
 
 
+  const setConditioning({claimID, newConditioning}:
+    {claimID: string, newConditioning: boolean | null}) => {
+  }
+
+
+  const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
+    const newDefinitionClaimIDs = ['',].concat(claim.definitionClaimIDs);
+    const updatedClaim = {
+      ...claim,
+      definitionClaimIDs: newDefinitionClaimIDs,
+      dependencies: new Set(newDefinitionClaimIDs),
+    };
+    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
+  };
+  
+  const editDefinitionClaimID = ({claim, oldDefinitionClaimID, newDefinitionClaimID}:
+    {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => {
+    const index = claim.definitionClaimIDs.indexOf(oldDefinitionClaimID);
+    if (index < 0) {throw new Error("Editing unrecognized definition attachment");}
+    
+    let deleteAttachment = (newDefinitionClaimID === "");
+    claim.definitionClaimIDs.forEach((oldDefinitionClaimID, oldIndex) => {
+      if (newDefinitionClaimID === oldDefinitionClaimID && index !== oldIndex) {
+        deleteAttachment = true;
+      }
+    });
+ 
+    let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
+    if (deleteAttachment) {newDefinitionClaimIDs.splice(index, 1);}
+    else {newDefinitionClaimIDs[index] = newDefinitionClaimID;}
+    const updatedClaim = {
+      ...claim,
+      definitionClaimIDs: newDefinitionClaimIDs,
+      dependencies: new Set(newDefinitionClaimIDs),
+    };
+    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
+  };
+
+  const moveDefinition = ({claim, startDefinitionClaimID, endDefinitionClaimID}:
+    {claim: ClaimWithDefinitions, startDefinitionClaimID: string, endDefinitionClaimID: string}) => {
+    if (startDefinitionClaimID === endDefinitionClaimID) { return; }
+    setClaimLookup(prevClaimLookup => {
+      const startIndex = claim.definitionClaimIDs.indexOf(startDefinitionClaimID);
+      if (startIndex < 0) {throw new Error("Moving unrecognized definition attachment");}
+      const endIndex = claim.definitionClaimIDs.indexOf(endDefinitionClaimID);
+
+      let newDefinitionClaimIDs = [ ...claim.definitionClaimIDs ];
+      const [removed] = newDefinitionClaimIDs.splice(startIndex, 1);
+      newDefinitionClaimIDs.splice(endIndex, 0, removed);
+      const updatedClaim = { ...claim, definitionClaimIDs: newDefinitionClaimIDs };
+      return { ...prevClaimLookup, [claim.claimID]: updatedClaim };
+    });
+  };
+
+
   const getAncestors = (claim: Claim) => {
     //Returns a set containing all the claim IDs of claims
     //that reference this claim, including this claim itself.
@@ -255,13 +264,16 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
         addClaim,
         moveClaim,
-        attachBlankDefinition,
-        editDefinitionClaimID,
-        moveDefinition,
 
         setClaimText,
         getInterpretedText,
         getDisplayData,
+
+        setConditioning,
+
+        attachBlankDefinition,
+        editDefinitionClaimID,
+        moveDefinition,
 
         getAncestors,
         deleteClaim,
