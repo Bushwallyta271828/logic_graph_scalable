@@ -11,7 +11,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
   const [ dialogOpen, setDialogOpen ] = useState(false);
   const [ additionalAncestors, setAdditionalAncestors ] = useState<Claim[]>([]);
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const { attachBlankDefinition, getAncestors, deleteClaim, claimLookup } = useClaimsContext();
+  const { setConditioning, attachBlankDefinition, getAncestors, deleteClaim, claimLookup } = useClaimsContext();
 
   const handleDelete = () => {
     const ancestors = getAncestors(claim);
@@ -40,15 +40,18 @@ export function ClaimTab({claim} : {claim: Claim}) {
               <p className="px-4 py-2">Conditioning:</p>
               <div className="container mx-auto flex items-center">
                 <Popover.Button
-                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === false ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === false ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === false ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}>
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === false ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === false ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === false ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  onClick={() => setConditioning({claim: claim, newConditioning: false})}>
                   False
                 </Popover.Button>
                 <Popover.Button
-                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === null ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === null ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === null ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}>
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === null ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === null ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === null ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  onClick={() => setConditioning({claim: claim, newConditioning: null})}>
                   None
                 </Popover.Button>
                 <Popover.Button
-                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === true ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === true ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === true ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}>
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === true ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === true ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === true ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  onClick={() => setConditioning({claim: claim, newConditioning: true})}>
                   True
                 </Popover.Button>
               </div>
