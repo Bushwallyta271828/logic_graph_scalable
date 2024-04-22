@@ -4,10 +4,11 @@ import { Dialog } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
 
 
-export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
+export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClaims}: {
   dialogOpen: boolean,
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  claimsToDelete: Claim[],
+  claim: Claim,
+  additionalClaims: Claim[],
 }) {
   return (
     <Dialog
@@ -23,13 +24,13 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
             By deleting this claim, you will also be deleting the following claims which depend upon it:
           </p>
           <div className="p-2">
-            { claimsToDelete.slice(0, 8).map((claimToDelete, index) => (
+            { additionalClaims.slice(0, 8).map((additionalClaim, index) => (
                 <p className="text-nowrap truncate" key={index}>
-                  {claimToDelete.claimID}: {claimToDelete.text}
+                  {additionalClaim.claimID}: {additionalClaim.text}
                 </p>
               ))
             }
-            {(claimsToDelete.length > 8) ? <p key={8}>...</p> : null}
+            {(additionalClaims.length > 8) ? <p key={8}>...</p> : null}
           </div>
           <p>Are you sure you wish to proceed?</p>
           <div className="container mx-auto flex justify-between items-center p-2">

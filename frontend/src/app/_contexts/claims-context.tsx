@@ -28,7 +28,7 @@ type ClaimsContext = {
   getInterpretedText: (claim: Claim) => string;
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 
-  //getDependencies: (claim: Claim) => Set<string>;
+  getAncestors: (claim: Claim) => Set<string>;
   //deleteClaim: (claim: Claim) => void;
 }
 
@@ -207,6 +207,30 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   }
 
 
+  const getAncestors = (claim: Claim) => {
+    //Returns a set containing all the claim IDs of claims
+    //that reference this claim, including this claim itself.
+    const ancestors = new Set<string>([claim.claimID]);
+    let newAncestors = new Set<string>([claim.claimID]);
+    
+    while (newAncestors.size > 0) {
+      const newerAncestors = new Set<string>();
+      newAncestors.forEach((ancestor) => {
+        for (const claimID in claimLookup) {
+          if (claimLookup[claimID].dependencies.has(ancestor)) {
+            if (!ancestors.has(claimID)) {
+              ancestors.add(claimID);
+              newerAncestors.add(claimID);
+            }
+          }
+        }
+      });
+      newAncestors = newerAncestors;
+    }
+    return ancestors;
+  }
+
+
   return (
     <ClaimsContext.Provider
       value={{
@@ -222,6 +246,8 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         setClaimText,
         getInterpretedText,
         getDisplayData,
+
+        getAncestors,
         }}>
       {children}
     </ClaimsContext.Provider>
