@@ -1,20 +1,31 @@
 'use client';
 
-type ParserInput = {
-  formula: string;
-  substitutions: {[claimID: string]: string};
-};
+import {
+  LogicalFormula,
+  LogicalFormulaWithoutImplies,
+  ConditionalProbabilityAssignment,
+  AffineExpression,
+  AffineEquation,
+  ConstraintParse
+} from '@/app/_types/parse-types';
+import { potentialClaimID } from '@/app/_types/claim-types';
 
-type ParserOutput = {
-  substitutedFormula: string;
-  validFormula: boolean;
-};
+function signlessReal({candidate}: {candidate: string}) : number | null {
+  //Tries to parse candidate as a signless real number, returns null if impossible.
+  //(The only difference between signless and non-negative is that "-0" has a sign.)
+  if (/^(0|[1-9]\d*)(\.\d+)?$/.test(candidate)) {return Number(candidate);}
+  else {return null;}
+}
 
-type Parser = ({formula, substitutions}: ParserInput) => ParserOutput;
-
-
-function nonNegativeReal({candidate}: {candidate: string}) {
-  return /^(0|[1-9]\d*)(\.\d+)?$/.test(candidate);
+function probabilityValue({candidate}: {candidate: string}) : number | null {
+  //Tries to parse candidate as a real number in [0, 1], returns null if impossible.
+  const isNegative = candidate.startsWith("-");
+  const nonNegative = isNegative ? candidate.slice(1).trim() : candidate;
+  const isZero = /^0(\.0+)?$/.test(nonNegative);
+  const magnitudeValid = /^(1(\.0+)?|0(\.\d+)?)$/.test(nonNegative);
+  if ((magnitudeValid && !isNegative) || isZero) {
+    return Number(nonNegative);
+  } else {return null;}
 }
 
 function findDepths({formula}: {formula: string}) {
@@ -33,294 +44,275 @@ function findDepths({formula}: {formula: string}) {
   return {depths: depths, matching: matching && (depth === 0)};
 }
 
-function indexOfDepthZeroSubstring({selector, formula, depths, substring}:
-  {selector: 'first' | 'last', formula: string, depths: number[], substring: string}) {
-  //Returns the index of a match for substring within formula
-  //that lies at a depth of zero, or -1 if no such index exists.
-  //If selector is 'first', this function returns the first such index,
-  //and if selector is 'last', it returns the last such index.
-  //We need the first index for implications and the last index for subtraction.
-  //This function assumes that substring doesn't contain "(" or ")" so the depth is
-  //constant throughout.
-  if (selector === 'first') {
-    const firstCandidateIndex = formula.indexOf(substring);
-    if (firstCandidateIndex < 0) {
-      return -1;
-    } else if (depths[firstCandidateIndex] === 0) {
-      return firstCandidateIndex;
-    } else {
-      return indexOfDepthZeroSubstring({
-        selector: 'first' as const,
-        formula: formula.slice(firstCandidateIndex+1),
-        depths: depths.slice(firstCandidateIndex+1),
-        substring: substring,
-      });
+function splitOnAllDepthZeroSubstrings({formula, depths, substring}:
+  {formula: string, depths: number[], substring: string}): string[] {
+  //This function behaves exactly like slicing formula with substring except that it
+  //only splits on instances of substring at a depth of zero.
+  //The function assumes that substring doesn't contain parentheses so it has constant depth.
+  //Be careful if substring shares prefixes and suffixes!
+  const fragments: string[] = [];
+  let fragmentStart = 0;
+  let fragmentEnd = formula.indexOf(substring);
+  let matches = (fragmentEnd >= 0);
+  while (matches) {
+    if (depths[fragmentEnd] === 0) {
+      fragments.push(formula.slice(fragmentStart, fragmentEnd));
+      fragmentStart = fragmentEnd + substring.length;
     }
-  } else {
-    const lastCandidateIndex = formula.lastIndexOf(substring);
-    if (lastCandidateIndex < 0) {
-      return -1;
-    } else if (depths[lastCandidateIndex] === 0) {
-      return lastCandidateIndex;
+    const gapToNextMatch = formula.slice(fragmentEnd + substring.length).indexOf(substring);
+    if (gapToNextMatch >= 0) {
+      fragmentEnd += substring.length + gapToNextMatch;
     } else {
-      return indexOfDepthZeroSubstring({
-        selector: 'last' as const,
-        formula: formula.slice(0, lastCandidateIndex),
-        depths: depths.slice(0, lastCandidateIndex),
-        substring: substring,
-      });
+      matches = false;
     }
   }
+  fragments.push(formula.slice(fragmentStart));
+  return fragments;
 }
 
-function attemptInfixSplit({formula, substitutions, selector, divider, subParser}: {
-  formula:string,
-  substitutions:{[claimID:string]:string},
-  selector: 'first' | 'last',
-  divider:string,
-  subParser: Parser})
-{
-  //This helper function will attempt to split formula with a substring of divider
-  //at a depth of zero at either the first possible or the last possible location,
-  //depending on the value of selector. If the parentheses don't match
-  //or if the split is possible but the children don't parse, it will return a best
-  //guess at substitutedFormula and false for validFormula. If the split is possible
-  //and the children parse, it will return true for validFormula together with the 
-  //substitutedFormula. If the split is not possible, it will return null.
-  //Note: divider shouldn't have any parentheses in it.
-  const {depths, matching} = findDepths({formula: formula});
-  if (!matching) {return {substitutedFormula: formula, validFormula: false};}
-  const splitIndex = indexOfDepthZeroSubstring(
-    {selector: selector, formula: formula, depths: depths, substring: divider});
-  if (splitIndex < 0) {return null;}
-  const {substitutedFormula: leftSubstitutedFormula, validFormula: leftValidFormula}
-    = subParser({formula: formula.slice(0, splitIndex), substitutions: substitutions});
-  const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-    = subParser({formula: formula.slice(splitIndex + divider.length), substitutions: substitutions});
-  return {
-    substitutedFormula: leftSubstitutedFormula + divider + rightSubstitutedFormula,
-    validFormula: leftValidFormula && rightValidFormula,
-  };
-}
-
-function parseWrapping({trimmedFormula, substitutions, subParser}: {
-  trimmedFormula:string,
-  substitutions:{[claimID:string]:string},
-  subParser: Parser})
-{
-  //This helper function deals with unwrapping parentheses and empty inputs.
-  //If trimmedFormula is empty, has mismatched parentheses, or is nested inside
-  //a pair of outer parentheses then the function returns the appropriate
-  //substitutedFormula and validFormula. If trimmedFormula is not of these forms, it
-  //returns null.
-  if (trimmedFormula === "") {return {substitutedFormula: "", validFormula: false};}
-  const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return {substitutedFormula: trimmedFormula, validFormula: false};}
-  
+function attemptUnwrap({trimmedFormula, depths}:
+  {trimmedFormula: string, depths: number[]}): string | null {
+  //Given trimmedFormula (no spaces at the start or end) and
+  //the depths corresponding to trimmedFormula, attemptUnwrap will
+  //return ... if trimmedFormula is of the form (...) and null otherwise.
   if (trimmedFormula[0] === "(" && trimmedFormula[trimmedFormula.length-1] === ")" &&
     depths.slice(1, depths.length-1).every((depth) => depth >= 1)) {
-    const innerParse = subParser({
-      formula: trimmedFormula.slice(1, trimmedFormula.length-1),
-      substitutions: substitutions
-    });
-    return {
-      substitutedFormula: "("+innerParse.substitutedFormula+")",
-      validFormula: innerParse.validFormula
-    };
+    return trimmedFormula.slice(1, trimmedFormula.length-1);
+  }
+  return null;
+}
+
+function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | null {
+  //This function will attempt to parse formula as a LogicalFormula.
+  //It will return null if formula cannot be parsed.
+  //This function assumes that formula has had spaces added around parentheses!
+  const trimmedFormula = formula.trim(); 
+  if (trimmedFormula === "") {return null;}
+  const {depths, matching} = findDepths({formula: trimmedFormula});
+  if (!matching) {return null;}
+  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
+  if (unwrap !== null) {return parseLogicalFormula({formula: unwrap});}
+
+  if (potentialClaimID({candidate: trimmedFormula}))
+    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
+
+  const impliesFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " implies "});
+  if (impliesFragments.length >= 2) {
+    let rightTail = parseLogicalFormula({formula: impliesFragments[impliesFragments.length-1]});
+    if (rightTail === null) {return null;}
+    for (let i = impliesFragments.length-2; i >= 0; i--) {
+      const left = parseLogicalFormula({formula: impliesFragments[i]});
+      if (left === null) {return null;}
+      rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
+    }
+    return rightTail;
+  }
+
+  const orFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " or "});
+  if (orFragments.length >= 2) {
+    const children: LogicalFormula[] = [];
+    for (let i = 0; i < orFragments.length; i++) {
+      const child = parseLogicalFormula({formula: orFragments[i]});
+      if (child !== null) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'LogicalFormulaOr' as const, children: children} as LogicalFormula;
+  }
+
+  const andFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " and "});
+  if (andFragments.length >= 2) {
+    const children: LogicalFormula[] = [];
+    for (let i = 0; i < andFragments.length; i++) {
+      const child = parseLogicalFormula({formula: andFragments[i]});
+      if (child !== null) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'LogicalFormulaAnd' as const, children: children} as LogicalFormula;
+  }
+
+  if (trimmedFormula.slice(0, 4) === "not ") {
+    const child = parseLogicalFormula({formula: trimmedFormula.slice(4)});
+    if (child !== null) {
+      return {parseType: 'LogicalFormulaNot' as const, child: child} as LogicalFormula;
+    } else {return null;}
   }
 
   return null;
 }
 
-function parseLogicalFormula({acceptsImplies} : {acceptsImplies: boolean}) {
-  return function({formula,substitutions}: ParserInput): ParserOutput {
-    //NOTE: assumes formula has had spaces added around parentheses!
-    const trimmedFormula = formula.trim();
-    
-    const attemptedParseWrapping = parseWrapping({
-      trimmedFormula: trimmedFormula,
-      substitutions: substitutions,
-      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies})
-    });
-    if (attemptedParseWrapping) {return attemptedParseWrapping;}
-  
-    if (trimmedFormula in substitutions)
-      {return {substitutedFormula: substitutions[trimmedFormula], validFormula: true};}
+function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
+  LogicalFormulaWithoutImplies | null {
+  //This function will attempt to parse formula as a LogicalFormulaWithoutImplies.
+  //It will return null if formula cannot be parsed.
+  //This function assumes that formula has had spaces added around parentheses!
+  const trimmedFormula = formula.trim(); 
+  if (trimmedFormula === "") {return null;}
+  const {depths, matching} = findDepths({formula: trimmedFormula});
+  if (!matching) {return null;}
+  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
+  if (unwrap !== null) {return parseLogicalFormulaWithoutImplies({formula: unwrap});}
 
-    if (acceptsImplies) { 
-      const impliesSplit = attemptInfixSplit({
-        formula: trimmedFormula,
-        substitutions: substitutions,
-        selector: 'first' as const,
-        divider: " implies ",
-        subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-      });
-      if (impliesSplit) {return impliesSplit;}
-    }
- 
-    const orSplit = attemptInfixSplit({
-      formula: trimmedFormula,
-      substitutions: substitutions,
-      selector: 'last' as const,
-      divider: " or ",
-      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-    });
-    if (orSplit) {return orSplit;}
-  
-    const andSplit = attemptInfixSplit({
-      formula: trimmedFormula,
-      substitutions: substitutions,
-      selector: 'last' as const,
-      divider: " and ",
-      subParser: parseLogicalFormula({acceptsImplies: acceptsImplies}),
-    });
-    if (andSplit) {return andSplit;}
-  
-    if (trimmedFormula.slice(0, 4) === "not ") {
-      const {substitutedFormula, validFormula} =
-        parseLogicalFormula({acceptsImplies: acceptsImplies})
-          ({formula: trimmedFormula.slice(4), substitutions: substitutions});
-      return {substitutedFormula: "not "+substitutedFormula, validFormula: validFormula};
-    }
-  
-    return {substitutedFormula: trimmedFormula, validFormula: false};
-  }
-}
+  if (potentialClaimID({candidate: trimmedFormula}))
+    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
 
-function attemptProbabilityUnwrap({trimmedFormula}: {trimmedFormula: string}) {
-  //This function will attempt to parse trimmedFormula as the form
-  //"P  (child)" where child never breaks out of the parentheses.
-  //If such a parsing is possible, it returns the child string.
-  //If not, it returns null.
-  if (trimmedFormula[0] === "P")
-  {
-    const afterP = trimmedFormula.slice(1).trim();
-    const { depths: afterPDepths } = findDepths({formula: afterP});
-    if (afterP[0] === "(" && afterP[afterP.length-1] === ")" &&
-      afterPDepths.slice(1, afterPDepths.length-1).every((depth) => depth >= 1)) {
-      return afterP.slice(1, afterP.length-1);
+  const orFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " or "});
+  if (orFragments.length >= 2) {
+    const children: LogicalFormulaWithoutImplies[] = [];
+    for (let i = 0; i < orFragments.length; i++) {
+      const child = parseLogicalFormulaWithoutImplies({formula: orFragments[i]});
+      if (child !== null) {children.push(child);} else {return null;}
     }
+    return {parseType: 'LogicalFormulaWithoutImpliesOr' as const, children: children} as LogicalFormulaWithoutImplies;
   }
+
+  const andFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: " and "});
+  if (andFragments.length >= 2) {
+    const children: LogicalFormulaWithoutImplies[] = [];
+    for (let i = 0; i < andFragments.length; i++) {
+      const child = parseLogicalFormulaWithoutImplies({formula: andFragments[i]});
+      if (child !== null) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'LogicalFormulaWithoutImpliesAnd' as const, children: children} as LogicalFormulaWithoutImplies;
+  }
+
+  if (trimmedFormula.slice(0, 4) === "not ") {
+    const child = parseLogicalFormulaWithoutImplies({formula: trimmedFormula.slice(4)});
+    if (child !== null) {
+      return {parseType: 'LogicalFormulaWithoutImpliesNot' as const, child: child} as LogicalFormulaWithoutImplies;
+    } else {return null;}
+  }
+
   return null;
 }
 
-function parseAffineFormula({formula,substitutions}: ParserInput): ParserOutput {
-  //NOTE: assumes formula has had spaces added around parentheses, "*", "+", and "-"!
-  const trimmedFormula = formula.trim();
-  
-  const attemptedParseWrapping = parseWrapping(
-    {trimmedFormula:trimmedFormula, substitutions:substitutions, subParser:parseAffineFormula});
-  if (attemptedParseWrapping) {return attemptedParseWrapping;}
+function parseAffineFormula({formula}: {formula: string}): AffineExpression | null {
+  //This function will attempt to parse formula as an AffineExpression.
+  //It will return null if formula cannot be parsed.
+  //This function assumes that formula has had spaces
+  //added around parentheses, "*", "+", and "-"!
+  const trimmedFormula = formula.trim(); 
+  if (trimmedFormula === "") {return null;}
+  const {depths, matching} = findDepths({formula: trimmedFormula});
+  if (!matching) {return null;}
+  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
+  if (unwrap !== null) {return parseAffineFormula({formula: unwrap});}
 
-  const plusSplit = attemptInfixSplit({
-    formula: trimmedFormula,
-    substitutions: substitutions,
-    selector: 'last' as const,
-    divider: " + ",
-    subParser: parseAffineFormula,
+  //To handle subtraction, we're going to take all depth-zero minus signs
+  //(except for a potential first one) and add addition signs
+  //in front of them. Since we split on ' - ' and use trimmedFormula, any
+  //initial minus sign will be ignored.
+  const minusFragments = splitOnAllDepthZeroSubstrings(
+    {formula: trimmedFormula, depths: depths, substring: ' - '});
+  const allAdditionFormula = minusFragments.join(' + - ');
+  const { depths: additionDepths, matching: additionMatching } =
+    findDepths({formula: allAdditionFormula});
+  if (!additionMatching) {return null;} //should never fire
+
+  const plusFragments = splitOnAllDepthZeroSubstrings(
+    {formula: allAdditionFormula, depths: additionDepths, substring: " + "});
+  if (plusFragments.length >= 2) {
+    const children: AffineExpression[] = [];
+    for (let i = 0; i < plusFragments.length; i++) {
+      const child = parseAffineFormula({formula: plusFragments[i]});
+      if (child !== null) {children.push(child);} else {return null;}
+    }
+    return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
+  }
+
+  const isNegated = allAdditionFormula.startsWith("-");
+  const signFactor = isNegated ? -1 : 1;
+  const signless = isNegated ? allAdditionFormula.slice(1).trim() : allAdditionFormula;
+  const { depths: signlessDepths } = findDepths({formula: signless});
+
+  const attemptConstant = signlessReal({candidate: signless});
+  if (attemptConstant !== null) {
+    return { parseType: 'AffineExpressionConstant', constant: signFactor * attemptConstant };
+  }
+
+  const openParenthesisIndex = signless.indexOf("("); //first index crucial here
+  if (openParenthesisIndex < 0) {return null;}
+  const rightUnwrap = attemptUnwrap({
+    trimmedFormula: signless.slice(openParenthesisIndex), //Note that we preserve trimming!
+    depths: signlessDepths.slice(openParenthesisIndex),
   });
-  if (plusSplit) {return plusSplit;}
-
-  //NOTE: The operator tree is valid becasue we split on the last instance.
-  //For example, a - b - c will be parsed as (a - b) - c.
-  //Also note that if the original formula started with "-", the trimming
-  //will remove the left space, so initial minus signs don't count.
-  const minusSplit = attemptInfixSplit({
-    formula: trimmedFormula,
-    substitutions: substitutions,
-    selector: 'last' as const,
-    divider: " - ",
-    subParser: parseAffineFormula,
-  });
-  if (minusSplit) {return minusSplit;}
-
-  //(Dealing with minus signs for single term linear combinations)
-  if (trimmedFormula[0] === "-") {
-    const {substitutedFormula, validFormula} = parseAffineFormula(
-      {formula: trimmedFormula.slice(1), substitutions: substitutions});
-    return {substitutedFormula: "-"+substitutedFormula, validFormula: validFormula};
+  if (rightUnwrap === null) {return null;}
+  const outer = signless.slice(0, openParenthesisIndex).trim();
+  const isProbability = outer.endsWith("P");
+  const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
+  const outerWithoutStar = outerWithoutP.endsWith("*") ?
+    outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
+  const attemptMagnitude = signlessReal({candidate: outerWithoutStar});
+  if (attemptMagnitude === null && outerWithoutStar !== "") {return null;}
+  //Note that attemptMagnitude === null now implies outerWithoutStar === "".
+  const coefficient = (attemptMagnitude !== null ? attemptMagnitude : 1) * signFactor;
+  let child: AffineExpression | null;
+  if (isProbability) {
+    const probabilityChild = parseLogicalFormulaWithoutImplies({formula: rightUnwrap});
+    if (probabilityChild === null) {return null;}
+    child = { parseType: 'AffineExpressionProbability' as const,
+      child: probabilityChild } as AffineExpression;
+  } else {
+    child = parseAffineFormula({formula: rightUnwrap});
   }
-
-  //NOTE: The only syntax I accept for coefficient multiplication is realNumber * affineFormula.
-  //I could probably do something fancier but I think that this is fine.
-  const splitIndex = indexOfDepthZeroSubstring({
-    selector: 'last' as const,
-    formula: trimmedFormula,
-    depths: findDepths({formula: trimmedFormula}).depths,
-    substring: " * ",
-  });
-  if (splitIndex >= 0) {
-    const coefficient = trimmedFormula.slice(0, splitIndex).trim();
-    const validCoefficient = nonNegativeReal({candidate: coefficient});
-    const {substitutedFormula: rightSubstitutedFormula, validFormula: rightValidFormula}
-      = parseAffineFormula({formula: trimmedFormula.slice(splitIndex + 3), substitutions: substitutions});
-    return {
-      substitutedFormula: coefficient + " * " + rightSubstitutedFormula,
-      validFormula: validCoefficient && rightValidFormula,
-    };
+  if (child === null) {return null;}
+  if (coefficient === 1) {return child;}
+  else {
+    return { parseType: 'AffineExpressionMultiplication' as const,
+      coefficient: coefficient, child: child } as AffineExpression;
   }
-
-  const possibleProbabilityUnwrap = attemptProbabilityUnwrap({trimmedFormula: trimmedFormula});
-  if (possibleProbabilityUnwrap) {
-    const {substitutedFormula, validFormula} = parseLogicalFormula({acceptsImplies: false})(
-      {formula: possibleProbabilityUnwrap, substitutions: substitutions});
-    return {substitutedFormula: "P( "+substitutedFormula+" )", validFormula: validFormula};
-  }
-
-  if (nonNegativeReal({candidate: trimmedFormula})) {
-    return {substitutedFormula: trimmedFormula, validFormula: true};
-  }
-
-  return {substitutedFormula: trimmedFormula, validFormula: false};
 }
 
-export function parseFormula({formula,substitutions}: ParserInput): ParserOutput {
+export function parseFormula({formula}: {formula: string}): ConstraintParse | null {
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
-  if (!matching) {return {substitutedFormula: spacedFormula, validFormula: false};}
-  const equalsIndex = indexOfDepthZeroSubstring(
-    {selector: 'last' as const, formula: spacedFormula, depths: depths, substring: " = "});
+  if (!matching) {return null;}
 
-  if (equalsIndex < 0) {
-    return parseLogicalFormula({acceptsImplies: true})
-      ({formula:spacedFormula, substitutions:substitutions});
-  } else {
-    //First, we test to see if we have a conditional probability.
-    const rightHandSide = spacedFormula.slice(equalsIndex + 3).trim();
-    if (nonNegativeReal({candidate: rightHandSide})) {
-      const leftHandSide = spacedFormula.slice(0, equalsIndex).trim();
-      const possibleProbabilityUnwrap = attemptProbabilityUnwrap({trimmedFormula: leftHandSide});
-      if (possibleProbabilityUnwrap) { 
-        const conditionalSplit = attemptInfixSplit({
-          formula: possibleProbabilityUnwrap,
-          substitutions: substitutions,
-          selector: 'last' as const,
-          divider: " | ",
-          subParser: parseLogicalFormula({acceptsImplies: false}),
-        });
-        if (conditionalSplit) {
-          return {
-            substitutedFormula: "P( "+conditionalSplit.substitutedFormula+" ) = "+rightHandSide, 
-            validFormula: conditionalSplit.validFormula,
-          };
+  const equalsFragments = splitOnAllDepthZeroSubstrings(
+    {formula: spacedFormula, depths: depths, substring: " = "});
+
+  if (equalsFragments.length === 1) {
+    const logicalAttempt = parseLogicalFormula({formula: spacedFormula});
+    return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
+  } else if (equalsFragments.length === 2) {
+    //First, let's attempt to parse as a conditional probability.
+    const rightHandSideConstant = probabilityValue({candidate: equalsFragments[1].trim()});
+    if (rightHandSideConstant !== null) {
+      const leftHandSide = equalsFragments[0].trim();
+      if (leftHandSide.startsWith("P")) {
+        const leftNoP = leftHandSide.slice(1).trim();
+        const { depths: leftNoPDepths } = findDepths({formula: leftNoP});
+        const probUnwrap = attemptUnwrap({trimmedFormula: leftNoP, depths: leftNoPDepths});
+        if (probUnwrap !== null) {
+          const { depths: probUnwrapDepths } = findDepths({formula: probUnwrap});
+          const conditionalFragments = splitOnAllDepthZeroSubstrings(
+            {formula: probUnwrap, depths: probUnwrapDepths, substring: " | "});
+          if (conditionalFragments.length === 2) {
+            const left = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[0]});
+            const right = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[1]});
+            if (left !== null && right !== null) {
+              return {
+                parseType: 'ConditionalProbabilityAssignment' as const,
+                conditionalLeftFormula: left,
+                conditionalRightFormula: right,
+                probability: rightHandSideConstant,
+              } as ConstraintParse;
+            } else {return null;}
+          } else if (conditionalFragments.length >= 3) {return null;}
         }
       }
     }
-    
-    //If we can't parse as a conditional, we parse as an affine formula.
-    const equalsSplit = attemptInfixSplit({
-      formula: spacedFormula,
-      substitutions: substitutions,
-      selector: 'last' as const,
-      divider: " = ",
-      subParser: parseAffineFormula,
-    });
-    if (equalsSplit) {return equalsSplit;}
-    else {
-      throw new Error(
-        "' = ' identified in indexOfDepthZeroSubstring but not attemptInfixSplit"
-      );
-    }
+
+    //Now let's parse as an affine equation.
+    const left = parseAffineFormula({formula: equalsFragments[0]});
+    const right = parseAffineFormula({formula: equalsFragments[1]});
+    if (left !== null && right !== null) {
+      return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
+    } else {return null;}
+  } else {
+    return null;
   }
 }
