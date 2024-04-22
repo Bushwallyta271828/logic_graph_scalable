@@ -32,25 +32,25 @@ export function ClaimTab({claim} : {claim: Claim}) {
     <>
       <div className="relative">
         <Popover>
-          <Popover.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-14 p-2 rounded-l-md`}>
+          <Popover.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-constraint hover:bg-bright-constraint'} h-full w-14 p-2 rounded-l-md`}>
             <p className="text-white text-sm truncate">{claim.claimID}</p>
           </Popover.Button>
-          <Popover.Panel className={`absolute origin-top-right z-20 ${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} outline outline-1 outline-white rounded-md shadow-xl text-white text-sm font-normal`}>
+          <Popover.Panel className={`absolute origin-top-right z-20 ${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-constraint'} outline outline-1 outline-white rounded-md shadow-xl text-white text-sm font-normal`}>
             <div>
               <p className="px-4 py-2">Conditioning:</p>
               <div className="container mx-auto flex items-center">
                 <Popover.Button
-                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === false ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === false ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === false ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === false ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === false ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === false ? 'bg-bright-constraint' : 'hover:bg-medium-constraint')}`}
                   onClick={() => setConditioning({claim: claim, newConditioning: false})}>
                   False
                 </Popover.Button>
                 <Popover.Button
-                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === null ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === null ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === null ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === null ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === null ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === null ? 'bg-bright-constraint' : 'hover:bg-medium-constraint')}`}
                   onClick={() => setConditioning({claim: claim, newConditioning: null})}>
                   None
                 </Popover.Button>
                 <Popover.Button
-                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === true ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === true ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === true ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === true ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === true ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === true ? 'bg-bright-constraint' : 'hover:bg-medium-constraint')}`}
                   onClick={() => setConditioning({claim: claim, newConditioning: true})}>
                   True
                 </Popover.Button>

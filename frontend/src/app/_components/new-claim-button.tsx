@@ -30,9 +30,9 @@ export function NewClaimButton() {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  className={`block px-4 py-2 ${active ? 'bg-bright-zeroth-order' : 'bg-medium-zeroth-order'}`}
-                  onClick={() => addClaim({author: 'local', claimType: 'zeroth-order' as const, text: '', conditioning: null})}>
-                  Zeroth Order Claim
+                  className={`block px-4 py-2 ${active ? 'bg-bright-constraint' : 'bg-medium-constraint'}`}
+                  onClick={() => addClaim({author: 'local', claimType: 'constraint' as const, text: '', conditioning: null})}>
+                  Constraint Claim
                 </a>
               )}
             </Menu.Item>
