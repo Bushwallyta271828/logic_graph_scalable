@@ -16,7 +16,7 @@ export function NewClaimButton() {
               : (<p className="px-2 py-1 rounded-md bg-transparent hover:bg-medium-neutral">New Claim</p>) 
           }
         </Menu.Button>
-        <Menu.Items className="absolute w-40 origin-top-right z-20 bg-transparent outline-none rounded-md shadow-xl text-sm font-normal">
+        <Menu.Items className="absolute w-40 origin-top-right z-30 bg-transparent outline-none rounded-md shadow-xl text-sm font-normal">
           <div>
             <Menu.Item>
               {({ active }) => (
