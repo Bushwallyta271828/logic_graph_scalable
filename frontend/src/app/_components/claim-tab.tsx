@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Menu } from '@headlessui/react';
+import { Popover } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
 import { useClaimsContext } from '@/app/_contexts/claims-context';
 import { DeletionDialog } from '@/app/_components/deletion-dialog';
@@ -11,7 +11,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
   const [ dialogOpen, setDialogOpen ] = useState(false);
   const [ additionalAncestors, setAdditionalAncestors ] = useState<Claim[]>([]);
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const { attachBlankDefinition, getAncestors, deleteClaim, claimLookup } = useClaimsContext();
+  const { setConditioning, attachBlankDefinition, getAncestors, deleteClaim, claimLookup } = useClaimsContext();
 
   const handleDelete = () => {
     const ancestors = getAncestors(claim);
@@ -31,36 +31,48 @@ export function ClaimTab({claim} : {claim: Claim}) {
   return (
     <>
       <div className="relative">
-        <Menu>
-          <Menu.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-14 p-2 rounded-l-md`}>
+        <Popover>
+          <Popover.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-14 p-2 rounded-l-md`}>
             <p className="text-white text-sm truncate">{claim.claimID}</p>
-          </Menu.Button>
-          <Menu.Items className={`absolute w-40 origin-top-right z-20 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
+          </Popover.Button>
+          <Popover.Panel className={`absolute origin-top-right z-20 ${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} outline outline-1 outline-white rounded-md shadow-xl text-white text-sm font-normal`}>
             <div>
+              <p className="px-4 py-2">Conditioning:</p>
+              <div className="container mx-auto flex items-center">
+                <Popover.Button
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === false ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === false ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === false ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  onClick={() => setConditioning({claim: claim, newConditioning: false})}>
+                  False
+                </Popover.Button>
+                <Popover.Button
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === null ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === null ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === null ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  onClick={() => setConditioning({claim: claim, newConditioning: null})}>
+                  None
+                </Popover.Button>
+                <Popover.Button
+                  className={`block px-4 py-2 ${claim.claimType === 'text' ? (claim.conditioning === true ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === true ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === true ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}
+                  onClick={() => setConditioning({claim: claim, newConditioning: true})}>
+                  True
+                </Popover.Button>
+              </div>
               {acceptsDefinitions ? 
-                <Menu.Item>
-                  {({ active }) => (
-                    <a
-                      className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-definition' : 'bg-medium-definition'}`}
-                      onClick={() => attachBlankDefinition(claim)}>
-                      Attach Definition
-                    </a>
-                  )}
-                </Menu.Item> :
+                <Popover.Button
+                  as="p"
+                  className="block px-4 py-2 bg-medium-definition hover:bg-bright-definition"
+                  onClick={() => attachBlankDefinition(claim)}>
+                  Attach Definition
+                </Popover.Button> :
                 null
               }
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-                    onClick={handleDelete}>
-                    Delete Claim
-                  </a>
-                )}
-              </Menu.Item>
+              <Popover.Button
+                as="p"
+                className="block px-4 py-2 rounded-b-md bg-medium-danger hover:bg-bright-danger"
+                onClick={handleDelete}>
+                Delete Claim
+              </Popover.Button>
             </div>
-          </Menu.Items>
-        </Menu>
+          </Popover.Panel>
+        </Popover>
       </div>
       <DeletionDialog
         dialogOpen={dialogOpen}
