@@ -35,7 +35,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
           <Popover.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-14 p-2 rounded-l-md`}>
             <p className="text-white text-sm truncate">{claim.claimID}</p>
           </Popover.Button>
-          <Popover.Panel className={`absolute w-40 origin-top-right z-20 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
+          <Popover.Panel className={`absolute w-40 origin-top-right z-20 bg-dark-neutral outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
             <div>
               {acceptsDefinitions ? 
                 <Popover.Button
@@ -46,9 +46,10 @@ export function ClaimTab({claim} : {claim: Claim}) {
                 </Popover.Button> :
                 null
               }
+              <p className="px-4 py-2">Conditioning:</p>
               <Popover.Button
                 as="p"
-                className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} bg-medium-danger hover:bg-bright-danger`}
+                className="block px-4 py-2 rounded-b-md bg-medium-danger hover:bg-bright-danger"
                 onClick={handleDelete}>
                 Delete Claim
               </Popover.Button>
