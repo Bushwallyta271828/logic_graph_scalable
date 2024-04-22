@@ -27,19 +27,21 @@ export function ClaimBox({claimID} : {claimID: string}) {
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className={`flex flex-col ${isDragging ? 'z-40' : ''} ${claim.conditioning === true ? 'ml-64' : claim.conditioning === false ? 'mr-64' : ''}`}>
-      <div
-        className={`flex ${hasDefinitions ? 'rounded-tr-md rounded-tl-md rounded-bl-md' : 'rounded-md'} shadow-xl`}
-        {...listeners}>
-        <ClaimTab claim={claim} />
-        <ClaimContentBox claim={claim} hasDefinitions={hasDefinitions} />
+      className={`flex flex-col ${isDragging ? 'z-40' : ''}`}>
+      <div className={`${claim.conditioning === true ? 'ml-64' : claim.conditioning === false ? 'mr-64' : ''}`}>
+        <div
+          className={`flex ${hasDefinitions ? 'rounded-tr-md rounded-tl-md rounded-bl-md' : 'rounded-md'} shadow-xl`}
+          {...listeners}>
+          <ClaimTab claim={claim} />
+          <ClaimContentBox claim={claim} hasDefinitions={hasDefinitions} />
+        </div>
+        {acceptsDefinitions ?
+          <div className="ml-14">
+            <DefinitionList claim={claim} />
+          </div> :
+          null
+        }
       </div>
-      {acceptsDefinitions ?
-        <div className="ml-14">
-          <DefinitionList claim={claim} />
-        </div> :
-        null
-      }
     </div>
   );
 }
