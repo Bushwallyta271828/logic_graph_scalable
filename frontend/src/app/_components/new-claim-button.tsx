@@ -16,7 +16,7 @@ export function NewClaimButton() {
               : (<p className="px-2 py-1 rounded-md bg-transparent hover:bg-medium-neutral">New Claim</p>) 
           }
         </Menu.Button>
-        <Menu.Items className="absolute w-40 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
+        <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
           <div>
             <Menu.Item>
               {({ active }) => (
@@ -30,9 +30,9 @@ export function NewClaimButton() {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  className={`block px-4 py-2 ${active ? 'bg-bright-zeroth-order' : 'bg-medium-zeroth-order'}`}
-                  onClick={() => addClaim({author: 'local', claimType: 'zeroth-order' as const, text: '', conditioning: null})}>
-                  Zeroth Order Claim
+                  className={`block px-4 py-2 ${active ? 'bg-bright-constraint' : 'bg-medium-constraint'}`}
+                  onClick={() => addClaim({author: 'local', claimType: 'constraint' as const, text: '', conditioning: null})}>
+                  Constraint Claim
                 </a>
               )}
             </Menu.Item>

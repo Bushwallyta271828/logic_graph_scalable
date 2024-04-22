@@ -14,7 +14,7 @@ type ClaimsContext = {
   //I don't return the setClaimLookup or setClaimIDs functions so that
   //other parts of the code can't break the data invariants.
   
-  addClaim: ({author, claimType, text, conditioning}: {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string, conditioning: boolean | null}) => string;
+  addClaim: ({author, claimType, text, conditioning}: {author: string, claimType: 'text'|'definition'|'constraint', text: string, conditioning: boolean | null}) => string;
   //addClaim returns the claimID assigned to the new claim.
   //To add a claim with definitions, first add the claim without definitions and then
   //add the definitions individually by creating blank definitions and then editing them.
@@ -64,7 +64,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   };
 
   const addClaim = ({author, claimType, text, conditioning}:
-    {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string, conditioning: boolean | null}) => {
+    {author: string, claimType: 'text'|'definition'|'constraint', text: string, conditioning: boolean | null}) => {
     const claimID = newClaimID();
     if (claimType === 'text' || claimType === 'definition') {
       const claim = {
@@ -78,7 +78,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       } as Claim;
       setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
       setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
-    } else if (claimType === 'zeroth-order') {
+    } else if (claimType === 'constraint') {
       const parse = parseFormula({formula: text});
       const claim = {
         claimID: claimID,
@@ -118,7 +118,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       if (!(claimID in prevClaimLookup))
         {throw new Error("Editing unrecognized claim");}
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
-      if (updatedClaim.claimType === 'zeroth-order') {
+      if (updatedClaim.claimType === 'constraint') {
         updatedClaim.parse = parseFormula({formula: newText});
         updatedClaim.dependencies = 
           (updatedClaim.parse !== null) ?
@@ -135,7 +135,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         return claim.text;
       case 'definition':
         return `\"${claim.text}\" is a valid definition.`;
-      case 'zeroth-order':
+      case 'constraint':
         return claim.text;
       default:
         throw new Error('Unrecognized claimType');
@@ -143,7 +143,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   };
 
   const getDisplayData = (claim: Claim) => {
-    if (claim.claimType !== 'zeroth-order')
+    if (claim.claimType !== 'constraint')
       {return {displayText: getInterpretedText(claim), validText: true};}
     if (claim.parse === null)
       {return {displayText: "Please enter a valid constraint.", validText: false};}

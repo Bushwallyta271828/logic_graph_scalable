@@ -29,10 +29,10 @@ export type ClaimWithDefinitions =
   | TextClaim
   | DefinitionClaim;
 
-export type ZerothOrderClaim = {
+export type ConstraintClaim = {
   claimID: string; //Must satisfy potentialClaimID
   author: string;
-  claimType: 'zeroth-order';
+  claimType: 'constraint';
   text: string;
   conditioning: boolean | null;
   dependencies: Set<string>; //Must be immediateConstraintDependencies({parse: parse})
@@ -42,4 +42,4 @@ export type ZerothOrderClaim = {
 export type Claim =
   | TextClaim
   | DefinitionClaim
-  | ZerothOrderClaim;
+  | ConstraintClaim;
