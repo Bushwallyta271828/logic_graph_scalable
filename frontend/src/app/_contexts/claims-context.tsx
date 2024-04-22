@@ -22,7 +22,6 @@ type ClaimsContext = {
   moveClaim: ({startClaimID, endClaimID}: {startClaimID: string, endClaimID: string}) => void;
 
   setClaimText: ({claimID, newText}: {claimID: string, newText: string}) => void;
-  getInterpretedText: (claim: Claim) => string;
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 
   setConditioning: ({claim, newConditioning}: {claim: Claim, newConditioning: boolean | null}) => void;
@@ -129,22 +128,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
   };
 
-  const getInterpretedText = (claim: Claim) => {
-    switch (claim.claimType) {
-      case 'text':
-        return claim.text;
-      case 'definition':
-        return `\"${claim.text}\" is a valid definition.`;
-      case 'constraint':
-        return claim.text;
-      default:
-        throw new Error('Unrecognized claimType');
-    }
-  };
-
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'constraint')
-      {return {displayText: getInterpretedText(claim), validText: true};}
+      {return {displayText: claim.text, validText: true};}
     if (claim.parse === null)
       {return {displayText: "Please enter a valid constraint.", validText: false};}
     const referencedIDs = Array.from(claim.dependencies);
@@ -156,7 +142,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
           validText: false,
         };
       }
-      substitutions[referencedIDs[i]] = getInterpretedText(claimLookup[referencedIDs[i]]);
+      substitutions[referencedIDs[i]] = claimLookup[referencedIDs[i]].text;
     }
     const displayText = displayConstraintParse({parse: claim.parse, substitutions: substitutions});
     return {displayText: displayText, validText: true};
@@ -268,7 +254,6 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         moveClaim,
 
         setClaimText,
-        getInterpretedText,
         getDisplayData,
 
         setConditioning,
