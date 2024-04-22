@@ -25,7 +25,7 @@ type ClaimsContext = {
   getInterpretedText: (claim: Claim) => string;
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 
-  setConditioning: ({claimID, newConditioning}: {claimID: string, newConditioning: boolean | null}) => void;
+  setConditioning: ({claim, newConditioning}: {claim: Claim, newConditioning: boolean | null}) => void;
 
   attachBlankDefinition: (claim: ClaimWithDefinitions) => void;
   editDefinitionClaimID: ({claim, oldDefinitionClaimID, newDefinitionClaimID}: {claim: ClaimWithDefinitions, oldDefinitionClaimID: string, newDefinitionClaimID: string}) => void;
@@ -127,7 +127,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       }
       return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
-  }
+  };
 
   const getInterpretedText = (claim: Claim) => {
     switch (claim.claimType) {
@@ -140,7 +140,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       default:
         throw new Error('Unrecognized claimType');
     }
-  }
+  };
 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'zeroth-order')
@@ -160,12 +160,14 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     }
     const displayText = displayConstraintParse({parse: claim.parse, substitutions: substitutions});
     return {displayText: displayText, validText: true};
-  }
+  };
 
 
-  const setConditioning({claimID, newConditioning}:
-    {claimID: string, newConditioning: boolean | null}) => {
-  }
+  const setConditioning = ({claim, newConditioning}:
+    {claim: Claim, newConditioning: boolean | null}) => {
+    const updatedClaim = {...claim, conditioning: newConditioning};
+    setClaimLookup(prevClaimLookup => {return { ...prevClaimLookup, [claim.claimID]: updatedClaim };});
+  };
 
 
   const attachBlankDefinition = (claim: ClaimWithDefinitions) => {
@@ -239,7 +241,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       newAncestors = newerAncestors;
     }
     return ancestors;
-  }
+  };
 
   const deleteClaim = (claim: Claim) => {
     const ancestors = getAncestors(claim);
@@ -253,7 +255,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     });
     setClaimIDs(prevClaimIDs => prevClaimIDs.filter(
       (prevClaimID) => !ancestors.has(prevClaimID)));
-  }
+  };
 
 
   return (
