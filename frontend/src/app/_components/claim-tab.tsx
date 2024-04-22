@@ -35,7 +35,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
           <Popover.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-14 p-2 rounded-l-md`}>
             <p className="text-white text-sm truncate">{claim.claimID}</p>
           </Popover.Button>
-          <Popover.Panel className={`absolute origin-top-right z-20 ${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
+          <Popover.Panel className={`absolute origin-top-right z-20 ${claim.claimType === 'text' ? 'bg-dark-text' : claim.claimType === 'definition' ? 'bg-dark-definition' : 'bg-dark-zeroth-order'} outline outline-1 outline-white rounded-md shadow-xl text-white text-sm font-normal`}>
             <div>
               <p className="px-4 py-2">Conditioning:</p>
               <div className="container mx-auto flex items-center">
