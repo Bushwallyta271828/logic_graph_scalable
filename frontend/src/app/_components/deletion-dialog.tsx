@@ -32,7 +32,9 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
           </div>
           <p>Are you sure you wish to proceed?</p>
           <div className="container mx-auto flex justify-between items-center p-2">
-            <button className="bg-medium-neutral hover:bg-bright-neutral text-lg font-bold px-2 py-1 rounded-md">
+            <button
+              className="bg-medium-neutral hover:bg-bright-neutral text-lg font-bold px-2 py-1 rounded-md"
+              onClick={() => setDialogOpen(false)}>
               Cancel
             </button>
             <button className="bg-medium-danger hover:bg-bright-danger text-lg font-bold px-2 py-1 rounded-md">
