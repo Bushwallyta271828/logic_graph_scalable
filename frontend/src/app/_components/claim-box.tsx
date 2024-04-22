@@ -27,7 +27,7 @@ export function ClaimBox({claimID} : {claimID: string}) {
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className={`flex flex-col ${isDragging ? 'z-30' : ''}`}>
+      className={`flex flex-col ${isDragging ? 'z-40' : ''}`}>
       <div
         className={`flex ${hasDefinitions ? 'rounded-tr-md rounded-tl-md rounded-bl-md' : 'rounded-md'} shadow-xl`}
         {...listeners}>
