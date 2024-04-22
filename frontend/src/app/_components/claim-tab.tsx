@@ -59,7 +59,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
           </Menu.Items>
         </Menu>
       </div>
-      <DeletionDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} claimsToDelete={ancestors} />
+      <DeletionDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} claim={claim} claimsToDelete={ancestors} />
     </>
   );
 }

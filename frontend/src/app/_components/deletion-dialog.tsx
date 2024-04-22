@@ -7,8 +7,14 @@ import { Claim } from '@/app/_types/claim-types';
 export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
   dialogOpen: boolean,
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  claimsToDelete: Claim[],
+  claim: Claim,
+  claimsToDelete: Set<string>,
 }) {
+  if (!claimsToDelete.has(claim.claimID)) {
+    throw new Error("claimsToDelete doesn't contain claim.claimID");
+  }
+  const otherClaimIDs = Array.from(claimsToDelete).filter((claimID) => {return claimID !== claim.claimID;});
+  
   return (
     <Dialog
       data-no-dnd="true"
@@ -23,13 +29,13 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
             By deleting this claim, you will also be deleting the following claims which depend upon it:
           </p>
           <div className="p-2">
-            { claimsToDelete.slice(0, 8).map((claimToDelete, index) => (
+            { otherClaimIDs.slice(0, 8).map((otherClaimID, index) => (
                 <p className="text-nowrap truncate" key={index}>
-                  {claimToDelete.claimID}: {claimToDelete.text}
+                  {otherClaimID.claimID}: {otherClaimID.text}
                 </p>
               ))
             }
-            {(claimsToDelete.length > 8) ? <p key={8}>...</p> : null}
+            {(otherClaimIDs.length > 8) ? <p key={8}>...</p> : null}
           </div>
           <p>Are you sure you wish to proceed?</p>
           <div className="container mx-auto flex justify-between items-center p-2">
