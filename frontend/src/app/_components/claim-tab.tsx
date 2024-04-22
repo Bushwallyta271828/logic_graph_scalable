@@ -19,7 +19,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
       {throw new Error("ancestors lacks starting claim ID");}
     const others = Array.from(ancestors)
       .filter((ancestor) => {return ancestor !== claim.claimID;})
-      .map((claimID) => claimLookup(claimID));
+      .map((claimID) => claimLookup[claimID]);
     if (others.length > 0) {
       setAdditionalAncestors(others);
       setDialogOpen(true);
@@ -66,7 +66,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
         dialogOpen={dialogOpen}
         setDialogOpen={setDialogOpen}
         claim={claim}
-        additionalClaimIDs={additionalAncestors} />
+        additionalClaims={additionalAncestors} />
     </>
   );
 }
