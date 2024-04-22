@@ -14,7 +14,7 @@ type ClaimsContext = {
   //I don't return the setClaimLookup or setClaimIDs functions so that
   //other parts of the code can't break the data invariants.
   
-  addClaim: ({author, claimType, text}: {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string}) => string;
+  addClaim: ({author, claimType, text, conditioning}: {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string, conditioning: boolean | null}) => string;
   //addClaim returns the claimID assigned to the new claim.
   //To add a claim with definitions, first add the claim without definitions and then
   //add the definitions individually by creating blank definitions and then editing them.
@@ -60,8 +60,8 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     return uniqueID;
   };
 
-  const addClaim = ({author, claimType, text}:
-    {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string}) => {
+  const addClaim = ({author, claimType, text, conditioning}:
+    {author: string, claimType: 'text'|'definition'|'zeroth-order', text: string, conditioning: boolean | null}) => {
     const claimID = newClaimID();
     if (claimType === 'text' || claimType === 'definition') {
       const claim = {
@@ -69,6 +69,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         author: author,
         claimType: claimType,
         text: text,
+        conditioning: conditioning,
         dependencies: new Set<string>(),
         definitionClaimIDs: [] as string[],
       } as Claim;
@@ -81,6 +82,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         author: author,
         claimType: claimType,
         text: text,
+        conditioning: conditioning,
         dependencies:
           (parse !== null) ?
           immediateConstraintDependencies({parse: parse}) :
