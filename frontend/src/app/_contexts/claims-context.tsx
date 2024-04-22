@@ -233,12 +233,12 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const deleteClaim = (claim: Claim) => {
     const ancestors = getAncestors(claim);
     setClaimLookup(prevLookup => {
-      Object.entries(prevLookup).reduce((newLookup, [prevClaimID, prevClaim]) => {
-        if (!ancestors.includes(prevClaimID)) {
+      return Object.entries(prevLookup).reduce((newLookup, [prevClaimID, prevClaim]) => {
+        if (!ancestors.has(prevClaimID)) {
           newLookup[prevClaimID] = prevClaim;
         }
         return newLookup;
-      }, {});
+      }, {} as { [claimID: string]: Claim });
     });
     setClaimIDs(prevClaimIDs => prevClaimIDs.filter(
       (prevClaimID) => !ancestors.has(prevClaimID)));
