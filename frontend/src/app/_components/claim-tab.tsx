@@ -38,18 +38,20 @@ export function ClaimTab({claim} : {claim: Claim}) {
           <Popover.Panel className={`absolute w-40 origin-top-right z-20 bg-transparent outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
             <div>
               {acceptsDefinitions ? 
-                <p
+                <Popover.Button
+                  as="p"
                   className="block px-4 py-2 rounded-t-md bg-medium-definition hover:bg-bright-definition"
                   onClick={() => attachBlankDefinition(claim)}>
                   Attach Definition
-                </p> :
+                </Popover.Button> :
                 null
               }
-              <p
+              <Popover.Button
+                as="p"
                 className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} bg-medium-danger hover:bg-bright-danger`}
                 onClick={handleDelete}>
                 Delete Claim
-              </p>
+              </Popover.Button>
             </div>
           </Popover.Panel>
         </Popover>
