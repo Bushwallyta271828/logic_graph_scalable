@@ -35,18 +35,18 @@ export function ClaimTab({claim} : {claim: Claim}) {
           <Popover.Button className={`${claim.claimType === 'text' ? 'bg-medium-text hover:bg-bright-text' : claim.claimType === 'definition' ? 'bg-medium-definition hover:bg-bright-definition' : 'bg-medium-zeroth-order hover:bg-bright-zeroth-order'} h-full w-14 p-2 rounded-l-md`}>
             <p className="text-white text-sm truncate">{claim.claimID}</p>
           </Popover.Button>
-          <Popover.Panel className={`absolute w-40 origin-top-right z-20 bg-dark-neutral outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
+          <Popover.Panel className={`absolute w-40 origin-top-right z-20 bg-bright-neutral outline-none rounded-md shadow-xl text-white text-sm font-normal`}>
             <div>
+              <p className="px-4 py-2">Conditioning:</p>
               {acceptsDefinitions ? 
                 <Popover.Button
                   as="p"
-                  className="block px-4 py-2 rounded-t-md bg-medium-definition hover:bg-bright-definition"
+                  className="block px-4 py-2 bg-medium-definition hover:bg-bright-definition"
                   onClick={() => attachBlankDefinition(claim)}>
                   Attach Definition
                 </Popover.Button> :
                 null
               }
-              <p className="px-4 py-2">Conditioning:</p>
               <Popover.Button
                 as="p"
                 className="block px-4 py-2 rounded-b-md bg-medium-danger hover:bg-bright-danger"
