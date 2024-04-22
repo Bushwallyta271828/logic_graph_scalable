@@ -11,7 +11,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
   const [ dialogOpen, setDialogOpen ] = useState(false);
   const [ additionalAncestors, setAdditionalAncestors ] = useState<Claim[]>([]);
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const { attachBlankDefinition, getAncestors, claimLookup } = useClaimsContext();
+  const { attachBlankDefinition, getAncestors, deleteClaim, claimLookup } = useClaimsContext();
 
   const handleDelete = () => {
     const ancestors = getAncestors(claim);
@@ -24,7 +24,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
       setAdditionalAncestors(others);
       setDialogOpen(true);
     } else {
-      return null; //TODO
+      deleteClaim(claim);
     }
   }
 

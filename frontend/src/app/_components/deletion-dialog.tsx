@@ -2,6 +2,7 @@
 
 import { Dialog } from '@headlessui/react';
 import { Claim } from '@/app/_types/claim-types';
+import { useClaimsContext } from '@/app/_contexts/claims-context';
 
 
 export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClaims}: {
@@ -10,6 +11,8 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClai
   claim: Claim,
   additionalClaims: Claim[],
 }) {
+  const { deleteClaim } = useClaimsContext();
+
   return (
     <Dialog
       data-no-dnd="true"
@@ -39,7 +42,9 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClai
               onClick={() => setDialogOpen(false)}>
               Cancel
             </button>
-            <button className="bg-medium-danger hover:bg-bright-danger text-lg font-bold px-2 py-1 rounded-md">
+            <button
+              className="bg-medium-danger hover:bg-bright-danger text-lg font-bold px-2 py-1 rounded-md"
+              onClick={() => deleteClaim(claim)}>
               Delete
             </button>
           </div>
