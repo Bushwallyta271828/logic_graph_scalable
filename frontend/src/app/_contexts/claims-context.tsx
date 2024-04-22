@@ -29,7 +29,7 @@ type ClaimsContext = {
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 
   getAncestors: (claim: Claim) => Set<string>;
-  //deleteClaim: (claim: Claim) => void;
+  deleteClaim: (claim: Claim) => void;
 }
 
 export const ClaimsContext = createContext<ClaimsContext | null>(null);
@@ -230,6 +230,20 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
     return ancestors;
   }
 
+  const deleteClaim = (claim: Claim) => {
+    const ancestors = getAncestors(claim);
+    setClaimLookup(prevLookup => {
+      Object.entries(prevLookup).reduce((newLookup, [prevClaimID, prevClaim]) => {
+        if (!ancestors.includes(prevClaimID)) {
+          newLookup[prevClaimID] = prevClaim;
+        }
+        return newLookup;
+      }, {});
+    });
+    setClaimIDs(prevClaimIDs => prevClaimIDs.filter(
+      (prevClaimID) => !ancestors.has(prevClaimID)));
+  }
+
 
   return (
     <ClaimsContext.Provider
@@ -248,6 +262,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         getDisplayData,
 
         getAncestors,
+        deleteClaim,
         }}>
       {children}
     </ClaimsContext.Provider>
