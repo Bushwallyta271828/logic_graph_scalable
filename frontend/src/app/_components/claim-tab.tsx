@@ -9,8 +9,21 @@ import { DeletionDialog } from '@/app/_components/deletion-dialog';
 
 export function ClaimTab({claim} : {claim: Claim}) {
   const [ dialogOpen, setDialogOpen ] = useState(false);
+  const [ ancestors, setAncestors ] = useState<Set<string>>(new Set());
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const { attachBlankDefinition } = useClaimsContext();
+  const { attachBlankDefinition, getAncestors } = useClaimsContext();
+
+  const handleDelete = () => {
+    const foundAncestors = getAncestors({claim: claim});
+    if (foundAncestors.size === 1) {
+      return null; //TODO
+    } else if (foundAncestors.size > 1) {
+      setAncestors(foundAncestors);
+      setDialogOpen(true);
+    } else {
+      throw new Error("foundAncestors empty but must always contain starting claim ID");
+    }
+  }
 
   return (
     <>
@@ -37,7 +50,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
                 {({ active }) => (
                   <a
                     className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-                    onClick={() => setDialogOpen(true)}>
+                    onClick=handleDelete>
                     Delete Claim
                   </a>
                 )}
@@ -46,7 +59,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
           </Menu.Items>
         </Menu>
       </div>
-      <DeletionDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} claimsToDelete={[claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim,claim]} />
+      <DeletionDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} claimsToDelete={ancestors} />
     </>
   );
 }
