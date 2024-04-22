@@ -9,15 +9,17 @@ import { DeletionDialog } from '@/app/_components/deletion-dialog';
 
 export function ClaimTab({claim} : {claim: Claim}) {
   const [ dialogOpen, setDialogOpen ] = useState(false);
-  const [ additionalAncestors, setAdditionalAncestors ] = useState<string[]>([]);
+  const [ additionalAncestors, setAdditionalAncestors ] = useState<Claim[]>([]);
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const { attachBlankDefinition, getAncestors } = useClaimsContext();
+  const { attachBlankDefinition, getAncestors, claimLookup } = useClaimsContext();
 
   const handleDelete = () => {
-    const ancestors = getAncestors({claim: claim});
+    const ancestors = getAncestors(claim);
     if (!ancestors.has(claim.claimID))
       {throw new Error("ancestors lacks starting claim ID");}
-    const others = Array.from(ancestors).filter((ancestor) => {return ancestor !== claim.claimID;});
+    const others = Array.from(ancestors)
+      .filter((ancestor) => {return ancestor !== claim.claimID;})
+      .map((claimID) => claimLookup(claimID));
     if (others.length > 0) {
       setAdditionalAncestors(others);
       setDialogOpen(true);
@@ -51,7 +53,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
                 {({ active }) => (
                   <a
                     className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-                    onClick=handleDelete>
+                    onClick={handleDelete}>
                     Delete Claim
                   </a>
                 )}
