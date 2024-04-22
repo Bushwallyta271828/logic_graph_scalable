@@ -9,19 +9,20 @@ import { DeletionDialog } from '@/app/_components/deletion-dialog';
 
 export function ClaimTab({claim} : {claim: Claim}) {
   const [ dialogOpen, setDialogOpen ] = useState(false);
-  const [ ancestors, setAncestors ] = useState<Set<string>>(new Set());
+  const [ additionalAncestors, setAdditionalAncestors ] = useState<string[]>([]);
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
   const { attachBlankDefinition, getAncestors } = useClaimsContext();
 
   const handleDelete = () => {
-    const foundAncestors = getAncestors({claim: claim});
-    if (foundAncestors.size === 1) {
-      return null; //TODO
-    } else if (foundAncestors.size > 1) {
-      setAncestors(foundAncestors);
+    const ancestors = getAncestors({claim: claim});
+    if (!ancestors.has(claim.claimID))
+      {throw new Error("ancestors lacks starting claim ID");}
+    const others = Array.from(ancestors).filter((ancestor) => {return ancestor !== claim.claimID;});
+    if (others.length > 0) {
+      setAdditionalAncestors(others);
       setDialogOpen(true);
     } else {
-      throw new Error("foundAncestors empty but must always contain starting claim ID");
+      return null; //TODO
     }
   }
 
@@ -59,7 +60,11 @@ export function ClaimTab({claim} : {claim: Claim}) {
           </Menu.Items>
         </Menu>
       </div>
-      <DeletionDialog dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} claimsToDelete={ancestors} />
+      <DeletionDialog
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        claim={claim}
+        additionalClaimIDs={additionalAncestors} />
     </>
   );
 }
