@@ -28,7 +28,7 @@ type ClaimsContext = {
   getInterpretedText: (claim: Claim) => string;
   getDisplayData: (claim: Claim) => {displayText: string, validText: boolean};
 
-  //getDependencies: (claim: Claim) => Set<string>;
+  getAncestors: (claim: Claim) => Set<string>;
   //deleteClaim: (claim: Claim) => void;
 }
 
@@ -207,6 +207,11 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   }
 
 
+  const getAncestors = (claim: Claim) => {
+    return new Set<string>(); //TODO
+  }
+
+
   return (
     <ClaimsContext.Provider
       value={{
@@ -222,6 +227,8 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         setClaimText,
         getInterpretedText,
         getDisplayData,
+
+        getAncestors,
         }}>
       {children}
     </ClaimsContext.Provider>
