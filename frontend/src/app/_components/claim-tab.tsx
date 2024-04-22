@@ -40,15 +40,15 @@ export function ClaimTab({claim} : {claim: Claim}) {
               <p className="px-4 py-2">Conditioning:</p>
               <div className="container mx-auto flex items-center">
                 <Popover.Button
-                  className="block px-4 py-2 hover:bg-medium-neutral">
+                  className={`block px-4 py-2 ${claim.claimType === 'text' : (claim.conditioning === false ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === false ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === false ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}>
                   False
                 </Popover.Button>
                 <Popover.Button
-                  className="block px-4 py-2 hover:bg-medium-neutral">
+                  className={`block px-4 py-2 ${claim.claimType === 'text' : (claim.conditioning === null ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === null ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === null ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}>
                   None
                 </Popover.Button>
                 <Popover.Button
-                  className="block px-4 py-2 hover:bg-medium-neutral">
+                  className={`block px-4 py-2 ${claim.claimType === 'text' : (claim.conditioning === true ? 'bg-bright-text' : 'hover:bg-medium-text') : claim.claimType === 'definition' ? (claim.conditioning === true ? 'bg-bright-definition' : 'hover:bg-medium-definition') : (claim.conditioning === true ? 'bg-bright-zeroth-order' : 'hover:bg-medium-zeroth-order')}`}>
                   True
                 </Popover.Button>
               </div>
