@@ -39,14 +39,14 @@ export function ClaimTab({claim} : {claim: Claim}) {
             <div>
               {acceptsDefinitions ? 
                 <p
-                  className={`block px-4 py-2 rounded-t-md ${false ? 'bg-bright-definition' : 'bg-medium-definition'}`}
+                  className="block px-4 py-2 rounded-t-md bg-medium-definition hover:bg-bright-definition"
                   onClick={() => attachBlankDefinition(claim)}>
                   Attach Definition
                 </p> :
                 null
               }
               <p
-                className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} ${false ? 'bg-bright-danger' : 'bg-medium-danger'}`}
+                className={`block px-4 py-2 ${acceptsDefinitions ? 'rounded-b-md' : 'rounded-md'} bg-medium-danger hover:bg-bright-danger`}
                 onClick={handleDelete}>
                 Delete Claim
               </p>
