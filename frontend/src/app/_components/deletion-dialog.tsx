@@ -11,6 +11,7 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claimsToDelete}: {
 }) {
   return (
     <Dialog
+      data-no-dnd="true"
       open={dialogOpen}
       onClose={() => setDialogOpen(false)}
       className="relative z-50">
