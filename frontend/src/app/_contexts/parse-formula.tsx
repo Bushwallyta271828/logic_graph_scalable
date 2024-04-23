@@ -91,7 +91,7 @@ function attemptUnwrap({trimmedFormula, depths}:
 
 function parseLogicalFormula({formula}: {formula: string}): LogicalFormula {
   //This function will attempt to parse formula as a LogicalFormula.
-  //It will return null if formula cannot be parsed.
+  //It will throw a ParsingError if formula cannot be parsed.
   //This function assumes that formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim(); 
   if (trimmedFormula === "") {return null;}
@@ -151,7 +151,7 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula {
 function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
   LogicalFormulaWithoutImplies {
   //This function will attempt to parse formula as a LogicalFormulaWithoutImplies.
-  //It will return null if formula cannot be parsed.
+  //It will throw a ParsingError if formula cannot be parsed.
   //This function assumes that formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim(); 
   if (trimmedFormula === "") {return null;}
@@ -197,7 +197,7 @@ function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
 
 function parseAffineFormula({formula}: {formula: string}): AffineExpression {
   //This function will attempt to parse formula as an AffineExpression.
-  //It will return null if formula cannot be parsed.
+  //It will throw a ParsingError if formula cannot be parsed.
   //This function assumes that formula has had spaces
   //added around parentheses, "*", "+", and "-"!
   const trimmedFormula = formula.trim(); 
@@ -273,6 +273,8 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression {
 }
 
 export function parseFormula({formula}: {formula: string}): ConstraintParse {
+  //This function will attempt to parse formula as a ConstraintParse.
+  //It will throw a ParsingError if formula cannot be parsed.
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
