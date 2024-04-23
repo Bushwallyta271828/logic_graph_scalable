@@ -96,7 +96,6 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
   //This function will attempt to parse formula as either a LogicalFormula or a
   //LogicalFormulaWithoutImplies depending on the value of acceptsImplies.
   //It will throw a ParsingError if formula cannot be parsed.
-  //Make sure that B and acceptsImplies agree!
   //This function assumes that formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim(); 
   if (trimmedFormula === "") {throw new ParsingError("Empty logical formula encountered.");}
@@ -112,9 +111,10 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
     {formula: trimmedFormula, depths: depths, substring: " implies "});
   if (impliesFragments.length >= 2) {
     if (acceptsImplies) {
-      let rightTail = parseLogicalFormula<B>({formula: impliesFragments[impliesFragments.length-1], acceptsImplies: true});
+      let rightTail = parseLogicalFormula<B>
+        ({formula: impliesFragments[impliesFragments.length-1], acceptsImplies: acceptsImplies});
       for (let i = impliesFragments.length-2; i >= 0; i--) {
-        const left = parseLogicalFormula<B>({formula: impliesFragments[i], acceptsImplies: true});
+        const left = parseLogicalFormula<B>({formula: impliesFragments[i], acceptsImplies: acceptsImplies});
         rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as GeneralLogicalFormula<B>;
       }
       return rightTail;
@@ -127,7 +127,7 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
     {formula: trimmedFormula, depths: depths, substring: " or "});
   if (orFragments.length >= 2) {
     return {
-      parseType: (acceptsImplies ? 'LogicalFormulaOr' : 'LogicalFormulaWithoutImpliesOr') as const,
+      parseType: (acceptsImplies ? 'LogicalFormulaOr' as const : 'LogicalFormulaWithoutImpliesOr' as const),
       children: orFragments.map((orFragment) =>
         parseLogicalFormula<B>({formula: orFragment, acceptsImplies: acceptsImplies})),
     } as GeneralLogicalFormula<B>;
@@ -137,7 +137,7 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
     {formula: trimmedFormula, depths: depths, substring: " and "});
   if (andFragments.length >= 2) {
     return {
-      parseType: (acceptsImplies ? 'LogicalFormulaAnd' : 'LogicalFormulaWithoutImpliesAnd') as const,
+      parseType: (acceptsImplies ? 'LogicalFormulaAnd' as const : 'LogicalFormulaWithoutImpliesAnd' as const),
       children: andFragments.map((andFragment) =>
         parseLogicalFormula<B>({formula: andFragment, acceptsImplies: acceptsImplies})),
     } as GeneralLogicalFormula<B>;
@@ -145,7 +145,7 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
 
   if (trimmedFormula.slice(0, 4) === "not ") {
     return {
-      parseType: (acceptsImplies ? 'LogicalFormulaNot' : 'LogicalFormulaWithoutImpliesNot') as const,
+      parseType: (acceptsImplies ? 'LogicalFormulaNot' as const : 'LogicalFormulaWithoutImpliesNot' as const),
       child: parseLogicalFormula<B>({formula: trimmedFormula.slice(4), acceptsImplies: acceptsImplies}),
     } as GeneralLogicalFormula<B>;
   }
