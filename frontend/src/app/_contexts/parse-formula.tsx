@@ -159,9 +159,9 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression {
   //This function assumes that formula has had spaces
   //added around parentheses, "*", "+", and "-"!
   const trimmedFormula = formula.trim(); 
-  if (trimmedFormula === "") {return null;}
+  if (trimmedFormula === "") {throw new ParsingError("Empty affine formula encountered.");}
   const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return null;}
+  if (!matching) {throw new ParsingError("Input has mismatched parentheses.");}
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap !== null) {return parseAffineFormula({formula: unwrap});}
 
@@ -174,17 +174,16 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression {
   const allAdditionFormula = minusFragments.join(' + - ');
   const { depths: additionDepths, matching: additionMatching } =
     findDepths({formula: allAdditionFormula});
-  if (!additionMatching) {return null;} //should never fire
+  if (!additionMatching)
+    {throw new ParsingError("Oops, looks like the parser has a bug in it. Sorry!");}
 
   const plusFragments = splitOnAllDepthZeroSubstrings(
     {formula: allAdditionFormula, depths: additionDepths, substring: " + "});
   if (plusFragments.length >= 2) {
-    const children: AffineExpression[] = [];
-    for (let i = 0; i < plusFragments.length; i++) {
-      const child = parseAffineFormula({formula: plusFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
+    return {
+      parseType: 'AffineExpressionAddition' as const,
+      children: plusFragments.map((plusFragment) => parseAffineFormula({formula: plusFragment})),
+    } as AffineExpression;
   }
 
   const isNegated = allAdditionFormula.startsWith("-");
@@ -194,36 +193,33 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression {
 
   const attemptConstant = signlessReal({candidate: signless});
   if (attemptConstant !== null) {
-    return { parseType: 'AffineExpressionConstant', constant: signFactor * attemptConstant };
+    return {
+      parseType: 'AffineExpressionConstant',
+      constant: signFactor * attemptConstant,
+    } as AffineExpression;
   }
 
   const openParenthesisIndex = signless.indexOf("("); //first index crucial here
-  if (openParenthesisIndex < 0) {return null;}
+  if (openParenthesisIndex < 0)
+    {throw new ParsingError("Unrecognized term encountered in affine combination.");}
   const rightUnwrap = attemptUnwrap({
     trimmedFormula: signless.slice(openParenthesisIndex), //Note that we preserve trimming!
     depths: signlessDepths.slice(openParenthesisIndex),
   });
-  if (rightUnwrap === null) {return null;}
   const outer = signless.slice(0, openParenthesisIndex).trim();
   const isProbability = outer.endsWith("P");
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
   const outerWithoutStar = outerWithoutP.endsWith("*") ?
     outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
   const attemptMagnitude = signlessReal({candidate: outerWithoutStar});
-  if (attemptMagnitude === null && outerWithoutStar !== "") {return null;}
+  if (attemptMagnitude === null && outerWithoutStar !== "")
+    {throw new ParsingError("Unrecognized term encountered in affine combination.");}
   //Note that attemptMagnitude === null now implies outerWithoutStar === "".
   const coefficient = (attemptMagnitude !== null ? attemptMagnitude : 1) * signFactor;
-  let child: AffineExpression | null;
-  if (isProbability) {
-    const probabilityChild = parseLogicalFormula<false>
-      ({formula: rightUnwrap, acceptsImplies: false});
-    if (probabilityChild === null) {return null;}
-    child = { parseType: 'AffineExpressionProbability' as const,
-      child: probabilityChild } as AffineExpression;
-  } else {
-    child = parseAffineFormula({formula: rightUnwrap});
-  }
-  if (child === null) {return null;}
+  const child = isProbability ? {
+      parseType: 'AffineExpressionProbability' as const,
+      child: parseLogicalFormula<false>({formula: rightUnwrap, acceptsImplies: false}),
+    } as AffineExpression : parseAffineFormula({formula: rightUnwrap});
   if (coefficient === 1) {return child;}
   else {
     return { parseType: 'AffineExpressionMultiplication' as const,
