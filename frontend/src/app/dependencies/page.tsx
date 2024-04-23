@@ -5,14 +5,14 @@ export default function Analysis() {
     <>
       <nav className="bg-dark-neutral px-8 py-4">
         <div className="container mx-auto flex justify-between items-center">
-          <div>
-            Analysis-specific content
+          <div className="text-lg text-white font-bold">
+            Dependency Controls
           </div>
           <DebateLinks />
         </div>
       </nav>
       <div className="bg-red-800 text-white">
-        <h1 className="text-xl">Welcome to the analysis of the claims!</h1>
+        <h1 className="text-xl">Dependencies go here!</h1>
       </div>
     </>
   );

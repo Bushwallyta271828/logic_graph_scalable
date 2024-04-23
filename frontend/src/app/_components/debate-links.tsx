@@ -8,14 +8,19 @@ export function DebateLinks() {
           Claims
         </button>
       </Link>
-      <Link href="/analysis">
+      <Link href="/sampling">
         <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
-          Analysis
+          Sampling
         </button>
       </Link>
-      <Link href="/documentation">
+      <Link href="/ideologies">
         <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
-          Documentation
+          Ideologies
+        </button>
+      </Link>
+      <Link href="/dependencies">
+        <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
+          Dependencies
         </button>
       </Link>
     </div>
