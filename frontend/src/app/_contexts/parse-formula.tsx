@@ -10,6 +10,13 @@ import {
 } from '@/app/_types/parse-types';
 import { potentialClaimID } from '@/app/_types/claim-types';
 
+class ParsingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ParsingError";
+  }
+}
+
 function signlessReal({candidate}: {candidate: string}) : number | null {
   //Tries to parse candidate as a signless real number, returns null if impossible.
   //(The only difference between signless and non-negative is that "-0" has a sign.)
@@ -82,121 +89,79 @@ function attemptUnwrap({trimmedFormula, depths}:
   return null;
 }
 
-function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | null {
-  //This function will attempt to parse formula as a LogicalFormula.
-  //It will return null if formula cannot be parsed.
+type GeneralLogicalFormula<B extends boolean> = B extends true ? LogicalFormula : LogicalFormulaWithoutImplies;
+
+function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
+  {formula: string, acceptsImplies: B}): GeneralLogicalFormula<B> {
+  //This function will attempt to parse formula as either a LogicalFormula or a
+  //LogicalFormulaWithoutImplies depending on the value of acceptsImplies.
+  //It will throw a ParsingError if formula cannot be parsed.
   //This function assumes that formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim(); 
-  if (trimmedFormula === "") {return null;}
+  if (trimmedFormula === "") {throw new ParsingError("Empty logical formula encountered.");}
   const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return null;}
+  if (!matching) {throw new ParsingError("Input has mismatched parentheses.");}
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap !== null) {return parseLogicalFormula({formula: unwrap});}
+  if (unwrap !== null) {return parseLogicalFormula<B>({formula: unwrap, acceptsImplies: acceptsImplies});}
 
   if (potentialClaimID({candidate: trimmedFormula}))
-    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
+    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as GeneralLogicalFormula<B>;}
 
   const impliesFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " implies "});
   if (impliesFragments.length >= 2) {
-    let rightTail = parseLogicalFormula({formula: impliesFragments[impliesFragments.length-1]});
-    if (rightTail === null) {return null;}
-    for (let i = impliesFragments.length-2; i >= 0; i--) {
-      const left = parseLogicalFormula({formula: impliesFragments[i]});
-      if (left === null) {return null;}
-      rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
+    if (acceptsImplies) {
+      let rightTail = parseLogicalFormula<B>
+        ({formula: impliesFragments[impliesFragments.length-1], acceptsImplies: acceptsImplies});
+      for (let i = impliesFragments.length-2; i >= 0; i--) {
+        const left = parseLogicalFormula<B>({formula: impliesFragments[i], acceptsImplies: acceptsImplies});
+        rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as GeneralLogicalFormula<B>;
+      }
+      return rightTail;
+    } else {
+      throw new ParsingError("Encountered \"implies\" inside a probability.");
     }
-    return rightTail;
   }
 
   const orFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " or "});
   if (orFragments.length >= 2) {
-    const children: LogicalFormula[] = [];
-    for (let i = 0; i < orFragments.length; i++) {
-      const child = parseLogicalFormula({formula: orFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'LogicalFormulaOr' as const, children: children} as LogicalFormula;
+    return {
+      parseType: (acceptsImplies ? 'LogicalFormulaOr' as const : 'LogicalFormulaWithoutImpliesOr' as const),
+      children: orFragments.map((orFragment) =>
+        parseLogicalFormula<B>({formula: orFragment, acceptsImplies: acceptsImplies})),
+    } as GeneralLogicalFormula<B>;
   }
 
   const andFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " and "});
   if (andFragments.length >= 2) {
-    const children: LogicalFormula[] = [];
-    for (let i = 0; i < andFragments.length; i++) {
-      const child = parseLogicalFormula({formula: andFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'LogicalFormulaAnd' as const, children: children} as LogicalFormula;
+    return {
+      parseType: (acceptsImplies ? 'LogicalFormulaAnd' as const : 'LogicalFormulaWithoutImpliesAnd' as const),
+      children: andFragments.map((andFragment) =>
+        parseLogicalFormula<B>({formula: andFragment, acceptsImplies: acceptsImplies})),
+    } as GeneralLogicalFormula<B>;
   }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
-    const child = parseLogicalFormula({formula: trimmedFormula.slice(4)});
-    if (child !== null) {
-      return {parseType: 'LogicalFormulaNot' as const, child: child} as LogicalFormula;
-    } else {return null;}
+    return {
+      parseType: (acceptsImplies ? 'LogicalFormulaNot' as const : 'LogicalFormulaWithoutImpliesNot' as const),
+      child: parseLogicalFormula<B>({formula: trimmedFormula.slice(4), acceptsImplies: acceptsImplies}),
+    } as GeneralLogicalFormula<B>;
   }
 
-  return null;
+  throw new ParsingError("Unrecognized format for logical formula.");
 }
 
-function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
-  LogicalFormulaWithoutImplies | null {
-  //This function will attempt to parse formula as a LogicalFormulaWithoutImplies.
-  //It will return null if formula cannot be parsed.
-  //This function assumes that formula has had spaces added around parentheses!
-  const trimmedFormula = formula.trim(); 
-  if (trimmedFormula === "") {return null;}
-  const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return null;}
-  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap !== null) {return parseLogicalFormulaWithoutImplies({formula: unwrap});}
-
-  if (potentialClaimID({candidate: trimmedFormula}))
-    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
-
-  const orFragments = splitOnAllDepthZeroSubstrings(
-    {formula: trimmedFormula, depths: depths, substring: " or "});
-  if (orFragments.length >= 2) {
-    const children: LogicalFormulaWithoutImplies[] = [];
-    for (let i = 0; i < orFragments.length; i++) {
-      const child = parseLogicalFormulaWithoutImplies({formula: orFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'LogicalFormulaWithoutImpliesOr' as const, children: children} as LogicalFormulaWithoutImplies;
-  }
-
-  const andFragments = splitOnAllDepthZeroSubstrings(
-    {formula: trimmedFormula, depths: depths, substring: " and "});
-  if (andFragments.length >= 2) {
-    const children: LogicalFormulaWithoutImplies[] = [];
-    for (let i = 0; i < andFragments.length; i++) {
-      const child = parseLogicalFormulaWithoutImplies({formula: andFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'LogicalFormulaWithoutImpliesAnd' as const, children: children} as LogicalFormulaWithoutImplies;
-  }
-
-  if (trimmedFormula.slice(0, 4) === "not ") {
-    const child = parseLogicalFormulaWithoutImplies({formula: trimmedFormula.slice(4)});
-    if (child !== null) {
-      return {parseType: 'LogicalFormulaWithoutImpliesNot' as const, child: child} as LogicalFormulaWithoutImplies;
-    } else {return null;}
-  }
-
-  return null;
-}
-
-function parseAffineFormula({formula}: {formula: string}): AffineExpression | null {
+function parseAffineFormula({formula}: {formula: string}): AffineExpression {
   //This function will attempt to parse formula as an AffineExpression.
-  //It will return null if formula cannot be parsed.
+  //It will throw a ParsingError if formula cannot be parsed.
   //This function assumes that formula has had spaces
   //added around parentheses, "*", "+", and "-"!
   const trimmedFormula = formula.trim(); 
-  if (trimmedFormula === "") {return null;}
+  if (trimmedFormula === "") {throw new ParsingError("Empty affine formula encountered.");}
   const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return null;}
+  if (!matching) {throw new ParsingError("Input has mismatched parentheses.");}
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
   if (unwrap !== null) {return parseAffineFormula({formula: unwrap});}
 
@@ -209,17 +174,16 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
   const allAdditionFormula = minusFragments.join(' + - ');
   const { depths: additionDepths, matching: additionMatching } =
     findDepths({formula: allAdditionFormula});
-  if (!additionMatching) {return null;} //should never fire
+  if (!additionMatching)
+    {throw new ParsingError("Oops, looks like the parser has a bug in it. Sorry!");}
 
   const plusFragments = splitOnAllDepthZeroSubstrings(
     {formula: allAdditionFormula, depths: additionDepths, substring: " + "});
   if (plusFragments.length >= 2) {
-    const children: AffineExpression[] = [];
-    for (let i = 0; i < plusFragments.length; i++) {
-      const child = parseAffineFormula({formula: plusFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'AffineExpressionAddition' as const, children: children} as AffineExpression;
+    return {
+      parseType: 'AffineExpressionAddition' as const,
+      children: plusFragments.map((plusFragment) => parseAffineFormula({formula: plusFragment})),
+    } as AffineExpression;
   }
 
   const isNegated = allAdditionFormula.startsWith("-");
@@ -229,35 +193,35 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
 
   const attemptConstant = signlessReal({candidate: signless});
   if (attemptConstant !== null) {
-    return { parseType: 'AffineExpressionConstant', constant: signFactor * attemptConstant };
+    return {
+      parseType: 'AffineExpressionConstant',
+      constant: signFactor * attemptConstant,
+    } as AffineExpression;
   }
 
   const openParenthesisIndex = signless.indexOf("("); //first index crucial here
-  if (openParenthesisIndex < 0) {return null;}
+  if (openParenthesisIndex < 0)
+    {throw new ParsingError("Unrecognized term encountered in affine combination.");}
   const rightUnwrap = attemptUnwrap({
     trimmedFormula: signless.slice(openParenthesisIndex), //Note that we preserve trimming!
     depths: signlessDepths.slice(openParenthesisIndex),
   });
-  if (rightUnwrap === null) {return null;}
+  if (rightUnwrap === null)
+    {throw new ParsingError("Unable to unwrap parentheses in term in affine combination.");}
   const outer = signless.slice(0, openParenthesisIndex).trim();
   const isProbability = outer.endsWith("P");
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
   const outerWithoutStar = outerWithoutP.endsWith("*") ?
     outerWithoutP.slice(0, outerWithoutP.length - 1).trim() : outerWithoutP;
   const attemptMagnitude = signlessReal({candidate: outerWithoutStar});
-  if (attemptMagnitude === null && outerWithoutStar !== "") {return null;}
+  if (attemptMagnitude === null && outerWithoutStar !== "")
+    {throw new ParsingError("Unrecognized term encountered in affine combination.");}
   //Note that attemptMagnitude === null now implies outerWithoutStar === "".
   const coefficient = (attemptMagnitude !== null ? attemptMagnitude : 1) * signFactor;
-  let child: AffineExpression | null;
-  if (isProbability) {
-    const probabilityChild = parseLogicalFormulaWithoutImplies({formula: rightUnwrap});
-    if (probabilityChild === null) {return null;}
-    child = { parseType: 'AffineExpressionProbability' as const,
-      child: probabilityChild } as AffineExpression;
-  } else {
-    child = parseAffineFormula({formula: rightUnwrap});
-  }
-  if (child === null) {return null;}
+  const child = isProbability ? {
+      parseType: 'AffineExpressionProbability' as const,
+      child: parseLogicalFormula<false>({formula: rightUnwrap, acceptsImplies: false}),
+    } as AffineExpression : parseAffineFormula({formula: rightUnwrap});
   if (coefficient === 1) {return child;}
   else {
     return { parseType: 'AffineExpressionMultiplication' as const,
@@ -265,18 +229,20 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
   }
 }
 
-export function parseFormula({formula}: {formula: string}): ConstraintParse | null {
+function parseFormulaThrowErrors({formula}: {formula: string}): ConstraintParse {
+  //This function will attempt to parse formula as a ConstraintParse.
+  //It will throw a ParsingError if formula cannot be parsed.
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
-  if (!matching) {return null;}
+  if (!matching) {throw new ParsingError("Input has mismatched parentheses.");}
 
   const equalsFragments = splitOnAllDepthZeroSubstrings(
     {formula: spacedFormula, depths: depths, substring: " = "});
 
   if (equalsFragments.length === 1) {
-    const logicalAttempt = parseLogicalFormula({formula: spacedFormula});
-    return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
+    return parseLogicalFormula<true>
+      ({formula: spacedFormula, acceptsImplies: true}) as ConstraintParse;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
     const rightHandSideConstant = probabilityValue({candidate: equalsFragments[1].trim()});
@@ -291,17 +257,18 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
           const conditionalFragments = splitOnAllDepthZeroSubstrings(
             {formula: probUnwrap, depths: probUnwrapDepths, substring: " | "});
           if (conditionalFragments.length === 2) {
-            const left = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[0]});
-            const right = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[1]});
-            if (left !== null && right !== null) {
-              return {
-                parseType: 'ConditionalProbabilityAssignment' as const,
-                conditionalLeftFormula: left,
-                conditionalRightFormula: right,
-                probability: rightHandSideConstant,
-              } as ConstraintParse;
-            } else {return null;}
-          } else if (conditionalFragments.length >= 3) {return null;}
+            const left = parseLogicalFormula<false>
+              ({formula: conditionalFragments[0], acceptsImplies: false});
+            const right = parseLogicalFormula<false>
+              ({formula: conditionalFragments[1], acceptsImplies: false});
+            return {
+              parseType: 'ConditionalProbabilityAssignment' as const,
+              conditionalLeftFormula: left,
+              conditionalRightFormula: right,
+              probability: rightHandSideConstant,
+            } as ConstraintParse;
+          } else if (conditionalFragments.length >= 3)
+            {throw new ParsingError("Multiple conditioning symbols identified.");}
         }
       }
     }
@@ -309,10 +276,16 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse | nu
     //Now let's parse as an affine equation.
     const left = parseAffineFormula({formula: equalsFragments[0]});
     const right = parseAffineFormula({formula: equalsFragments[1]});
-    if (left !== null && right !== null) {
-      return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
-    } else {return null;}
-  } else {
-    return null;
+    return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
+  } else {throw new ParsingError("Multiple equals signs identified.");}
+}
+
+export function parseFormula({formula}: {formula: string}): ConstraintParse | string {
+  //This function will attempt to parse formula as a ConstraintParse.
+  //It will return an error message if formula cannot be parsed.
+  try {return parseFormulaThrowErrors({formula: formula});}
+  catch (error) {
+    if (error instanceof ParsingError) {return error.message;}
+    else {throw error;}
   }
 }

@@ -4,6 +4,7 @@
 
 import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/_types/claim-types';
+import { ConstraintParse } from '@/app/_types/parse-types';
 import { parseFormula } from '@/app/_contexts/parse-formula';
 import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
 import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse';
@@ -85,8 +86,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         claimType: claimType,
         text: text,
         conditioning: conditioning,
-        dependencies:
-          (parse !== null) ?
+        dependencies: (typeof parse !== 'string') ?
           immediateConstraintDependencies({parse: parse}) :
           new Set<string>(),
         parse: parse,
@@ -119,8 +119,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
       if (updatedClaim.claimType === 'constraint') {
         updatedClaim.parse = parseFormula({formula: newText});
-        updatedClaim.dependencies = 
-          (updatedClaim.parse !== null) ?
+        updatedClaim.dependencies = (typeof updatedClaim.parse !== 'string') ?
           immediateConstraintDependencies({parse: updatedClaim.parse}) :
           new Set<string>();
       }
@@ -131,14 +130,17 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'constraint')
       {return {displayText: claim.text, validText: true};}
-    if (claim.parse === null)
-      {return {displayText: "Please enter a valid constraint.", validText: false};}
+    if (typeof claim.parse === 'string') {
+      if (claim.text === "")
+        {return {displayText: "Please enter a constraint.", validText: false};}
+      else {return {displayText: "Parsing Error: " + claim.parse, validText: false};}
+    }
     const referencedIDs = Array.from(claim.dependencies);
     let substitutions: { [claimID: string]: string} = {};
     for (let i = 0; i < referencedIDs.length; i++) {
       if (!(referencedIDs[i] in claimLookup)) {
         return {
-          displayText: "This constraint seems to be referencing an unrecognized claim ID.",
+          displayText: "Constraint Error: This constraint seems to be referencing an unrecognized claim ID.",
           validText: false,
         };
       }

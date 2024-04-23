@@ -35,8 +35,8 @@ export type ConstraintClaim = {
   claimType: 'constraint';
   text: string;
   conditioning: boolean | null;
-  dependencies: Set<string>; //Must be immediateConstraintDependencies({parse: parse})
-  parse: ConstraintParse | null; //Must be parseFormula({formula: text}), can reference unrecognized Claim IDs
+  dependencies: Set<string>; //Must be immediateConstraintDependencies({parse: parse}) if parse : ConstraintParse and empty otherwise
+  parse: ConstraintParse | string; //Must be parseFormula({formula: text}), can reference unrecognized Claim IDs
 };
 
 export type Claim =

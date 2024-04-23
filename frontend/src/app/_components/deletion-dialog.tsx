@@ -11,7 +11,14 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClai
   claim: Claim,
   additionalClaims: Claim[],
 }) {
-  const { deleteClaim } = useClaimsContext();
+  const { deleteClaim, getDisplayData } = useClaimsContext();
+
+  const claimsDisplay = additionalClaims.slice(0, 8).map((additionalClaim) => {
+    const {displayText, validText} = getDisplayData(additionalClaim);
+    if (validText === true) {return additionalClaim.claimID + ": " + displayText;}
+    else {return additionalClaim.claimID + ": " + additionalClaim.text;}
+  });
+  if (additionalClaims.length > 8) {claimsDisplay.push("...");}
 
   return (
     <Dialog
@@ -27,13 +34,10 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClai
             By deleting this claim, you will also be deleting the following claims which depend upon it:
           </p>
           <div className="p-2">
-            { additionalClaims.slice(0, 8).map((additionalClaim, index) => (
-                <p className="text-nowrap truncate" key={index}>
-                  {additionalClaim.claimID}: {additionalClaim.text}
-                </p>
+            { claimsDisplay.map((claimDisplay, index) => (
+                <p className="text-nowrap truncate" key={index}>{claimDisplay}</p>
               ))
             }
-            {(additionalClaims.length > 8) ? <p key={8}>...</p> : null}
           </div>
           <p>Are you sure you wish to proceed?</p>
           <div className="container mx-auto flex justify-between items-center p-2">
