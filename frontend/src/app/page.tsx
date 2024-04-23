@@ -9,7 +9,7 @@ export default async function Home() {
   
   return (
     <>
-      <nav className="bg-dark-neutral text-white text-lg font-bold px-8 py-4">
+      <nav className="bg-dark-neutral px-8 py-4">
         <div className="container mx-auto flex justify-between items-center">
           <NewClaimButton />
           <DebateLinks />
