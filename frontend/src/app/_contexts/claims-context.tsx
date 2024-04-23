@@ -130,14 +130,17 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'constraint')
       {return {displayText: claim.text, validText: true};}
-    if (claim.parse === null)
-      {return {displayText: "Please enter a valid constraint.", validText: false};}
+    if (claim.parse instanceof string) {
+      if (claim.text === "")
+        {return {displayText: "Please enter a constraint.", validText: false};}
+      else {return {displayText: "Parsing Error: " + claim.parse, validText: false};}
+    }
     const referencedIDs = Array.from(claim.dependencies);
     let substitutions: { [claimID: string]: string} = {};
     for (let i = 0; i < referencedIDs.length; i++) {
       if (!(referencedIDs[i] in claimLookup)) {
         return {
-          displayText: "This constraint seems to be referencing an unrecognized claim ID.",
+          displayText: "Constraint Error: This constraint seems to be referencing an unrecognized claim ID.",
           validText: false,
         };
       }
