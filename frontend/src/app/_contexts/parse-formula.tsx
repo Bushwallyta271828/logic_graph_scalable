@@ -10,7 +10,7 @@ import {
 } from '@/app/_types/parse-types';
 import { potentialClaimID } from '@/app/_types/claim-types';
 
-export class ParsingError extends Error {
+class ParsingError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "ParsingError";
@@ -227,7 +227,7 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression {
   }
 }
 
-export function parseFormula({formula}: {formula: string}): ConstraintParse {
+function parseFormulaThrowErrors({formula}: {formula: string}): ConstraintParse {
   //This function will attempt to parse formula as a ConstraintParse.
   //It will throw a ParsingError if formula cannot be parsed.
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
@@ -276,4 +276,14 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse {
     const right = parseAffineFormula({formula: equalsFragments[1]});
     return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
   } else {throw new ParsingError("Multiple equals signs identified.");}
+}
+
+export function parseFormula({formula}: {formula: string}): ConstraintParse | string {
+  //This function will attempt to parse formula as a ConstraintParse.
+  //It will return an error message if formula cannot be parsed.
+  try {return parseFormulaThrowErrors({formula: formula});}
+  catch (error) {
+    if (error instanceof ParsingError) {return error.message;}
+    else {throw error;}
+  }
 }

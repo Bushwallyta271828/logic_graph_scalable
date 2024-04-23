@@ -5,7 +5,7 @@
 import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/_types/claim-types';
 import { ConstraintParse } from '@/app/_types/parse-types';
-import { parseFormula, ParsingError } from '@/app/_contexts/parse-formula';
+import { parseFormula } from '@/app/_contexts/parse-formula';
 import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
 import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse';
 
