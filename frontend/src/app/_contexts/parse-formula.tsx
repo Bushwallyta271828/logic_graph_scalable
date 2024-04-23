@@ -10,6 +10,13 @@ import {
 } from '@/app/_types/parse-types';
 import { potentialClaimID } from '@/app/_types/claim-types';
 
+class ParsingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ParsingError";
+  }
+}
+
 function signlessReal({candidate}: {candidate: string}) : number | null {
   //Tries to parse candidate as a signless real number, returns null if impossible.
   //(The only difference between signless and non-negative is that "-0" has a sign.)
@@ -82,7 +89,7 @@ function attemptUnwrap({trimmedFormula, depths}:
   return null;
 }
 
-function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | null {
+function parseLogicalFormula({formula}: {formula: string}): LogicalFormula {
   //This function will attempt to parse formula as a LogicalFormula.
   //It will return null if formula cannot be parsed.
   //This function assumes that formula has had spaces added around parentheses!
@@ -142,7 +149,7 @@ function parseLogicalFormula({formula}: {formula: string}): LogicalFormula | nul
 }
 
 function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
-  LogicalFormulaWithoutImplies | null {
+  LogicalFormulaWithoutImplies {
   //This function will attempt to parse formula as a LogicalFormulaWithoutImplies.
   //It will return null if formula cannot be parsed.
   //This function assumes that formula has had spaces added around parentheses!
@@ -188,7 +195,7 @@ function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
   return null;
 }
 
-function parseAffineFormula({formula}: {formula: string}): AffineExpression | null {
+function parseAffineFormula({formula}: {formula: string}): AffineExpression {
   //This function will attempt to parse formula as an AffineExpression.
   //It will return null if formula cannot be parsed.
   //This function assumes that formula has had spaces
@@ -265,7 +272,7 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression | nu
   }
 }
 
-export function parseFormula({formula}: {formula: string}): ConstraintParse | null {
+export function parseFormula({formula}: {formula: string}): ConstraintParse {
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
