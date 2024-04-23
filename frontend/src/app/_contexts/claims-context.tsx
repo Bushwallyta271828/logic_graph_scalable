@@ -4,7 +4,8 @@
 
 import { createContext, useContext, useState } from 'react';
 import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/_types/claim-types';
-import { parseFormula } from '@/app/_contexts/parse-formula';
+import { ConstraintParse } from '@/app/_types/parse-types';
+import { parseFormula, ParsingError } from '@/app/_contexts/parse-formula';
 import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
 import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse';
 
@@ -78,17 +79,22 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
       setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
     } else if (claimType === 'constraint') {
-      const parse = parseFormula({formula: text});
+      let parse: ConstraintParse | string;
+      try {parse = parseFormula({formula: text});}
+      catch (error) {
+        if (error instanceof ParsingError) {parse = error.message;}
+        else {throw error;}
+      }
+      const dependencies = (parse instanceof ConstraintParse) ?
+        immediateConstraintDependencies({parse: parse}) :
+        new Set<string>();
       const claim = {
         claimID: claimID,
         author: author,
         claimType: claimType,
         text: text,
         conditioning: conditioning,
-        dependencies:
-          (parse !== null) ?
-          immediateConstraintDependencies({parse: parse}) :
-          new Set<string>(),
+        dependencies: dependencies,
         parse: parse,
       } as Claim;
       setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
@@ -118,11 +124,16 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         {throw new Error("Editing unrecognized claim");}
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
       if (updatedClaim.claimType === 'constraint') {
-        updatedClaim.parse = parseFormula({formula: newText});
-        updatedClaim.dependencies = 
-          (updatedClaim.parse !== null) ?
-          immediateConstraintDependencies({parse: updatedClaim.parse}) :
-          new Set<string>();
+        try {
+          updatedClaim.parse = parseFormula({formula: newText});
+          updatedClaim.dependencies = 
+            immediateConstraintDependencies({parse: updatedClaim.parse});
+        } catch (error) {
+          if (error instanceof ParsingError) {
+            updatedClaim.parse = error.message;
+            updatedClaim.dependencies = new Set<string>();
+          } else {throw error;}
+        }
       }
       return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
