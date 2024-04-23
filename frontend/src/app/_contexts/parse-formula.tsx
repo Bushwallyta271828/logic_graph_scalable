@@ -89,102 +89,68 @@ function attemptUnwrap({trimmedFormula, depths}:
   return null;
 }
 
-function parseLogicalFormula({formula}: {formula: string}): LogicalFormula {
-  //This function will attempt to parse formula as a LogicalFormula.
+type GeneralLogicalFormula<B extends boolean> = B extends true ? LogicalFormula : LogicalFormulaWithoutImplies;
+
+function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
+  {formula: string, acceptsImplies: B}): GeneralLogicalFormula<B> {
+  //This function will attempt to parse formula as either a LogicalFormula or a
+  //LogicalFormulaWithoutImplies depending on the value of acceptsImplies.
   //It will throw a ParsingError if formula cannot be parsed.
+  //Make sure that B and acceptsImplies agree!
   //This function assumes that formula has had spaces added around parentheses!
   const trimmedFormula = formula.trim(); 
   if (trimmedFormula === "") {throw new ParsingError("Empty logical formula encountered.");}
   const {depths, matching} = findDepths({formula: trimmedFormula});
   if (!matching) {throw new ParsingError("Input has mismatched parentheses.");}
   const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap !== null) {return parseLogicalFormula({formula: unwrap});}
+  if (unwrap !== null) {return parseLogicalFormula<B>({formula: unwrap, acceptsImplies: acceptsImplies});}
 
   if (potentialClaimID({candidate: trimmedFormula}))
-    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormula;}
+    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as GeneralLogicalFormula<B>;}
 
   const impliesFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " implies "});
   if (impliesFragments.length >= 2) {
-    let rightTail = parseLogicalFormula({formula: impliesFragments[impliesFragments.length-1]});
-    for (let i = impliesFragments.length-2; i >= 0; i--) {
-      const left = parseLogicalFormula({formula: impliesFragments[i]});
-      rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
+    if (acceptsImplies) {
+      let rightTail = parseLogicalFormula({formula: impliesFragments[impliesFragments.length-1]});
+      for (let i = impliesFragments.length-2; i >= 0; i--) {
+        const left = parseLogicalFormula({formula: impliesFragments[i]});
+        rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
+      }
+      return rightTail;
+    } else {
+      throw new ParsingError("Encountered \"implies\" inside a probability.");
     }
-    return rightTail;
   }
 
   const orFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " or "});
   if (orFragments.length >= 2) {
     return {
-      parseType: 'LogicalFormulaOr' as const,
-      children: orFragments.map((orFragment) => parseLogicalFormula({formula: orFragment})),
-    } as LogicalFormula;
+      parseType: (acceptsImplies ? 'LogicalFormulaOr' : 'LogicalFormulaWithoutImpliesOr') as const,
+      children: orFragments.map((orFragment) =>
+        parseLogicalFormula({formula: orFragment, acceptsImplies: acceptsImplies})),
+    } as GeneralLogicalFormula<B>;
   }
 
   const andFragments = splitOnAllDepthZeroSubstrings(
     {formula: trimmedFormula, depths: depths, substring: " and "});
   if (andFragments.length >= 2) {
     return {
-      parseType: 'LogicalFormulaAnd' as const,
-      children: andFragments.map((andFragment) => parseLogicalFormula({formula: andFragment})),
-    } as LogicalFormula;
+      parseType: (acceptsImplies ? 'LogicalFormulaAnd' : 'LogicalFormulaWithoutImpliesAnd') as const,
+      children: andFragments.map((andFragment) =>
+        parseLogicalFormula({formula: andFragment, acceptsImplies: acceptsImplies})),
+    } as GeneralLogicalFormula<B>;
   }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
     return {
-      parseType: 'LogicalFormulaNot' as const,
-      child: parseLogicalFormula({formula: trimmedFormula.slice(4)}),
-    } as LogicalFormula;
-  }
-}
-
-function parseLogicalFormulaWithoutImplies({formula}: {formula: string}):
-  LogicalFormulaWithoutImplies {
-  //This function will attempt to parse formula as a LogicalFormulaWithoutImplies.
-  //It will throw a ParsingError if formula cannot be parsed.
-  //This function assumes that formula has had spaces added around parentheses!
-  const trimmedFormula = formula.trim(); 
-  if (trimmedFormula === "") {return null;}
-  const {depths, matching} = findDepths({formula: trimmedFormula});
-  if (!matching) {return null;}
-  const unwrap = attemptUnwrap({trimmedFormula: trimmedFormula, depths: depths});
-  if (unwrap !== null) {return parseLogicalFormulaWithoutImplies({formula: unwrap});}
-
-  if (potentialClaimID({candidate: trimmedFormula}))
-    {return {parseType: 'ClaimID' as const, claimID: trimmedFormula} as LogicalFormulaWithoutImplies;}
-
-  const orFragments = splitOnAllDepthZeroSubstrings(
-    {formula: trimmedFormula, depths: depths, substring: " or "});
-  if (orFragments.length >= 2) {
-    const children: LogicalFormulaWithoutImplies[] = [];
-    for (let i = 0; i < orFragments.length; i++) {
-      const child = parseLogicalFormulaWithoutImplies({formula: orFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'LogicalFormulaWithoutImpliesOr' as const, children: children} as LogicalFormulaWithoutImplies;
+      parseType: (acceptsImplies ? 'LogicalFormulaNot' : 'LogicalFormulaWithoutImpliesNot') as const,
+      child: parseLogicalFormula({formula: trimmedFormula.slice(4), acceptsImplies: acceptsImplies}),
+    } as GeneralLogicalFormula<B>;
   }
 
-  const andFragments = splitOnAllDepthZeroSubstrings(
-    {formula: trimmedFormula, depths: depths, substring: " and "});
-  if (andFragments.length >= 2) {
-    const children: LogicalFormulaWithoutImplies[] = [];
-    for (let i = 0; i < andFragments.length; i++) {
-      const child = parseLogicalFormulaWithoutImplies({formula: andFragments[i]});
-      if (child !== null) {children.push(child);} else {return null;}
-    }
-    return {parseType: 'LogicalFormulaWithoutImpliesAnd' as const, children: children} as LogicalFormulaWithoutImplies;
-  }
-
-  if (trimmedFormula.slice(0, 4) === "not ") {
-    const child = parseLogicalFormulaWithoutImplies({formula: trimmedFormula.slice(4)});
-    if (child !== null) {
-      return {parseType: 'LogicalFormulaWithoutImpliesNot' as const, child: child} as LogicalFormulaWithoutImplies;
-    } else {return null;}
-  }
-
-  return null;
+  throw new ParsingError("Unrecognized format for logical formula.");
 }
 
 function parseAffineFormula({formula}: {formula: string}): AffineExpression {
