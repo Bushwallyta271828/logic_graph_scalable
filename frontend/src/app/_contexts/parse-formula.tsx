@@ -112,10 +112,10 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
     {formula: trimmedFormula, depths: depths, substring: " implies "});
   if (impliesFragments.length >= 2) {
     if (acceptsImplies) {
-      let rightTail = parseLogicalFormula({formula: impliesFragments[impliesFragments.length-1]});
+      let rightTail = parseLogicalFormula<B>({formula: impliesFragments[impliesFragments.length-1], acceptsImplies: true});
       for (let i = impliesFragments.length-2; i >= 0; i--) {
-        const left = parseLogicalFormula({formula: impliesFragments[i]});
-        rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as LogicalFormula;
+        const left = parseLogicalFormula<B>({formula: impliesFragments[i], acceptsImplies: true});
+        rightTail = {parseType: 'LogicalFormulaImplies', left: left, right: rightTail} as GeneralLogicalFormula<B>;
       }
       return rightTail;
     } else {
@@ -129,7 +129,7 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
     return {
       parseType: (acceptsImplies ? 'LogicalFormulaOr' : 'LogicalFormulaWithoutImpliesOr') as const,
       children: orFragments.map((orFragment) =>
-        parseLogicalFormula({formula: orFragment, acceptsImplies: acceptsImplies})),
+        parseLogicalFormula<B>({formula: orFragment, acceptsImplies: acceptsImplies})),
     } as GeneralLogicalFormula<B>;
   }
 
@@ -139,14 +139,14 @@ function parseLogicalFormula<B extends boolean>({formula, acceptsImplies}:
     return {
       parseType: (acceptsImplies ? 'LogicalFormulaAnd' : 'LogicalFormulaWithoutImpliesAnd') as const,
       children: andFragments.map((andFragment) =>
-        parseLogicalFormula({formula: andFragment, acceptsImplies: acceptsImplies})),
+        parseLogicalFormula<B>({formula: andFragment, acceptsImplies: acceptsImplies})),
     } as GeneralLogicalFormula<B>;
   }
 
   if (trimmedFormula.slice(0, 4) === "not ") {
     return {
       parseType: (acceptsImplies ? 'LogicalFormulaNot' : 'LogicalFormulaWithoutImpliesNot') as const,
-      child: parseLogicalFormula({formula: trimmedFormula.slice(4), acceptsImplies: acceptsImplies}),
+      child: parseLogicalFormula<B>({formula: trimmedFormula.slice(4), acceptsImplies: acceptsImplies}),
     } as GeneralLogicalFormula<B>;
   }
 
