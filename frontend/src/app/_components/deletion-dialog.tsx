@@ -35,8 +35,8 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClai
           </p>
           <div className="p-2">
             { claimsDisplay.map((claimDisplay, index) => (
-                <p className="text-nowrap truncate" key={index}>claimDisplay</p>
-              ));
+                <p className="text-nowrap truncate" key={index}>{claimDisplay}</p>
+              ))
             }
           </div>
           <p>Are you sure you wish to proceed?</p>
