@@ -24,37 +24,39 @@ function displayClaim({claimID, substitutions}:
 
 function displayLogicalFormula({parse, substitutions}:
   {parse: LogicalFormula, substitutions: {[claimID: string]: string}}): string {
-  if (parse.parseType === 'LogicalFormulaImplies') {
-    const left = maybeWrap({
-      wrap: parse.left.parseType === 'LogicalFormulaImplies',
-      text: displayLogicalFormula({parse: parse.left, substitutions: substitutions}),
-    });
-    const right = maybeWrap({
-      wrap: parse.right.parseType === 'LogicalFormulaImplies',
-      text: displayLogicalFormula({parse: parse.right, substitutions: substitutions}),
-    });
-    return left + " implies " + right;
-  } else if (parse.parseType === 'LogicalFormulaOr') {
-    const subDisplays = parse.children.map((child) => maybeWrap({
-      wrap: child.parseType === 'LogicalFormulaImplies',
-      text: displayLogicalFormula({parse: child, substitutions: substitutions}),
-    }));
-    return subDisplays.join(" or ");
-  } else if (parse.parseType === 'LogicalFormulaAnd') {
-    const subDisplays = parse.children.map((child) => maybeWrap({
-      wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr'].includes(child.parseType),
-      text: displayLogicalFormula({parse: child, substitutions: substitutions}),
-    }));
-    return subDisplays.join(" and ");
-  } else if (parse.parseType === 'LogicalFormulaNot') {
-    return "not " + maybeWrap({
-      wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr', 'LogicalFormulaAnd']
-        .includes(parse.child.parseType),
-      text: displayLogicalFormula({parse: parse.child, substitutions: substitutions}),
-    });
-  } else if (parse.parseType === 'ClaimID') {
-    return displayClaim({claimID: parse.claimID, substitutions: substitutions});
-  } else {const exhaustive: never = parse.parseType; return exhaustive;}
+  switch (parse.parseType) {
+    case 'LogicalFormulaImplies': {
+      const left = maybeWrap({
+        wrap: parse.left.parseType === 'LogicalFormulaImplies',
+        text: displayLogicalFormula({parse: parse.left, substitutions: substitutions}),
+      });
+      const right = maybeWrap({
+        wrap: parse.right.parseType === 'LogicalFormulaImplies',
+        text: displayLogicalFormula({parse: parse.right, substitutions: substitutions}),
+      });
+      return left + " implies " + right;
+    } case 'LogicalFormulaOr': {
+      const subDisplays = parse.children.map((child) => maybeWrap({
+        wrap: child.parseType === 'LogicalFormulaImplies',
+        text: displayLogicalFormula({parse: child, substitutions: substitutions}),
+      }));
+      return subDisplays.join(" or ");
+    } case 'LogicalFormulaAnd': {
+      const subDisplays = parse.children.map((child) => maybeWrap({
+        wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr'].includes(child.parseType),
+        text: displayLogicalFormula({parse: child, substitutions: substitutions}),
+      }));
+      return subDisplays.join(" and ");
+    } case 'LogicalFormulaNot': {
+      return "not " + maybeWrap({
+        wrap: ['LogicalFormulaImplies', 'LogicalFormulaOr', 'LogicalFormulaAnd']
+          .includes(parse.child.parseType),
+        text: displayLogicalFormula({parse: parse.child, substitutions: substitutions}),
+      });
+    } case 'ClaimID': {
+      return displayClaim({claimID: parse.claimID, substitutions: substitutions});
+    } default: {return parse.parseType as never;}
+  }
 }
 
 function displayLogicalFormulaWithoutImplies({parse, substitutions}:
