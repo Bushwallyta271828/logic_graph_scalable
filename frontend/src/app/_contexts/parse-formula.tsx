@@ -215,7 +215,8 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression {
   const coefficient = (attemptMagnitude !== null ? attemptMagnitude : 1) * signFactor;
   let child: AffineExpression | null;
   if (isProbability) {
-    const probabilityChild = parseLogicalFormulaWithoutImplies({formula: rightUnwrap});
+    const probabilityChild = parseLogicalFormula<false>
+      ({formula: rightUnwrap, acceptsImplies: false});
     if (probabilityChild === null) {return null;}
     child = { parseType: 'AffineExpressionProbability' as const,
       child: probabilityChild } as AffineExpression;
@@ -242,7 +243,8 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse {
     {formula: spacedFormula, depths: depths, substring: " = "});
 
   if (equalsFragments.length === 1) {
-    const logicalAttempt = parseLogicalFormula({formula: spacedFormula});
+    const logicalAttempt = parseLogicalFormula<true>
+      ({formula: spacedFormula, acceptsImplies: true});
     return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
@@ -258,8 +260,10 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse {
           const conditionalFragments = splitOnAllDepthZeroSubstrings(
             {formula: probUnwrap, depths: probUnwrapDepths, substring: " | "});
           if (conditionalFragments.length === 2) {
-            const left = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[0]});
-            const right = parseLogicalFormulaWithoutImplies({formula: conditionalFragments[1]});
+            const left = parseLogicalFormula<false>
+              ({formula: conditionalFragments[0], acceptsImplies: false});
+            const right = parseLogicalFormula<false>
+              ({formula: conditionalFragments[1], acceptsImplies: false});
             if (left !== null && right !== null) {
               return {
                 parseType: 'ConditionalProbabilityAssignment' as const,
