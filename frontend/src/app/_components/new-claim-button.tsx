@@ -7,7 +7,7 @@ export function NewClaimButton() {
   const { addClaim } = useClaimsContext();
 
   return (
-    <div className="relative">
+    <div className="text-white text-lg font-bold relative">
       <Menu>
         <Menu.Button>
           {({ open }) => 
