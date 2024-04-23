@@ -86,9 +86,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         claimType: claimType,
         text: text,
         conditioning: conditioning,
-        dependencies: (parse instanceof ConstraintParse) ?
-          immediateConstraintDependencies({parse: parse}) :
-          new Set<string>();
+        dependencies: (typeof parse === "string") ?
+          new Set<string>() : 
+          immediateConstraintDependencies({parse: parse}),
         parse: parse,
       } as Claim;
       setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
@@ -119,9 +119,9 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
       if (updatedClaim.claimType === 'constraint') {
         updatedClaim.parse = parseFormula({formula: newText});
-        updatedClaim.dependencies = (parse instanceof ConstraintParse) ?
-          immediateConstraintDependencies({parse: parse}) :
-          new Set<string>();
+        updatedClaim.dependencies = (typeof updatedClaim.parse === "string") ?
+          new Set<string>() : 
+          immediateConstraintDependencies({parse: updatedClaim.parse});
       }
       return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
@@ -130,7 +130,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
   const getDisplayData = (claim: Claim) => {
     if (claim.claimType !== 'constraint')
       {return {displayText: claim.text, validText: true};}
-    if (claim.parse instanceof string) {
+    if (typeof claim.parse === "string") {
       if (claim.text === "")
         {return {displayText: "Please enter a constraint.", validText: false};}
       else {return {displayText: "Parsing Error: " + claim.parse, validText: false};}
