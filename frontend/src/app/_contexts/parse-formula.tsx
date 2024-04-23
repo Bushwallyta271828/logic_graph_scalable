@@ -233,15 +233,14 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse {
   const spacedFormula = formula.replace(/[\(\)\|\*\+\-\=]/g, match => ` ${match} `);
 
   const {depths, matching} = findDepths({formula: spacedFormula});
-  if (!matching) {return null;}
+  if (!matching) {throw new ParsingError("Input has mismatched parentheses.");}
 
   const equalsFragments = splitOnAllDepthZeroSubstrings(
     {formula: spacedFormula, depths: depths, substring: " = "});
 
   if (equalsFragments.length === 1) {
-    const logicalAttempt = parseLogicalFormula<true>
-      ({formula: spacedFormula, acceptsImplies: true});
-    return logicalAttempt ? (logicalAttempt as ConstraintParse) : null;
+    return parseLogicalFormula<true>
+      ({formula: spacedFormula, acceptsImplies: true}) as ConstraintParse;
   } else if (equalsFragments.length === 2) {
     //First, let's attempt to parse as a conditional probability.
     const rightHandSideConstant = probabilityValue({candidate: equalsFragments[1].trim()});
@@ -260,15 +259,14 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse {
               ({formula: conditionalFragments[0], acceptsImplies: false});
             const right = parseLogicalFormula<false>
               ({formula: conditionalFragments[1], acceptsImplies: false});
-            if (left !== null && right !== null) {
-              return {
-                parseType: 'ConditionalProbabilityAssignment' as const,
-                conditionalLeftFormula: left,
-                conditionalRightFormula: right,
-                probability: rightHandSideConstant,
-              } as ConstraintParse;
-            } else {return null;}
-          } else if (conditionalFragments.length >= 3) {return null;}
+            return {
+              parseType: 'ConditionalProbabilityAssignment' as const,
+              conditionalLeftFormula: left,
+              conditionalRightFormula: right,
+              probability: rightHandSideConstant,
+            } as ConstraintParse;
+          } else if (conditionalFragments.length >= 3)
+            {throw new ParsingError("Multiple conditioning symbols identified.");}
         }
       }
     }
@@ -276,10 +274,6 @@ export function parseFormula({formula}: {formula: string}): ConstraintParse {
     //Now let's parse as an affine equation.
     const left = parseAffineFormula({formula: equalsFragments[0]});
     const right = parseAffineFormula({formula: equalsFragments[1]});
-    if (left !== null && right !== null) {
-      return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
-    } else {return null;}
-  } else {
-    return null;
-  }
+    return { parseType: 'AffineEquation' as const, left: left, right: right } as ConstraintParse;
+  } else {throw new ParsingError("Multiple equals signs identified.");}
 }
