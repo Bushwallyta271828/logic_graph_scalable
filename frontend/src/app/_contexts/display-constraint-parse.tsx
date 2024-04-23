@@ -54,7 +54,7 @@ function displayLogicalFormula({parse, substitutions}:
     });
   } else if (parse.parseType === 'ClaimID') {
     return displayClaim({claimID: parse.claimID, substitutions: substitutions});
-  } else {throw new Error('Unrecognized parseType');}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }
 
 function displayLogicalFormulaWithoutImplies({parse, substitutions}:
@@ -80,7 +80,7 @@ function displayLogicalFormulaWithoutImplies({parse, substitutions}:
     });
   } else if (parse.parseType === 'ClaimID') {
     return displayClaim({claimID: parse.claimID, substitutions: substitutions});
-  } else {throw new Error('Unrecognized parseType');}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }
 
 export function displayAffineExpression({parse, substitutions}:
@@ -119,7 +119,7 @@ export function displayAffineExpression({parse, substitutions}:
       {parse: parse.child, substitutions: substitutions}) + " )";
   } else if (parse.parseType === 'AffineExpressionConstant') {
     return parse.constant.toString();
-  } else {throw new Error('Unrecognized parseType');}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }
 
 export function displayConstraintParse({parse, substitutions}: 
@@ -146,6 +146,5 @@ export function displayConstraintParse({parse, substitutions}:
     const rightDisplay = displayAffineExpression(
       {parse: parse.right, substitutions: substitutions});
     return leftDisplay + " = " + rightDisplay;
-  }
-  else {throw new Error('Unrecognized parseType');}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }

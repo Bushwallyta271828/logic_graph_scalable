@@ -26,7 +26,7 @@ function logicalFormulaDependencies({parse}: {parse: LogicalFormula}): Set<strin
     return logicalFormulaDependencies({parse: parse.child});
   } else if (parse.parseType === 'ClaimID') {
     return new Set([parse.claimID,]);
-  } else {throw new Error("Unrecognized parseType");}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }
 
 function logicalFormulaWithoutImpliesDependencies({parse}:
@@ -43,7 +43,7 @@ function logicalFormulaWithoutImpliesDependencies({parse}:
     return logicalFormulaWithoutImpliesDependencies({parse: parse.child});
   } else if (parse.parseType === 'ClaimID') {
     return new Set([parse.claimID,]);
-  } else {throw new Error("Unrecognized parseType");}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }
 
 function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<string> {
@@ -60,7 +60,7 @@ function affineExpressionDependencies({parse}: {parse: AffineExpression}): Set<s
     return logicalFormulaWithoutImpliesDependencies({parse: parse.child});
   } else if (parse.parseType === 'AffineExpressionConstant') {
     return new Set([]);
-  } else {throw new Error("Unrecognized parseType");}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }
 
 export function immediateConstraintDependencies({parse}: {parse: ConstraintParse}): Set<string> {
@@ -82,5 +82,5 @@ export function immediateConstraintDependencies({parse}: {parse: ConstraintParse
     const left = Array.from(affineExpressionDependencies({parse: parse.left}));
     const right = Array.from(affineExpressionDependencies({parse: parse.right}));
     return new Set([...left, ...right]);
-  } else {throw new Error("Unrecognized parseType");}
+  } else {const exhaustive: never = parse.parseType; return exhaustive;}
 }
