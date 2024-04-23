@@ -79,22 +79,16 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
       setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
       setClaimIDs(prevIDs => [claimID,].concat(prevIDs));
     } else if (claimType === 'constraint') {
-      let parse: ConstraintParse | string;
-      try {parse = parseFormula({formula: text});}
-      catch (error) {
-        if (error instanceof ParsingError) {parse = error.message;}
-        else {throw error;}
-      }
-      const dependencies = (parse instanceof ConstraintParse) ?
-        immediateConstraintDependencies({parse: parse}) :
-        new Set<string>();
+      const parse = parseFormula({formula: text});
       const claim = {
         claimID: claimID,
         author: author,
         claimType: claimType,
         text: text,
         conditioning: conditioning,
-        dependencies: dependencies,
+        dependencies: (parse instanceof ConstraintParse) ?
+          immediateConstraintDependencies({parse: parse}) :
+          new Set<string>();
         parse: parse,
       } as Claim;
       setClaimLookup(prevLookup => ({ ...prevLookup, [claimID]: claim }));
@@ -124,16 +118,10 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         {throw new Error("Editing unrecognized claim");}
       const updatedClaim = { ...prevClaimLookup[claimID], text: newText};
       if (updatedClaim.claimType === 'constraint') {
-        try {
-          updatedClaim.parse = parseFormula({formula: newText});
-          updatedClaim.dependencies = 
-            immediateConstraintDependencies({parse: updatedClaim.parse});
-        } catch (error) {
-          if (error instanceof ParsingError) {
-            updatedClaim.parse = error.message;
-            updatedClaim.dependencies = new Set<string>();
-          } else {throw error;}
-        }
+        updatedClaim.parse = parseFormula({formula: newText});
+        updatedClaim.dependencies = (parse instanceof ConstraintParse) ?
+          immediateConstraintDependencies({parse: parse}) :
+          new Set<string>();
       }
       return { ...prevClaimLookup, [claimID]: updatedClaim };
     });
