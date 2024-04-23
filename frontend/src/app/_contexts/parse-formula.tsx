@@ -206,6 +206,8 @@ function parseAffineFormula({formula}: {formula: string}): AffineExpression {
     trimmedFormula: signless.slice(openParenthesisIndex), //Note that we preserve trimming!
     depths: signlessDepths.slice(openParenthesisIndex),
   });
+  if (rightUnwrap === null)
+    {throw new ParsingError("Unable to unwrap parentheses in term in affine combination.");}
   const outer = signless.slice(0, openParenthesisIndex).trim();
   const isProbability = outer.endsWith("P");
   const outerWithoutP = isProbability ? outer.slice(0, outer.length-1).trim() : outer;
