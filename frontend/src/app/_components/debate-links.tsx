@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export function DebateBar() {
+export function DebateLinks() {
   return (
     <div className="text-white text-lg font-bold flex gap-4">
       <Link href="/">

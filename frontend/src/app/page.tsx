@@ -8,12 +8,14 @@ export default async function Home() {
   console.log(responseText);
   
   return (
-    <nav className="bg-dark-neutral text-white text-lg font-bold px-8 py-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <NewClaimButton />
-        <DebateLinks />
-      </div>
-    </nav>
-    <ClaimList />
+    <>
+      <nav className="bg-dark-neutral text-white text-lg font-bold px-8 py-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <NewClaimButton />
+          <DebateLinks />
+        </div>
+      </nav>
+      <ClaimList />
+    </>
   );
 }
