@@ -10,7 +10,7 @@ import {
 } from '@/app/_types/parse-types';
 import { potentialClaimID } from '@/app/_types/claim-types';
 
-class ParsingError extends Error {
+export class ParsingError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "ParsingError";
