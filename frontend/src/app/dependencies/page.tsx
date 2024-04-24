@@ -1,6 +1,6 @@
 import { DebateLinks } from '@/app/_components/debate-links';
 
-export default function Analysis() {
+export default function Dependencies() {
   return (
     <>
       <nav className="bg-dark-neutral px-8 py-4">

@@ -1,7 +1,7 @@
 import { CallAPI } from '@/app/_lib/call-api';
 import { DebateLinks } from '@/app/_components/debate-links';
 
-export default async function Analysis() {
+export default async function Sampling() {
   const responseText = await (await CallAPI()).text();
   console.log(responseText);
 
