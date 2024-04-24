@@ -1,6 +1,10 @@
+import { CallAPI } from '@/app/_lib/call-api';
 import { DebateLinks } from '@/app/_components/debate-links';
 
-export default function Analysis() {
+export default async function Analysis() {
+  const responseText = await (await CallAPI()).text();
+  console.log(responseText);
+
   return (
     <>
       <nav className="bg-dark-neutral px-8 py-4">

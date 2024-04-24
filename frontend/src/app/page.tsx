@@ -1,12 +1,8 @@
-import { CallAPI } from '@/app/_lib/call-api';
 import { NewClaimButton } from '@/app/_components/new-claim-button';
 import { DebateLinks } from '@/app/_components/debate-links';
 import { ClaimList } from '@/app/_components/claim-list';
 
-export default async function Home() {
-  const responseText = await (await CallAPI()).text();
-  console.log(responseText);
-  
+export default function Home() {
   return (
     <>
       <nav className="bg-dark-neutral px-8 py-4">
