@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
   return (
     <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
-      <body className="bg-medium-neutral">
+      <body className="bg-medium-neutral min-h-screen">
         <ClaimsContextProvider>
           {children}
         </ClaimsContextProvider>
