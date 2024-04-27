@@ -6,7 +6,7 @@ export async function CallAPI() {
     return new Response('BACKEND_ADDRESS undefined');
   } else {
     try {
-      return fetch(process.env.BACKEND_ADDRESS, { cache: 'no-store' });
+      return fetch(process.env.BACKEND_ADDRESS + "debates/", { cache: 'no-store' });
     } catch {
       return new Response('Unable to fetch');
     }
