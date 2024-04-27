@@ -7,4 +7,4 @@ python manage.py migrate
 
 PORT=${BACKEND_PORT:-80}
 
-uwsgi --http 0.0.0.0:${PORT} --workers 4 --master --enable-threads --module app.wsgi
+uvicorn app.asgi:application --host 0.0.0.0 --port ${PORT} --workers 4
