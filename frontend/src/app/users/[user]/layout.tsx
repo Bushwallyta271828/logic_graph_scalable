@@ -7,9 +7,9 @@ export default function DebateSelectionNavbar({children, params}:
     <>
       <nav className="bg-dark-neutral px-8 py-4">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="text-white text-lg font-bold flex gap-4">
-            <Link href={"/" + params.user}>
-              <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
+          <div className="flex gap-4">
+            <Link href={"/users/" + params.user}>
+              <button className="text-white text-lg font-bold bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                 Debates
               </button>
             </Link>
