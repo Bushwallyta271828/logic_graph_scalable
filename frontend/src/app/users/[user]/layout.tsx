@@ -5,9 +5,9 @@ export default function DebateSelectionNavbar({children, params}:
   Readonly<{children: React.ReactNode, params: {user: string}}>) {
   return (
     <>
-      <nav className="bg-dark-neutral px-8 py-4">
+      <nav className="bg-dark-neutral px-8 py-1">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="flex gap-4">
+          <div className="flex gap-8 items-baseline">
             <Link href={"/users/" + params.user}>
               <button className="text-white text-lg font-bold bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                 Debates

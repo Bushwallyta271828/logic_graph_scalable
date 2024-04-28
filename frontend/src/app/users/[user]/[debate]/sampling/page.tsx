@@ -7,7 +7,7 @@ export default async function Sampling() {
 
   return (
     <>
-      <nav className="bg-dark-neutral px-8 py-4">
+      <nav className="bg-dark-neutral px-8 py-1">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-lg text-white font-bold">
             Sampling Controls
