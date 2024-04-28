@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'utils',
-    'accounts',
+    'users',
     'debates',
 ]
 
