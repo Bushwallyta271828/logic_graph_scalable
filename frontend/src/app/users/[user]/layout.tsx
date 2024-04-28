@@ -27,6 +27,7 @@ export default function DebateSelectionNavbar({children, params}:
             </button>
           </Link>
         </div>
+      </Navbar>
       {children}
     </>
   );
