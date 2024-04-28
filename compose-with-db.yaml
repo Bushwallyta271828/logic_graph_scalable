@@ -16,7 +16,7 @@ services:
       context: ./backend
     restart: always
     volumes:
-      - ./backend/accounts:/accounts
+      - ./backend/users:/users
       - ./backend/debates:/debates
     environment:
       - BACKEND_PORT=9000

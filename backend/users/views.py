@@ -3,5 +3,5 @@ from rest_framework.decorators import api_view
 
 @api_view(['GET'])
 def getData(request):
-    claim = {'id': 1, 'statement': 'This message is from accounts!'}
+    claim = {'id': 1, 'statement': 'This message is from users!'}
     return Response(claim)
