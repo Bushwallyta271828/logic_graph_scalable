@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
-export default function DebateSelectionNavbar({params}: {params: {user: string}}) {
+export default function DebateSelectionNavbar({children, params}:
+  Readonly<{children: React.ReactNode, params: {user: string}}>) {
   return (
     <>
       <nav className="bg-dark-neutral px-8 py-4">
@@ -26,6 +27,7 @@ export default function DebateSelectionNavbar({params}: {params: {user: string}}
           </div>
         </div>
       </nav>
+      {children}
     </>
   );
 }
