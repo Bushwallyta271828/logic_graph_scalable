@@ -1,8 +1,8 @@
 'use client';
 
 import { Dialog } from '@headlessui/react';
-import { Claim } from '@/app/_types/claim-types';
-import { useClaimsContext } from '@/app/_contexts/claims-context';
+import { Claim } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
+import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
 
 
 export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClaims}: {
@@ -11,7 +11,7 @@ export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClai
   claim: Claim,
   additionalClaims: Claim[],
 }) {
-  const { deleteClaim, getDisplayData } = useClaimsContext();
+  const { deleteClaim, getDisplayData } = useDebateContext();
 
   const claimsDisplay = additionalClaims.slice(0, 8).map((additionalClaim) => {
     const {displayText, validText} = getDisplayData(additionalClaim);

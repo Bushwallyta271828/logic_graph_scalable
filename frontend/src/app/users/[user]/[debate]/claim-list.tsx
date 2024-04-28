@@ -3,8 +3,8 @@
 import { PointerEvent } from 'react';
 import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useClaimsContext } from '@/app/_contexts/claims-context';
-import { ClaimBox } from '@/app/_components/claim-box';
+import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
+import { ClaimBox } from '@/app/users/[user]/[debate]/claim-box';
 
 
 //From https://github.com/clauderic/dnd-kit/issues/477
@@ -26,7 +26,7 @@ class OptionalPointerSensor extends PointerSensor {
 
 export function ClaimList() {
   //Credit to https://www.youtube.com/watch?v=dL5SOdgMbRY for helping to create some starter code!
-  const { claimIDs, moveClaim } = useClaimsContext();
+  const { claimIDs, moveClaim } = useDebateContext();
 
   function handleDragEnd(event : DragEndEvent) {
     const {active, over} = event;

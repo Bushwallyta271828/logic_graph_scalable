@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Claim } from '@/app/_types/claim-types';
-import { useClaimsContext } from '@/app/_contexts/claims-context';
+import { Claim } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
+import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
 
 
 export function ClaimContentBox({claim, hasDefinitions}: {claim: Claim, hasDefinitions: boolean}) {
   const [text, setText] = useState(claim.text);
   const [editing, setEditing] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
-  const { setClaimText, getDisplayData } = useClaimsContext();
+  const { setClaimText, getDisplayData } = useDebateContext();
   const { validText, displayText } = getDisplayData(claim);
 
   useEffect(() => {

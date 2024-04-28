@@ -1,6 +1,6 @@
-import { NewClaimButton } from '@/app/_components/new-claim-button';
-import { DebateLinks } from '@/app/_components/debate-links';
-import { ClaimList } from '@/app/_components/claim-list';
+import { NewClaimButton } from '@/app/users/[user]/[debate]/new-claim-button';
+import { DebateLinks } from '@/app/users/[user]/[debate]/debate-links';
+import { ClaimList } from '@/app/users/[user]/[debate]/claim-list';
 
 export default function Claims() {
   return (
