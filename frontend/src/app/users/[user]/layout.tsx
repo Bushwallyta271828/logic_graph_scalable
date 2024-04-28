@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { DebateName } from '@/app/users/[user]/_components/debate-name';
 
 export default function DebateSelectionNavbar({children, params}:
   Readonly<{children: React.ReactNode, params: {user: string}}>) {
@@ -12,6 +13,7 @@ export default function DebateSelectionNavbar({children, params}:
                 Debates
               </button>
             </Link>
+            <DebateName />
           </div>
           <div className="text-white text-lg font-bold flex gap-4">
             <Link href="/">
