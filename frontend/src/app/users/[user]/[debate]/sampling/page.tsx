@@ -1,5 +1,5 @@
 import { CallAPI } from '@/app/_lib/call-api';
-import { DebateLinks } from '@/app/_components/debate-links';
+import { DebateLinks } from '@/app/users/[user]/[debate]/debate-links';
 
 export default async function Sampling() {
   const responseText = await (await CallAPI()).text();

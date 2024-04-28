@@ -1,4 +1,4 @@
-import { DebateLinks } from '@/app/_components/debate-links';
+import { DebateLinks } from '@/app/users/[user]/[debate]/debate-links';
 
 export default function Ideologies() {
   return (
