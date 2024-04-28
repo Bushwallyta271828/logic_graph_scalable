@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import { Popover } from '@headlessui/react';
-import { Claim } from '@/app/_types/claim-types';
-import { useClaimsContext } from '@/app/_contexts/claims-context';
-import { DeletionDialog } from '@/app/_components/deletion-dialog';
+import { Claim } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
+import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
+import { DeletionDialog } from '@/app/users/[user]/[debate]/deletion-dialog';
 
 
 export function ClaimTab({claim} : {claim: Claim}) {
   const [ dialogOpen, setDialogOpen ] = useState(false);
   const [ additionalAncestors, setAdditionalAncestors ] = useState<Claim[]>([]);
   const acceptsDefinitions = 'definitionClaimIDs' in claim;
-  const { setConditioning, attachBlankDefinition, getAncestors, deleteClaim, claimLookup } = useClaimsContext();
+  const { setConditioning, attachBlankDefinition, getAncestors, deleteClaim, claimLookup } = useDebateContext();
 
   const handleDelete = () => {
     const ancestors = getAncestors(claim);

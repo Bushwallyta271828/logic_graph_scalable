@@ -2,14 +2,14 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useClaimsContext } from '@/app/_contexts/claims-context';
-import { ClaimTab } from '@/app/_components/claim-tab';
-import { ClaimContentBox } from '@/app/_components/claim-content-box';
-import { DefinitionList } from '@/app/_components/definition-list';
+import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
+import { ClaimTab } from '@/app/users/[user]/[debate]/claim-tab';
+import { ClaimContentBox } from '@/app/users/[user]/[debate]/claim-content-box';
+import { DefinitionList } from '@/app/users/[user]/[debate]/definition-list';
 
 
 export function ClaimBox({claimID} : {claimID: string}) {
-  const { claimLookup } = useClaimsContext();
+  const { claimLookup } = useDebateContext();
   const claim = claimLookup[claimID];
   if (claim === null) {
     throw new Error("claimID not present in claimLookup");

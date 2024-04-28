@@ -1,10 +1,10 @@
 'use client';
 
 import { Menu } from '@headlessui/react'
-import { useClaimsContext } from '@/app/_contexts/claims-context';
+import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
 
 export function NewClaimButton() {
-  const { addClaim } = useClaimsContext();
+  const { addClaim } = useDebateContext();
 
   return (
     <div className="text-white text-lg font-bold relative">

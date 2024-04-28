@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ClaimWithDefinitions } from '@/app/_types/claim-types';
-import { useClaimsContext } from '@/app/_contexts/claims-context';
+import { ClaimWithDefinitions } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
+import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
 
 function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
   {initialDefinitionClaimID: string, final: boolean, parentClaim: ClaimWithDefinitions}) {
@@ -13,7 +13,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
    * Note: I'm assuming that parentClaim.claimID and initialDefinitionClaimID are both alphanumeric.
    * Otherwise "..."+"."+".." and ".."+"."+"..." would produce the same key. */
 
-  const { claimLookup, editDefinitionClaimID } = useClaimsContext();
+  const { claimLookup, editDefinitionClaimID } = useDebateContext();
 
   let definitionText = '';
   let validDefinition = false;
@@ -57,7 +57,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
 }
 
 export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
-  const { moveDefinition } = useClaimsContext();
+  const { moveDefinition } = useDebateContext();
 
   function handleDragEnd(event: DragEndEvent) {
     const {active, over} = event;

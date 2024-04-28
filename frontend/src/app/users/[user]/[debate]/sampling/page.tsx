@@ -1,5 +1,6 @@
 import { CallAPI } from '@/app/_lib/call-api';
-import { DebateLinks } from '@/app/_components/debate-links';
+import { Navbar } from '@/app/navbar';
+import { DebateLinks } from '@/app/users/[user]/[debate]/debate-links';
 
 export default async function Sampling() {
   const responseText = await (await CallAPI()).text();
@@ -7,14 +8,12 @@ export default async function Sampling() {
 
   return (
     <>
-      <nav className="bg-dark-neutral px-8 py-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="text-lg text-white font-bold">
-            Sampling Controls
-          </div>
-          <DebateLinks />
+      <Navbar border={true}>
+        <div className="text-lg text-white font-bold">
+          Sampling Controls
         </div>
-      </nav>
+        <DebateLinks />
+      </Navbar>
       <div className="bg-red-800 text-white">
         <h1 className="text-xl">Sampling goes here!</h1>
       </div>
