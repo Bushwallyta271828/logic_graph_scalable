@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DebateName } from '@/app/users/[user]/_components/debate-name';
+import { DebateName } from '@/app/users/[user]/debate-name';
 
 export default function DebateSelectionNavbar({children, params}:
   Readonly<{children: React.ReactNode, params: {user: string}}>) {

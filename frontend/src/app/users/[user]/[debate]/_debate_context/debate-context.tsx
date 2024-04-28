@@ -3,13 +3,13 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/_types/claim-types';
-import { ConstraintParse } from '@/app/_types/parse-types';
-import { parseFormula } from '@/app/_contexts/parse-formula';
-import { immediateConstraintDependencies } from '@/app/_contexts/immediate-constraint-dependencies';
-import { displayConstraintParse } from '@/app/_contexts/display-constraint-parse';
+import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
+import { ConstraintParse } from '@/app/users/[user]/[debate]/_debate_context/parse-types';
+import { parseFormula } from '@/app/users/[user]/[debate]/_debate_context/parse-formula';
+import { immediateConstraintDependencies } from '@/app/users/[user]/[debate]/_debate_context/immediate-constraint-dependencies';
+import { displayConstraintParse } from '@/app/users/[user]/[debate]/_debate_context/display-constraint-parse';
 
-type ClaimsContext = {
+type DebateContext = {
   claimLookup: { [claimID: string]: Claim };
   claimIDs: string[]; //used for storing the order in which the claims are displayed
   //I don't return the setClaimLookup or setClaimIDs functions so that
@@ -35,9 +35,9 @@ type ClaimsContext = {
   deleteClaim: (claim: Claim) => void;
 }
 
-export const ClaimsContext = createContext<ClaimsContext | null>(null);
+export const DebateContext = createContext<DebateContext | null>(null);
 
-export function ClaimsContextProvider({ children }: { children: React.ReactNode }) {
+export function DebateContextProvider({ children }: { children: React.ReactNode }) {
   const [claimLookup, setClaimLookup] = useState<{ [claimID: string]: Claim }>({});
   const [claimIDs, setClaimIDs] = useState<string[]>([]);
 
@@ -247,7 +247,7 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
 
 
   return (
-    <ClaimsContext.Provider
+    <DebateContext.Provider
       value={{
         claimLookup,
         claimIDs,
@@ -268,14 +268,14 @@ export function ClaimsContextProvider({ children }: { children: React.ReactNode 
         deleteClaim,
         }}>
       {children}
-    </ClaimsContext.Provider>
+    </DebateContext.Provider>
   );
 }
 
-export function useClaimsContext() {
-  const context = useContext(ClaimsContext);
+export function useDebateContext() {
+  const context = useContext(DebateContext);
   if (context === null) {
-    throw new Error("useClaimsContext must be used within a ClaimsContextProvider!");
+    throw new Error("useDebateContext must be used within a DebateContextProvider!");
   }
   return context;
 }
