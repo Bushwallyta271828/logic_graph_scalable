@@ -1,12 +1,12 @@
 import Link from 'next/link';
 
-export default function DebateSelectionNavbar({params}: {params: {account: string}}) {
+export default function DebateSelectionNavbar({params}: {params: {user: string}}) {
   return (
     <>
       <nav className="bg-dark-neutral px-8 py-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-white text-lg font-bold flex gap-4">
-            <Link href={"/" + params.account}>
+            <Link href={"/" + params.user}>
               <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                 Debates
               </button>
