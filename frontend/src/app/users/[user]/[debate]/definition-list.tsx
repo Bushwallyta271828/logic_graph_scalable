@@ -57,7 +57,7 @@ function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
 }
 
 export function DefinitionList({claim} : {claim: ClaimWithDefinitions}) {
-  const { moveDefinition } = useClaimsContext();
+  const { moveDefinition } = useDebateContext();
 
   function handleDragEnd(event: DragEndEvent) {
     const {active, over} = event;

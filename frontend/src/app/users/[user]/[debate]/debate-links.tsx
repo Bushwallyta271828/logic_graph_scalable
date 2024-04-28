@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 export function DebateLinks() {
-  const params = useParams<{ user: string, debate: string }>();
+  const { user, debate } = useParams<{ user: string, debate: string }>();
 
   return (
     <div className="text-white text-lg font-bold flex gap-4">
@@ -23,7 +23,7 @@ export function DebateLinks() {
           Ideologies
         </button>
       </Link>
-      <Link href={`/user/${user}/${debate}/dependencies`}>
+      <Link href={`/users/${user}/${debate}/dependencies`}>
         <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
           Dependencies
         </button>
