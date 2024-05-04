@@ -7,6 +7,7 @@ python manage.py wait_for_db
 if [ "${REBUILD_DB}" == "true" ]; then
     echo "Rebuilding the database..."
     python manage.py reset_db --noinput
+    python manage.py makemigrations
     python manage.py migrate
     echo "Database rebuilt."
 fi
