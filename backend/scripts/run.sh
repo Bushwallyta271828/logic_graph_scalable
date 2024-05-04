@@ -4,7 +4,7 @@ set -e
 
 python manage.py wait_for_db
 
-if [ "${REBUILD_DB}" == "true" ]; then
+if [ "${DB_REBUILD}" == "true" ]; then
     echo "Rebuilding the database..."
     python manage.py reset_db --noinput
     python manage.py makemigrations
