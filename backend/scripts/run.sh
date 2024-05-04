@@ -13,7 +13,7 @@ if [ "${DB_REBUILD}" == "true" ]; then
 fi
 
 # Run sqldiff for all apps and capture the output
-OUTPUT=$(python manage.py sqldiff --all-apps)
+OUTPUT=$(python manage.py sqldiff -a)
 
 if [[ "$OUTPUT" == *"No differences"* ]]; then
     echo "Database schema matches the models. Continuing execution..."
