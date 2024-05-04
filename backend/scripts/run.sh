@@ -13,13 +13,14 @@ if [ "${DB_REBUILD}" == "true" ]; then
 fi
 
 # Run the makemigrations command with --dry-run to check for changes
-output=$(python manage.py makemigrations --dry-run)
+OUTPUT=$(python manage.py makemigrations --dry-run)
 
 # Search for the string "No changes detected"
-if echo "$output" | grep -q "No changes detected"; then
+if echo "$OUTPUT" | grep -q "No changes detected"; then
     echo "Models and database schema are in sync."
 else
     echo "Error: Models and database schema are out of sync!"
+    echo "$OUTPUT"
     exit 1
 fi
 
