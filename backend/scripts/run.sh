@@ -12,14 +12,14 @@ if [ "${DB_REBUILD}" == "true" ]; then
     echo "Database rebuilt."
 fi
 
-# Run sqldiff for all apps and capture the output
-OUTPUT=$(python manage.py sqldiff -a)
+# Run the makemigrations command with --dry-run to check for changes
+output=$(python manage.py makemigrations --dry-run)
 
-if [[ "$OUTPUT" == *"No differences"* ]]; then
-    echo "Database schema matches the models. Continuing execution..."
+# Search for the string "No changes detected"
+if echo "$output" | grep -q "No changes detected"; then
+    echo "Models and database schema are in sync."
 else
-    echo "Schema differences detected. Please resolve the following issues:"
-    echo "$OUTPUT"
+    echo "Error: Models and database schema are out of sync!"
     exit 1
 fi
 
