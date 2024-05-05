@@ -20,7 +20,7 @@ application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter([
-            path('debates/', include(debates.routing.websocket_urlpatterns)),
+            path('debates/', URLRouter(debates.routing.websocket_urlpatterns)),
         ])
     ),
 })
