@@ -15,15 +15,13 @@ services:
     build:
       context: ./backend
     restart: always
-    volumes:
-      - ./backend/users:/users
-      - ./backend/debates:/debates
     environment:
       - BACKEND_PORT=9000
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
+      - DB_REBUILD=${DB_REBUILD}
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
