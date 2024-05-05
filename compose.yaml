@@ -33,8 +33,8 @@ services:
     volumes:
       - redis-data:/data
     command: >
-      sh -c "echo \"port 7000\" > /usr/local/etc/redis/redis.conf
-             redis-server /usr/local/etc/redis/redis.conf"
+      sh -c "echo \"port 7000\" > /usr/local/bin/redis.conf
+             redis-server /usr/local/bin/redis.conf"
 
 volumes:
   redis-data:
