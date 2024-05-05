@@ -2,7 +2,7 @@
 
 set -e
 
-python manage.py wait_for_db
+python manage.py wait_for_dependencies
 
 if [ "${DB_REBUILD}" == "true" ]; then
     echo "Rebuilding the database..."
