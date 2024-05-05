@@ -6,7 +6,7 @@ import { createContext, useContext, useState } from 'react';
 
 type UserContext = {
   user: string | null;
-  setUser: SetStateAction<string | null>;
+  setUser: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const UserContext = createContext<UserContext | null>(null);
