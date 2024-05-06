@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useUserContext } from '@/app/_user_context/user-context';
 
 export function LoginLogoutButton() {

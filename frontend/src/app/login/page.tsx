@@ -1,7 +1,6 @@
+import { LoginForm } from '@/app/login/login-form';
+
 export default function Login() {
-  return (
-    <div className="bg-red-800 text-white">
-      <h1 className="text-xl">Login</h1>
-    </div>
-  );
+  //I've put everything inside this component to get around server side / client side restrictions.
+  return (<LoginForm />);
 }
