@@ -1,9 +1,9 @@
-import { CallAPI } from '@/app/_lib/call-api';
+import { fetchAPI } from '@/app/_lib/api';
 import { Navbar } from '@/app/navbar';
 import { DebateLinks } from '@/app/users/[user]/[debate]/debate-links';
 
 export default async function Sampling() {
-  const responseText = await (await CallAPI()).text();
+  const responseText = await (await fetchAPI({path: "debates/"})).text();
   console.log(responseText);
 
   return (
