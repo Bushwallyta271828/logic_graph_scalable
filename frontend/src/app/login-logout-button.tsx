@@ -10,7 +10,7 @@ export function LoginLogoutButton() {
     return (
       <Link href="/login">
         <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
-          Login
+          Sign In/Sign Up
         </button>
       </Link>
     );
@@ -18,7 +18,7 @@ export function LoginLogoutButton() {
     return (
       <Link href="/">
         <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
-          Logout
+          Log Out {user}
         </button>
       </Link>
     );
