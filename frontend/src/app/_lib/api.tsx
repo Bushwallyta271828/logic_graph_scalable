@@ -1,34 +1,28 @@
+'use client';
+
 import { unstable_noStore as noStore } from 'next/cache';
-import useSWR from 'swr';
+import { useSWR } from 'swr';
 
-//export async function fetchAPI({path}: {path: string}) {
-//  noStore(); //Don't store process.env.BACKEND_ADDRESS.
-//  if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
-//    return new Response('BACKEND_ADDRESS undefined');
-//  } else {
-//    try {
-//      return fetch(process.env.BACKEND_ADDRESS + path, { cache: 'no-store' });
-//    } catch {
-//      return new Response('Unable to fetch');
-//    }
-//  }
-//}
-
-const fetcher = async (url) => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error('An error occurred while fetching the data.');
+export function useFetchAPI({path}: {path: string}) {
+  const fetchAPI = async (path: string) => {
+    noStore(); //Don't store process.env.BACKEND_ADDRESS.
+    if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
+      throw new Error('BACKEND_ADDRESS undefined');
+    } else {
+      try {
+        const response = fetch(process.env.BACKEND_ADDRESS + path, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('An error occurred while fetching data');
+        }
+        return response;
+      } catch {
+        throw new Error('Unable to fetch');
+      }
+    }
   }
-  return response.json();
-}
 
-export function useFetchAPI(path) {
-  const { data, error } = useSWR(() => path ? `${process.env.BACKEND_ADDRESS}${path}` : null, fetcher);
-  return {
-    data,
-    error,
-    isLoading: !error && !data,
-  };
+  const { data, error, isValidating } = useSWR(process.env.BACKEND_ADDRESS + path, fetchAPI);
+  return {data, error, isValidating};
 }
 
 export async function postAPI(path, data) {
