@@ -4,8 +4,8 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { useSWR } from 'swr';
 import { useSWRMutation } from 'swr/mutation';
 
-export function useFetchAPI({path}: {path: string}) {
-  const fetchAPI = async (path: string) => {
+export function useGet({path}: {path: string}) {
+  const get = async (path: string) => {
     noStore(); //Don't store process.env.BACKEND_ADDRESS.
     if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
       throw new Error('BACKEND_ADDRESS undefined');
@@ -22,7 +22,7 @@ export function useFetchAPI({path}: {path: string}) {
     }
   }
 
-  const { data, error, isValidating } = useSWR(process.env.BACKEND_ADDRESS + path, fetchAPI);
+  const { data, error, isValidating } = useSWR(path, get);
   return {data, error, isValidating};
 }
 
@@ -48,38 +48,23 @@ export function useFetchAPI({path}: {path: string}) {
 //  }
 //}
 
-async function sendRequest(url, { arg }) {
-  return fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(arg)
-  })
+
+export function usePost({path}: {path: string}) {
+  async function sendRequest(url, { arg }) {
+    return fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(arg)
+    });
+  }
+
+  // A useSWR + mutate like API, but it will never start the request.
+  const { data, error, trigger, reset, isMutating } = useSWRMutation('/api/user', getData, {
+    // options
+    onError,
+    onSuccess,
+    revalidate = true, // auto revalidate after mutation
+    populateCache = false, // write back the response to the cache after mutation
+    optimisticData,
+    rollbackOnError
+  });
 }
-
-function App() {
-  const { trigger } = useSWRMutation('/api/user', sendRequest)
-
-  return <button onClick={() => {
-    trigger({ username: 'johndoe' })
-  }}>Create User</button>
-}
-
-/////////////////////////////////
-
-
-import useSWRMutation from 'swr/mutation'
-
-async function getData(url, { arg: token }) {
-  ... // Fetcher implementation.
-      // The extra argument will be passed via the `arg` property of the 2nd parameter.
-}
-
-// A useSWR + mutate like API, but it will never start the request.
-const { data, error, trigger, reset, isMutating } = useSWRMutation('/api/user', getData, {
-  // options
-  onError,
-  onSuccess,
-  revalidate = true, // auto revalidate after mutation
-  populateCache = false, // write back the response to the cache after mutation
-  optimisticData,
-  rollbackOnError
-})
