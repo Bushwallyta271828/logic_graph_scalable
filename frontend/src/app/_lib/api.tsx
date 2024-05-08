@@ -50,21 +50,24 @@ export function useGet({path}: {path: string}) {
 
 
 export function usePost({path}: {path: string}) {
-  async function sendRequest(url, { arg }) {
-    return fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(arg)
-    });
+  const post = async ({path, data}: {path: string, data: string}) => {
+    noStore(); //Don't store process.env.BACKEND_ADDRESS.
+    if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
+      throw new Error('BACKEND_ADDRESS undefined');
+    } else {
+      try {
+        const response = fetch(process.env.BACKEND_ADDRESS + path,
+          { method: 'POST', body: JSON.stringify(data), cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('An error occurred while fetching data');
+        }
+        return response;
+      } catch {
+        throw new Error('Unable to fetch');
+      }
+    }
   }
 
-  // A useSWR + mutate like API, but it will never start the request.
-  const { data, error, trigger, reset, isMutating } = useSWRMutation('/api/user', getData, {
-    // options
-    onError,
-    onSuccess,
-    revalidate = true, // auto revalidate after mutation
-    populateCache = false, // write back the response to the cache after mutation
-    optimisticData,
-    rollbackOnError
-  });
+  const { data, error, trigger, reset, isMutating } = useSWRMutation('/api/user', post);
+  return { error, isMutating };
 }
