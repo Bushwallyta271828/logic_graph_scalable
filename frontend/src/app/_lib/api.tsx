@@ -26,48 +26,31 @@ export function useGet({path}: {path: string}) {
   return {data, error, isValidating};
 }
 
-//export function postAPI(path, data) {
-//  const url = `${process.env.BACKEND_ADDRESS}${path}`;
-//  const fetchOptions = {
-//    method: 'POST',
-//    headers: {
-//      'Content-Type': 'application/json',
-//    },
-//    body: JSON.stringify(data),
-//  };
-//
-//  try {
-//    const response = await fetch(url, fetchOptions);
-//    if (!response.ok) {
-//      throw new Error(`HTTP error! Status: ${response.status}`);
-//    }
-//    return await response.json();
-//  } catch (error) {
-//    console.error('Fetch error:', error);
-//    throw error;  // Rethrow to handle errors in the component
-//  }
-//}
+export async function post<T>({path, data}: {path: string, data: T}) {
+  noStore(); //Don't store process.env.BACKEND_ADDRESS.
+  if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
+    throw new Error('BACKEND_ADDRESS undefined');
+  } else {
+    const url = `https://your-backend-api.com/${postData.endpoint}`;
+  
+    try {
+      const response = await fetch(process.env.BACKEND_ADDRESS + path, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        cache: 'no-store',
+      });
 
-
-export function usePost({path}: {path: string}) {
-  const post = async ({path, data}: {path: string, data: string}) => {
-    noStore(); //Don't store process.env.BACKEND_ADDRESS.
-    if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
-      throw new Error('BACKEND_ADDRESS undefined');
-    } else {
-      try {
-        const response = fetch(process.env.BACKEND_ADDRESS + path,
-          { method: 'POST', body: JSON.stringify(data), cache: 'no-store' });
-        if (!response.ok) {
-          throw new Error('An error occurred while fetching data');
-        }
-        return response;
-      } catch {
-        throw new Error('Unable to fetch');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+
+      const { status, message } = await response.json();
+      return { status: status, message: message };
+    } catch (error) {
+      throw new Error('Failed to post data');
     }
   }
-
-  const { data, error, trigger, reset, isMutating } = useSWRMutation('/api/user', post);
-  return { error, isMutating };
 }
