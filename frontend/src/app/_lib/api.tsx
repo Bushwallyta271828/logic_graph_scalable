@@ -31,8 +31,6 @@ export async function post<T>({path, data}: {path: string, data: T}) {
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
   } else {
-    const url = `https://your-backend-api.com/${postData.endpoint}`;
-  
     try {
       const response = await fetch(process.env.BACKEND_ADDRESS + path, {
         method: 'POST',
