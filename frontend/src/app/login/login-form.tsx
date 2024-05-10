@@ -7,7 +7,8 @@ export function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const response = await fetchWrapper<{username: string, password: string}>
       ({path: "users/", data: {username: username, password: password}});
     console.log("Success!");
