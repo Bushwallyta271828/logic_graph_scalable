@@ -1,7 +1,7 @@
 'use client';
 
 import { unstable_noStore as noStore } from 'next/cache';
-import { useSWR } from 'swr';
+import useSWR from 'swr';
 
 export async function fetchWrapper<T>({path, data}: {path: string, data: T | null}) {
   //Call as fetchWrapper<null>(path: path, data: null) for GET,
@@ -11,18 +11,14 @@ export async function fetchWrapper<T>({path, data}: {path: string, data: T | nul
     throw new Error('BACKEND_ADDRESS undefined');
   } else {
     try {
-      if (data === null) {
-        const response = await fetch(process.env.BACKEND_ADDRESS + path, { cache: 'no-store' });
-      } else {
-        const response = await fetch(process.env.BACKEND_ADDRESS + path, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-          cache: 'no-store',
-        });
+      const options: {cache: string, method?: string, headers?: {[key: string]: string}, body?: string}
+        = {cache: 'no-store'};
+      if (data !== null) {
+        options.method = 'POST';
+        options.headers = {'Content-Type': 'application/json'};
+        options.body = JSON.stringify(data);
       }
+      const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
       if (!response.ok) {throw new Error('Network response was not ok');}
       return response;
     } catch (error) {throw new Error('Unable to fetch');}
