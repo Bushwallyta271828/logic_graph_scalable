@@ -1,13 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { fetchWrapper } from '@/app/_lib/api';
 
 export function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     const response = await fetchWrapper<{username: string, password: string}>
       ({path: "users/", data: {username: username, password: password}});
     console.log("Success!");

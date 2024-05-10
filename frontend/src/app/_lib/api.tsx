@@ -11,8 +11,7 @@ export async function fetchWrapper<T>({path, data}: {path: string, data: T | nul
     throw new Error('BACKEND_ADDRESS undefined');
   } else {
     try {
-      const options: {cache: string, method?: string, headers?: {[key: string]: string}, body?: string}
-        = {cache: 'no-store'};
+      const options: RequestInit = {cache: 'no-store'};
       if (data !== null) {
         options.method = 'POST';
         options.headers = {'Content-Type': 'application/json'};
