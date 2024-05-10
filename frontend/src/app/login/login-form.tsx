@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { fetchWrapper } from '@/app/_lib/api';
+import { post } from '@/app/_lib/api';
 
 export function LoginForm() {
   const [username, setUsername] = useState('');
@@ -9,7 +9,7 @@ export function LoginForm() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await fetchWrapper<{username: string, password: string}>
+    const response = await post<{username: string, password: string}>
       ({path: "users/", data: {username: username, password: password}});
     console.log("Success!");
   };
