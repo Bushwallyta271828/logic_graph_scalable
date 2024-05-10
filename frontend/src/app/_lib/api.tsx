@@ -1,22 +1,25 @@
 import { unstable_noStore as noStore } from 'next/cache';
 
-export async function fetchWrapper<T>({path, data}: {path: string, data: T | null}) {
-  //Call as fetchWrapper<null>(path: path, data: null) for GET,
-  //fetchWrapper<T>(path: path, data: T) for POST.
+async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
   } else {
     try {
-      const options: RequestInit = {cache: 'no-store'};
-      if (data !== null) {
-        options.method = 'POST';
-        options.headers = {'Content-Type': 'application/json'};
-        options.body = JSON.stringify(data);
-      }
-      const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
+      const response = await fetch(process.env.BACKEND_ADDRESS + path, {...options, cache: 'no-store'});
       if (!response.ok) {throw new Error('Network response was not ok');}
       return response;
     } catch (error) {throw new Error('Unable to fetch');}
   }
+}
+
+export async function get({path}: {path: string}) {
+  return fetchWrapper({path: path, options: {}});
+}
+
+export async function post<T>({path, data}: {path: string, data: T}) {
+  return fetchWrapper({
+    path: path,
+    options: {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}
+  });
 }
