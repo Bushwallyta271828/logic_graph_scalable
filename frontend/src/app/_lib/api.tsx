@@ -1,4 +1,6 @@
 import { unstable_noStore as noStore } from 'next/cache';
+import { cookies } from 'next/headers';
+import { parse, splitCookiesString } from 'set-cookie-parser';
 
 export async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
   //For GET, options should be {}.
@@ -9,6 +11,13 @@ export async function fetchWrapper({path, options}: {path: string, options: Requ
   } else {
     try {
       const response = await fetch(process.env.BACKEND_ADDRESS + path, {...options, cache: 'no-store'});
+      response.headers.forEach((value, name) => {
+        if (name.toLowerCase() === 'set-cookie') {
+          for (const cookie of parse(splitCookiesString(value))) {
+            cookies().set(cookie.name, cookie.value, COME BACK);
+          }
+        }
+      });
       return response;
     } catch (error) {throw new Error('Unable to fetch');}
   }
