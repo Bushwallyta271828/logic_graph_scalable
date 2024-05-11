@@ -26,4 +26,5 @@ def sign_up_view(request):
     else:
         user = User.objects.create_user(username, email, password)
         login(request, user)
-        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        response = Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        return response
