@@ -6,15 +6,10 @@ export default function SignUp() {
     'use server';
     const response = await fetchWrapper(
       {path: 'users/sign-up', options: {method: 'POST', body: formData}});
-    const attemptSessionIdCookie = cookies().get('sessionid');
-    if (attemptSessionIdCookie !== undefined) {
+    if (response.ok) {
       const formUsername = formData.get('username');
       if (typeof formUsername === 'string') {
-        cookies().set('username', formUsername, {
-          expires: attemptSessionIdCookie.expires,
-          maxAge: attemptSessionIdCookie.maxAge,
-          httpOnly: false,
-        });
+        cookies().set('username', formUsername, {httpOnly: true});
       } else {throw new Error("formData.get('username') isn't a string");}
     }
     console.log(response);
