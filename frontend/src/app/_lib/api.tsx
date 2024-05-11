@@ -5,19 +5,37 @@ import { parse, splitCookiesString } from 'set-cookie-parser';
 export async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
   //For GET, options should be {}.
   //For POST with formData, options should be {method: 'POST', body: formData}.
+  //Note that this function is for server-side use.
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
   } else {
     try {
       const response = await fetch(process.env.BACKEND_ADDRESS + path, {...options, cache: 'no-store'});
-      response.headers.forEach((value, name) => {
-        if (name.toLowerCase() === 'set-cookie') {
-          for (const cookie of parse(splitCookiesString(value))) {
-            cookies().set(cookie.name, cookie.value, COME BACK);
+
+      //Thanks to https://stackoverflow.com/a/77446172 for the ideas on cookie handling.
+      response.headers.forEach((headerValue, headerName) => {
+        if (headerName.toLowerCase() === 'set-cookie') {
+          for (const cookieObject of parse(splitCookiesString(headerValue))) {
+            //Note: I have to unpack everything manually for type checking reasons.
+            //These properties are all of the properties that cookieObject can possess.
+            const sameSite = (cookieObject.sameSite === undefined)
+              ? undefined : cookieObject.sameSite.toLowerCase();
+            cookies().set({
+              name: cookieObject.name,
+              value: cookieObject.value,
+              path: cookieObject.path,
+              expires: cookieObject.expires,
+              maxAge: cookieObject.maxAge,
+              domain: cookieObject.domain,
+              secure: cookieObject.secure,
+              httpOnly: cookieObject.httpOnly,
+              sameSite: (sameSite as 'lax' | 'strict' | 'none' | boolean | undefined),
+            });
           }
         }
       });
+
       return response;
     } catch (error) {throw new Error('Unable to fetch');}
   }
