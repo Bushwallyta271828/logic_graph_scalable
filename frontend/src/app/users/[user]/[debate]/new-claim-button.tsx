@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu } from '@headlessui/react'
+import { Menu } from '@headlessui/react';
 import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
 
 export function NewClaimButton() {
