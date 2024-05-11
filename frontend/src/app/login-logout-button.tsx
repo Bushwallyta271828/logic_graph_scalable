@@ -8,7 +8,7 @@ export function LoginLogoutButton() {
 
   if (user === null) {
     return (
-      <Link href="/login">
+      <Link href="/account/sign-up">
         <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
           Sign In/Sign Up
         </button>
