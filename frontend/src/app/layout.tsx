@@ -28,7 +28,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
               </Link>
             </div>
             <div className="text-white text-lg font-bold flex gap-4">
-              <AccountButton />
+              <AccountButton username={username} />
               <Link href="/documentation">
                 <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                   Documentation
