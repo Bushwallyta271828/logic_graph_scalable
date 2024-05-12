@@ -59,9 +59,7 @@ function UsernameMenuItems({username}: {username: string}) {
 }
 
 export function AccountButton() {
-  const testUsername = getCookie('username');
-  console.log(testUsername);
-  const username: string | null = "generic username";
+  const username = getCookie('username');
 
   return (
     <div className="text-white text-lg font-bold relative">
@@ -74,7 +72,7 @@ export function AccountButton() {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          { (username === null) ?
+          { (username === undefined) ?
             <NoUsernameMenuItems /> :
             <UsernameMenuItems username={username} />
           }

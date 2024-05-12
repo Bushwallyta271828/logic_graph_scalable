@@ -12,8 +12,8 @@ export async function submitSignUpForm(formData: FormData) {
     const formUsername = formData.get('username');
     const formEmail = formData.get('email');
     if (typeof formUsername === 'string' && typeof formEmail === 'string') {
-      cookies().set('username', formUsername, {httpOnly: true});
-      cookies().set('hasEmail', (formEmail.trim() !== ""), {httpOnly: true});
+      cookies().set('username', formUsername, {httpOnly: false});
+      cookies().set('hasEmail', (formEmail.trim() !== "").toString(), {httpOnly: false});
     } else {throw new Error("formData username/email aren't both strings");}
   }
 
