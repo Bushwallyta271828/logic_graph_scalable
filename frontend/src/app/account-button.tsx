@@ -3,6 +3,7 @@
 import { useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
+import { getCookie } from 'cookies-next';
 import { logOut } from '@/app/account/account-actions';
 
 function NoUsernameMenuItems() {
@@ -57,7 +58,11 @@ function UsernameMenuItems({username}: {username: string}) {
   );
 }
 
-export function AccountButton({username}: {username: string | null}) {
+export function AccountButton() {
+  const testUsername = getCookie('username');
+  console.log(testUsername);
+  const username: string | null = "generic username";
+
   return (
     <div className="text-white text-lg font-bold relative">
       <Menu>

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 import { UserContextProvider } from '@/app/_user_context/user-context';
 import { Navbar } from '@/app/navbar';
 import { AccountButton } from '@/app/account-button';
@@ -11,10 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
-  const usernameCookie = cookies().get('username');
-  const username = (usernameCookie !== undefined && typeof usernameCookie.value === 'string')
-    ? usernameCookie.value : null;
-
   return (
     <UserContextProvider>
       <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
@@ -36,7 +31,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
               </p>
             </div>
             <div className="text-white text-lg font-bold flex gap-4">
-              <AccountButton username={username} />
+              <AccountButton />
               <Link href="/documentation">
                 <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                   Documentation
