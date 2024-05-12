@@ -26,6 +26,11 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
                   LogicGraph
                 </button>
               </Link>
+              <Link href="/debates">
+                <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
+                  Debates
+                </button>
+              </Link>
             </div>
             <div className="text-white text-lg font-bold flex gap-4">
               <AccountButton username={username} />
