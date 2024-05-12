@@ -27,3 +27,42 @@ def sign_up_view(request):
         user = User.objects.create_user(username, email, password)
         login(request, user)
         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def change_username_view(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
+    
+    if User.objects.filter(username=username).exists():
+        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        user = User.objects.create_user(username, email, password)
+        login(request, user)
+        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def change_email_view(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
+    
+    if User.objects.filter(username=username).exists():
+        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        user = User.objects.create_user(username, email, password)
+        login(request, user)
+        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def change_password_view(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
+    
+    if User.objects.filter(username=username).exists():
+        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        user = User.objects.create_user(username, email, password)
+        login(request, user)
+        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
