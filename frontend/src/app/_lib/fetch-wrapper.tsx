@@ -11,10 +11,18 @@ export async function fetchWrapper({path, options}: {path: string, options: Requ
     throw new Error('BACKEND_ADDRESS undefined');
   } else {
     try {
-      const allCookies = await (await cookies()).getAll();
-      const cookieString = allCookies.map((cookie) => cookie.name+"="+cookie.value).join("; ");
-      const response = await fetch(process.env.BACKEND_ADDRESS + path,
-        {...options, cache: 'no-store', headers: {Cookie: cookieString}});
+      const sessionidCookie = await (await cookies()).get('sessionid');
+      const cookieString = (sessionidCookie === undefined) ? undefined : 'sessionid='+sessionidCookie.value;
+      const csrftokenCookie = await (await cookies()).get('csrftoken');
+      const csrftoken = (csrftokenCookie === undefined) ? undefined : csrftokenCookie.value;
+      const response = await fetch(process.env.BACKEND_ADDRESS + path, {
+        ...options,
+        cache: 'no-store',
+        headers: {
+          'Cookie': cookieString,
+          'X-CSRF-TOKEN': csrftoken,
+        },
+      });
 
       //Thanks to https://stackoverflow.com/a/77446172 for the ideas on cookie handling.
       response.headers.forEach((headerValue, headerName) => {
