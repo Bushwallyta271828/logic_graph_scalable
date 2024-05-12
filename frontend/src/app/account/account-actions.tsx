@@ -30,7 +30,7 @@ export async function submitSignInForm(formData: FormData) {
 
 export async function submitChangeUsernameForm(formData: FormData) {
   const response = await fetchWrapper(
-    {path: 'users/sign-in', options: {method: 'POST', body: formData}});
+    {path: 'users/change-username', options: {method: 'POST', body: formData}});
 
   revalidatePath('/');
   redirect('/debates');
@@ -38,7 +38,7 @@ export async function submitChangeUsernameForm(formData: FormData) {
 
 export async function submitChangeEmailForm(formData: FormData) {
   const response = await fetchWrapper(
-    {path: 'users/sign-in', options: {method: 'POST', body: formData}});
+    {path: 'users/change-email', options: {method: 'POST', body: formData}});
 
   revalidatePath('/');
   redirect('/debates');
@@ -46,7 +46,7 @@ export async function submitChangeEmailForm(formData: FormData) {
 
 export async function submitChangePasswordForm(formData: FormData) {
   const response = await fetchWrapper(
-    {path: 'users/sign-in', options: {method: 'POST', body: formData}});
+    {path: 'users/change-password', options: {method: 'POST', body: formData}});
 
   revalidatePath('/');
   redirect('/debates');
