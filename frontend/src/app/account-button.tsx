@@ -3,6 +3,56 @@
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
 
+function NoUsernameMenuItems() {
+  return (
+    <>
+      <Menu.Item>
+        {({ active }) => (
+          <Link href="/account/sign-in">
+            <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+              Sign In
+            </a>
+          </Link>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <Link href="/account/sign-up">
+            <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+              Sign Up
+            </a>
+          </Link>
+        )}
+      </Menu.Item>
+    </>
+  );
+}
+
+function UsernameMenuItems({username}: {username: string}) {
+  return (
+    <>
+      <Menu.Item>
+        {({ active }) => (
+          <Link href="/account/sign-in">
+            <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+              Change Password
+            </a>
+          </Link>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <Link href="/account/sign-up">
+            <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+              Log Out {username}
+            </a>
+          </Link>
+        )}
+      </Menu.Item>
+    </>
+  );
+}
+
 export function AccountButton({username}: {username: string | null}) {
   return (
     <Menu>
@@ -14,26 +64,10 @@ export function AccountButton({username}: {username: string | null}) {
         }
       </Menu.Button>
       <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-        <div>
-          <Menu.Item>
-            {({ active }) => (
-              <Link href="/account/sign-in">
-                <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-text' : 'bg-medium-text'}`}>
-                  Sign In
-                </a>
-              </Link>
-            )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
-              <Link href="/account/sign-up">
-                <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-constraint' : 'bg-medium-constraint'}`}>
-                  Sign Up
-                </a>
-              </Link>
-            )}
-          </Menu.Item>
-        </div>
+        { (username === null) ?
+          <NoUsernameMenuItems /> :
+          <UsernameMenuItems username={username} />
+        }
       </Menu.Items>
     </Menu>
   );
