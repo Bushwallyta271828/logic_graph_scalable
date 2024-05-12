@@ -5,30 +5,25 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { fetchWrapper } from '@/app/_lib/api';
 
-export async function submitSignUpForm(formData: FormData) {
+async function processAuthenticationForm({formData, path}: {formData: FormData, path: string}) {
   const response = await fetchWrapper(
-    {path: 'users/sign-up', options: {method: 'POST', body: formData}});
+    {path: path, options: {method: 'POST', body: formData}});
   if (response.ok) {
     const formUsername = formData.get('username');
     if (typeof formUsername === 'string') {
-      cookies().set('username', formUsername, {httpOnly: false});
+      await (await cookies()).set('username', formUsername, {httpOnly: false});
     } else {throw new Error("formData.get('username') isn't a string");}
   }
+}
 
+export async function submitSignUpForm(formData: FormData) {
+  await processAuthenticationForm({formData: formData, path: 'users/sign-up'});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitSignInForm(formData: FormData) {
-  const response = await fetchWrapper(
-    {path: 'users/sign-in', options: {method: 'POST', body: formData}});
-  if (response.ok) {
-    const formUsername = formData.get('username');
-    if (typeof formUsername === 'string') {
-      cookies().set('username', formUsername, {httpOnly: false});
-    } else {throw new Error("formData.get('username') isn't a string");}
-  }
-
+  await processAuthenticationForm({formData: formData, path: 'users/sign-in'});
   revalidatePath('/');
   redirect('/debates');
 }
