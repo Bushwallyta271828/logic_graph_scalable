@@ -31,11 +31,7 @@ export async function submitChangePasswordForm(formData: FormData) {
 
 export async function logOut() {
   console.log('Fix me');
-  //
-  //try {
-  //  revalidatePath('/');
-  //  redirect(`/`);
-  //} catch (error) {
-  //  console.log(error);
-  //}
+  
+  revalidatePath('/');
+  redirect(`/`);
 }
