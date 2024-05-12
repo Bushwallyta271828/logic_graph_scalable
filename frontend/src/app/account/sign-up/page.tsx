@@ -1,20 +1,6 @@
-import { fetchWrapper } from '@/app/_lib/api';
-import { cookies } from 'next/headers';
+import { submitSignUpForm } from '@/app/account/account-actions';
 
 export default function SignUp() {
-  async function submitSignUpForm(formData: FormData) {
-    'use server';
-    const response = await fetchWrapper(
-      {path: 'users/sign-up', options: {method: 'POST', body: formData}});
-    if (response.ok) {
-      const formUsername = formData.get('username');
-      if (typeof formUsername === 'string') {
-        cookies().set('username', formUsername, {httpOnly: true});
-      } else {throw new Error("formData.get('username') isn't a string");}
-    }
-    console.log(response);
-  }
-
   return (
     <form action={submitSignUpForm}>
       <div>

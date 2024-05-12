@@ -33,7 +33,7 @@ function UsernameMenuItems({username}: {username: string}) {
     <>
       <Menu.Item>
         {({ active }) => (
-          <Link href="/account/sign-in">
+          <Link href="/account/change-password">
             <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
               Change Password
             </a>

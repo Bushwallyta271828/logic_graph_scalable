@@ -1,13 +1,6 @@
-import { fetchWrapper } from '@/app/_lib/api';
+import { submitSignInForm } from '@/app/account/account-actions';
 
 export default function SignIn() {
-  async function submitSignInForm(formData: FormData) {
-    'use server';
-    const response = await fetchWrapper(
-      {path: 'users/sign-in', options: {method: 'POST', body: formData}});
-    console.log(response);
-  }
-
   return (
     <form action={submitSignInForm}>
       <div>
