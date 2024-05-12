@@ -6,7 +6,7 @@ import { Menu } from '@headlessui/react';
 import { getCookie } from 'cookies-next';
 import { logOut } from '@/app/account/account-actions';
 
-function NoUsernameMenuItems() {
+function SignedOutMenuItems() {
   return (
     <>
       <Menu.Item>
@@ -31,34 +31,16 @@ function NoUsernameMenuItems() {
   );
 }
 
-function UsernameMenuItems({username}: {username: string}) {
+function SignedInMenuItems() {
   const [isPending, startTransition] = useTransition();
 
   return (
     <>
       <Menu.Item>
         {({ active }) => (
-          <Link href="/account/change-username">
+          <Link href="/account/manage-account">
             <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
-              Change Username
-            </a>
-          </Link>
-        )}
-      </Menu.Item>
-      <Menu.Item>
-        {({ active }) => (
-          <Link href="/account/change-email">
-            <a className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
-              Change Email
-            </a>
-          </Link>
-        )}
-      </Menu.Item>
-      <Menu.Item>
-        {({ active }) => (
-          <Link href="/account/change-password">
-            <a className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
-              Change Password
+              Manage Account
             </a>
           </Link>
         )}
@@ -68,7 +50,7 @@ function UsernameMenuItems({username}: {username: string}) {
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
             onClick={() => {startTransition(logOut);}}>
-            Log Out {username}
+            Log Out
           </a>
         )}
       </Menu.Item>
@@ -77,8 +59,6 @@ function UsernameMenuItems({username}: {username: string}) {
 }
 
 export function AccountButton() {
-  const username = getCookie('username');
-
   return (
     <div className="text-white text-lg font-bold relative">
       <Menu>
@@ -90,10 +70,7 @@ export function AccountButton() {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          { (username === undefined) ?
-            <NoUsernameMenuItems /> :
-            <UsernameMenuItems username={username} />
-          }
+          {hasCookie('username') ? <SignedInMenuItems /> : <SignedOutMenuItems />}
         </Menu.Items>
       </Menu>
     </div>
