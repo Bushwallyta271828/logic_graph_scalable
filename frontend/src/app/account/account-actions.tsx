@@ -22,6 +22,12 @@ export async function submitSignUpForm(formData: FormData) {
 export async function submitSignInForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
+  if (response.ok) {
+    const formUsername = formData.get('username');
+    if (typeof formUsername === 'string') {
+      cookies().set('username', formUsername, {httpOnly: false});
+    } else {throw new Error("formData.get('username') isn't a string");}
+  }
 
   revalidatePath('/');
   redirect('/debates');
