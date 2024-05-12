@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ClaimWithDefinitions } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
-import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
+import { ClaimWithDefinitions } from '@/app/debates/[debateID]/_debate_context/claim-types';
+import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
 
 function DefinitionBox({initialDefinitionClaimID, final, parentClaim}:
   {initialDefinitionClaimID: string, final: boolean, parentClaim: ClaimWithDefinitions}) {

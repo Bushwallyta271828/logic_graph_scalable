@@ -1,4 +1,4 @@
-import { DebateContextProvider } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
+import { DebateContextProvider } from '@/app/debates/[debateID]/_debate_context/debate-context';
 
 export default function ContextWrapper({children}: Readonly<{children: React.ReactNode}>) {
   return (

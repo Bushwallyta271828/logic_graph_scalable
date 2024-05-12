@@ -7,7 +7,7 @@ import {
   AffineExpression,
   AffineEquation,
   ConstraintParse
-} from '@/app/users/[user]/[debate]/_debate_context/parse-types';
+} from '@/app/debates/[debateID]/_debate_context/parse-types';
 
 function logicalFormulaDependencies({parse}: {parse: LogicalFormula}): Set<string> {
   if (parse.parseType === 'LogicalFormulaImplies') {

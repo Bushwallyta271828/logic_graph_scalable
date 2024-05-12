@@ -1,4 +1,4 @@
-import { ConstraintParse } from '@/app/users/[user]/[debate]/_debate_context/parse-types';
+import { ConstraintParse } from '@/app/debates/[debateID]/_debate_context/parse-types';
 
 export function potentialClaimID({candidate}: {candidate: string}): boolean {
   //Specifies whether a string would make a valid Claim ID.

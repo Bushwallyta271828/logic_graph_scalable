@@ -1,5 +1,6 @@
 'use client';
 
+import { useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
 import { logOut } from '@/app/account/account-actions';
@@ -30,6 +31,8 @@ function NoUsernameMenuItems() {
 }
 
 function UsernameMenuItems({username}: {username: string}) {
+  const [isPending, startTransition] = useTransition();
+
   return (
     <>
       <Menu.Item>
@@ -45,7 +48,7 @@ function UsernameMenuItems({username}: {username: string}) {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={logOut}>
+            onClick={() => {startTransition(logOut);}}>
             Log Out {username}
           </a>
         )}

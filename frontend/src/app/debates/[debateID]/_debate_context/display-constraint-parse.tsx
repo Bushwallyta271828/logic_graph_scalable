@@ -7,7 +7,7 @@ import {
   AffineExpression,
   AffineEquation,
   ConstraintParse
-} from '@/app/users/[user]/[debate]/_debate_context/parse-types'; 
+} from '@/app/debates/[debateID]/_debate_context/parse-types'; 
 
 function maybeWrap({wrap, text}: {wrap: boolean, text: string}): string {
   //This function potentially wraps text in a pair of parentheses,

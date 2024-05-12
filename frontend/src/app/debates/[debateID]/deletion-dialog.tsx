@@ -1,8 +1,8 @@
 'use client';
 
 import { Dialog } from '@headlessui/react';
-import { Claim } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
-import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
+import { Claim } from '@/app/debates/[debateID]/_debate_context/claim-types';
+import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
 
 
 export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClaims}: {

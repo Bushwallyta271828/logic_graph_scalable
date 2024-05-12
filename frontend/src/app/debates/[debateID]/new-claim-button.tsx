@@ -1,7 +1,7 @@
 'use client';
 
 import { Menu } from '@headlessui/react';
-import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
+import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
 
 export function NewClaimButton() {
   const { addClaim } = useDebateContext();
