@@ -20,17 +20,20 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
       <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
         <body className="bg-medium-neutral min-h-screen">
           <Navbar border={false}>
-            <div className="text-white text-lg font-bold flex gap-4">
+            <div className="flex gap-4 items-baseline">
               <Link href="/">
-                <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
+                <button className="text-white text-lg font-bold bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                   LogicGraph
                 </button>
               </Link>
               <Link href="/debates">
-                <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
+                <button className="text-white text-lg font-bold bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                   Debates
                 </button>
               </Link>
+              <p className="text-white px-2 py-1">
+                debate_name_goes_here
+              </p>
             </div>
             <div className="text-white text-lg font-bold flex gap-4">
               <AccountButton username={username} />
