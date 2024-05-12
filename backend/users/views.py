@@ -34,30 +34,26 @@ def change_username_view(request):
         new_username = request.data.get('new-username')
         if User.objects.filter(username=new_username).exists():
             return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
-        user.username = new_username
-        user.save()
+        request.user.username = new_username
+        request.user.save()
         return Response({"message": "Username changed successfully"}, status=status.HTTP_200_OK)
     else:
-        return Response({"message": "Failed"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 def change_email_view(request):
     if request.user.is_authenticated:
-        user.email = request.data.get('new-email')
-        user.save()
+        request.user.email = request.data.get('new-email')
+        request.user.save()
         return Response({"message": "Email changed successfully"}, status=status.HTTP_200_OK)
     else:
-        return Response({"message": "Failed"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 def change_password_view(request):
-    username = request.data.get('username')
-    email = request.data.get('email')
-    password = request.data.get('password')
-    
-    if User.objects.filter(username=username).exists():
-        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    if request.user.is_authenticated:
+        request.user.set_password(request.data.get('new-password'))
+        request.user.save()
+        return Response({"message": "Email changed successfully"}, status=status.HTTP_200_OK)
     else:
-        user = User.objects.create_user(username, email, password)
-        login(request, user)
-        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
