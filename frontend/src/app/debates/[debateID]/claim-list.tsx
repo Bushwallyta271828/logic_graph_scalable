@@ -3,8 +3,8 @@
 import { PointerEvent } from 'react';
 import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
-import { ClaimBox } from '@/app/users/[user]/[debate]/claim-box';
+import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
+import { ClaimBox } from '@/app/debates/[debateID]/claim-box';
 
 
 //From https://github.com/clauderic/dnd-kit/issues/477

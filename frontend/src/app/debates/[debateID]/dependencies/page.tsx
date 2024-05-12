@@ -1,5 +1,5 @@
 import { Navbar } from '@/app/navbar';
-import { DebateLinks } from '@/app/users/[user]/[debate]/debate-links';
+import { DebateLinks } from '@/app/debates/[debateID]/debate-links';
 
 export default function Dependencies() {
   return (

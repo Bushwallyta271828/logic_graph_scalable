@@ -2,10 +2,10 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useDebateContext } from '@/app/users/[user]/[debate]/_debate_context/debate-context';
-import { ClaimTab } from '@/app/users/[user]/[debate]/claim-tab';
-import { ClaimContentBox } from '@/app/users/[user]/[debate]/claim-content-box';
-import { DefinitionList } from '@/app/users/[user]/[debate]/definition-list';
+import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
+import { ClaimTab } from '@/app/debates/[debateID]/claim-tab';
+import { ClaimContentBox } from '@/app/debates/[debateID]/claim-content-box';
+import { DefinitionList } from '@/app/debates/[debateID]/definition-list';
 
 
 export function ClaimBox({claimID} : {claimID: string}) {
