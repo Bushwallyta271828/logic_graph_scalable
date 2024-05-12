@@ -71,21 +71,4 @@ export function AccountButton({username}: {username: string | null}) {
       </Menu.Items>
     </Menu>
   );
-  //if (username === null) {
-  //  return (
-  //    <Link href="/account/sign-up">
-  //      <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
-  //        Account
-  //      </button>
-  //    </Link>
-  //  );
-  //} else {
-  //  return (
-  //    <Link href="/">
-  //      <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
-  //        Account
-  //      </button>
-  //    </Link>
-  //  );
-  //}
 }
