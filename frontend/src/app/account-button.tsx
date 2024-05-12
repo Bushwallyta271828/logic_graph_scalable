@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
+import { logOut } from '@/app/account/account-actions';
 
 function NoUsernameMenuItems() {
   return (
@@ -42,11 +43,11 @@ function UsernameMenuItems({username}: {username: string}) {
       </Menu.Item>
       <Menu.Item>
         {({ active }) => (
-          <Link href="/account/sign-up">
-            <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
-              Log Out {username}
-            </a>
-          </Link>
+          <a
+            className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
+            onClick={logOut}>
+            Log Out {username}
+          </a>
         )}
       </Menu.Item>
     </>

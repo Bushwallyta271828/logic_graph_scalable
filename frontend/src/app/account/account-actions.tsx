@@ -26,3 +26,7 @@ export async function submitChangePasswordForm(formData: FormData) {
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
   console.log(response);
 }
+
+export async function logOut() {
+  console.log('Fix me');
+}
