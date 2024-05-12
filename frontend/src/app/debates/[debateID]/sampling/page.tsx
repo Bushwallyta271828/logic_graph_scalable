@@ -1,4 +1,4 @@
-import { fetchWrapper } from '@/app/_lib/api';
+import { fetchWrapper } from '@/app/_lib/fetch-wrapper';
 import { Navbar } from '@/app/navbar';
 import { DebateLinks } from '@/app/debates/[debateID]/debate-links';
 
