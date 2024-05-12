@@ -30,6 +30,7 @@ def sign_up_view(request):
 
 @api_view(['POST'])
 def change_username_view(request):
+    print(request.COOKIES)
     if request.user.is_authenticated:
         new_username = request.data.get('new-username')
         if User.objects.filter(username=new_username).exists():
