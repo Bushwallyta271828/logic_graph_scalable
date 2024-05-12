@@ -48,7 +48,7 @@ function UsernameMenuItems({username}: {username: string}) {
       <Menu.Item>
         {({ active }) => (
           <Link href="/account/change-email">
-            <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+            <a className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
               Change Email
             </a>
           </Link>
@@ -57,7 +57,7 @@ function UsernameMenuItems({username}: {username: string}) {
       <Menu.Item>
         {({ active }) => (
           <Link href="/account/change-password">
-            <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+            <a className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
               Change Password
             </a>
           </Link>
