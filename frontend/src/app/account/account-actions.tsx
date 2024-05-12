@@ -10,12 +10,14 @@ export async function submitSignUpForm(formData: FormData) {
     {path: 'users/sign-up', options: {method: 'POST', body: formData}});
   if (response.ok) {
     const formUsername = formData.get('username');
-    if (typeof formUsername === 'string') {
+    const formEmail = formData.get('email');
+    if (typeof formUsername === 'string' && typeof formEmail === 'string') {
       cookies().set('username', formUsername, {httpOnly: true});
-    } else {throw new Error("formData.get('username') isn't a string");}
+      cookies().set('email', formEmail, {httpOnly: true});
+    } else {throw new Error("formData username/email aren't both strings");}
   }
 
-  revalidatePath('/debates');
+  revalidatePath('/');
   redirect('/debates');
 }
 
@@ -23,7 +25,23 @@ export async function submitSignInForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
 
-  revalidatePath('/debates');
+  revalidatePath('/');
+  redirect('/debates');
+}
+
+export async function submitChangeUsernameForm(formData: FormData) {
+  const response = await fetchWrapper(
+    {path: 'users/sign-in', options: {method: 'POST', body: formData}});
+
+  revalidatePath('/');
+  redirect('/debates');
+}
+
+export async function submitChangeEmailForm(formData: FormData) {
+  const response = await fetchWrapper(
+    {path: 'users/sign-in', options: {method: 'POST', body: formData}});
+
+  revalidatePath('/');
   redirect('/debates');
 }
 
@@ -31,7 +49,7 @@ export async function submitChangePasswordForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
 
-  revalidatePath('/debates');
+  revalidatePath('/');
   redirect('/debates');
 }
 
