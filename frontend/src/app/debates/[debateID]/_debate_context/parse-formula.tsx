@@ -7,8 +7,8 @@ import {
   AffineExpression,
   AffineEquation,
   ConstraintParse
-} from '@/app/users/[user]/[debate]/_debate_context/parse-types';
-import { potentialClaimID } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
+} from '@/app/debates/[debateID]/_debate_context/parse-types';
+import { potentialClaimID } from '@/app/debates/[debateID]/_debate_context/claim-types';
 
 class ParsingError extends Error {
   constructor(message: string) {

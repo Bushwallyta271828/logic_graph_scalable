@@ -3,11 +3,11 @@
 //Credit to the tutorial at https://www.youtube.com/watch?v=I7dwJxGuGYQ for the template!
 
 import { createContext, useContext, useState } from 'react';
-import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/users/[user]/[debate]/_debate_context/claim-types';
-import { ConstraintParse } from '@/app/users/[user]/[debate]/_debate_context/parse-types';
-import { parseFormula } from '@/app/users/[user]/[debate]/_debate_context/parse-formula';
-import { immediateConstraintDependencies } from '@/app/users/[user]/[debate]/_debate_context/immediate-constraint-dependencies';
-import { displayConstraintParse } from '@/app/users/[user]/[debate]/_debate_context/display-constraint-parse';
+import { Claim, ClaimWithDefinitions, potentialClaimID } from '@/app/debates/[debateID]/_debate_context/claim-types';
+import { ConstraintParse } from '@/app/debates/[debateID]/_debate_context/parse-types';
+import { parseFormula } from '@/app/debates/[debateID]/_debate_context/parse-formula';
+import { immediateConstraintDependencies } from '@/app/debates/[debateID]/_debate_context/immediate-constraint-dependencies';
+import { displayConstraintParse } from '@/app/debates/[debateID]/_debate_context/display-constraint-parse';
 
 type DebateContext = {
   claimLookup: { [claimID: string]: Claim };
