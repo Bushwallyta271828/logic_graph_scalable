@@ -5,11 +5,6 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { fetchWrapper } from '@/app/_lib/api';
 
-async function move(path: string) {
-  revalidatePath('/');
-  redirect(path);
-}
-
 export async function submitSignUpForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-up', options: {method: 'POST', body: formData}});
@@ -22,35 +17,40 @@ export async function submitSignUpForm(formData: FormData) {
     } else {throw new Error("formData username/email aren't both strings");}
   }
 
-  move('/debates');
+  revalidatePath('/');
+  redirect('/debates');
 }
 
 export async function submitSignInForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
 
-  move('/debates');
+  revalidatePath('/');
+  redirect('/debates');
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
 
-  move('/debates');
+  revalidatePath('/');
+  redirect('/debates');
 }
 
 export async function submitChangeEmailForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
 
-  move('/debates');
+  revalidatePath('/');
+  redirect('/debates');
 }
 
 export async function submitChangePasswordForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-in', options: {method: 'POST', body: formData}});
 
-  move('/debates');
+  revalidatePath('/');
+  redirect('/debates');
 }
 
 export async function logOut() {
@@ -58,5 +58,6 @@ export async function logOut() {
   if (cookies().has('sessionid')) {cookies().delete('sessionid');}
   if (cookies().has('username')) {cookies().delete('username');}
   if (cookies().has('email')) {cookies().delete('email');}
-  move('/');
+  revalidatePath('/');
+  redirect('/');
 }
