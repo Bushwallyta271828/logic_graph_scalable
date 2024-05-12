@@ -38,6 +38,24 @@ function UsernameMenuItems({username}: {username: string}) {
     <>
       <Menu.Item>
         {({ active }) => (
+          <Link href="/account/change-username">
+            <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+              Change Username
+            </a>
+          </Link>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <Link href="/account/change-email">
+            <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
+              Change Email
+            </a>
+          </Link>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
           <Link href="/account/change-password">
             <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
               Change Password

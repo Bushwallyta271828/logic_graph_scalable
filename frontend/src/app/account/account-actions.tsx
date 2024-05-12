@@ -10,11 +10,9 @@ export async function submitSignUpForm(formData: FormData) {
     {path: 'users/sign-up', options: {method: 'POST', body: formData}});
   if (response.ok) {
     const formUsername = formData.get('username');
-    const formEmail = formData.get('email');
-    if (typeof formUsername === 'string' && typeof formEmail === 'string') {
+    if (typeof formUsername === 'string') {
       cookies().set('username', formUsername, {httpOnly: false});
-      cookies().set('hasEmail', (formEmail.trim() !== "").toString(), {httpOnly: false});
-    } else {throw new Error("formData username/email aren't both strings");}
+    } else {throw new Error("formData.get('username') isn't a string");}
   }
 
   revalidatePath('/');
@@ -57,7 +55,6 @@ export async function logOut() {
   if (cookies().has('csrftoken')) {cookies().delete('csrftoken');}
   if (cookies().has('sessionid')) {cookies().delete('sessionid');}
   if (cookies().has('username')) {cookies().delete('username');}
-  if (cookies().has('email')) {cookies().delete('email');}
   revalidatePath('/');
   redirect('/');
 }
