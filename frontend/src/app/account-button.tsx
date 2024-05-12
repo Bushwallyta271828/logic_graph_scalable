@@ -3,7 +3,7 @@
 import { useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
-import { logOut } from '@/app/account/account-actions';
+import { getUsername, hasEmail, logOut } from '@/app/account/account-actions';
 
 function NoUsernameMenuItems() {
   return (
@@ -57,7 +57,9 @@ function UsernameMenuItems({username}: {username: string}) {
   );
 }
 
-export function AccountButton({username}: {username: string | null}) {
+export function AccountButton() {
+  const username = await getUsername();
+
   return (
     <div className="text-white text-lg font-bold relative">
       <Menu>

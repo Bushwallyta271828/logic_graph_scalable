@@ -53,6 +53,16 @@ export async function submitChangePasswordForm(formData: FormData) {
   redirect('/debates');
 }
 
+export async function getUsername(): Promise<string | null> {
+  const usernameCookie = cookies().get('username');
+  const username = (usernameCookie !== undefined && typeof usernameCookie.value === 'string')
+    ? usernameCookie.value : null;
+}
+
+export async function hasEmail(): Promise<boolean> {
+  return cookies().has('email');
+}
+
 export async function logOut() {
   if (cookies().has('csrftoken')) {cookies().delete('csrftoken');}
   if (cookies().has('sessionid')) {cookies().delete('sessionid');}
