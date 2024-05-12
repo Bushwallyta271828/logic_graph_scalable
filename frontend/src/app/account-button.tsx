@@ -3,7 +3,7 @@
 import { useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
-import { getCookie } from 'cookies-next';
+import { hasCookie } from 'cookies-next';
 import { logOut } from '@/app/account/account-actions';
 
 function SignedOutMenuItems() {
