@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { fetchWrapper } from '@/app/_lib/fetch-wrapper';
+import { fetchWrapper } from '@/app/fetch-wrapper';
 
 async function formDataToJSON(formData: FormData) {
   let formDataObj: Record<string, string> = {};
