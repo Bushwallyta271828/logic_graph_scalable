@@ -17,7 +17,8 @@ export async function fetchWrapper({path, options}: {path: string, options: Requ
         {headers['Cookie'] = 'sessionid='+sessionidCookie.value;}
       const csrftokenCookie = await (await cookies()).get('csrftoken');
       if (csrftokenCookie !== undefined)
-        {headers['X-CSRF-TOKEN'] = csrftokenCookie.value;}
+        {headers['X-CSRFTOKEN'] = csrftokenCookie.value;}
+      console.log(headers);
 
       const response = await fetch(process.env.BACKEND_ADDRESS + path,
         {...options, cache: 'no-store', headers: headers});
