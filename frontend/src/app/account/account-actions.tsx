@@ -61,7 +61,6 @@ export async function submitChangePasswordForm(formData: FormData) {
 }
 
 export async function logOut() {
-  if (cookies().has('csrftoken')) {cookies().delete('csrftoken');}
   if (cookies().has('sessionid')) {cookies().delete('sessionid');}
   if (cookies().has('username')) {cookies().delete('username');}
   revalidatePath('/');
