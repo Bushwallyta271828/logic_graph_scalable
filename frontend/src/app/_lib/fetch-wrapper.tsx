@@ -4,7 +4,7 @@ import { parse, splitCookiesString } from 'set-cookie-parser';
 
 export async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
   //For GET, options should be {}.
-  //For POST with formData, options should be {method: 'POST', body: formData}.
+  //For POST, options should be {method: 'POST', body: dataAsJson}.
   //Note that this function is for server-side use.
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
@@ -12,6 +12,8 @@ export async function fetchWrapper({path, options}: {path: string, options: Requ
   } else {
     try {
       let headers: Record<string, string> = {};
+      if (options.method === 'POST')
+        {headers['Content-Type'] = 'application/json';}
       const sessionidCookie = await (await cookies()).get('sessionid');
       if (sessionidCookie !== undefined)
         {headers['Cookie'] = 'sessionid='+sessionidCookie.value;}
