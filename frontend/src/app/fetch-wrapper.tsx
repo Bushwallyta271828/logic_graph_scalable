@@ -2,24 +2,23 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
 
-export async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
-  //For GET, options should be {}.
-  //For POST, options should be {method: 'POST', body: dataAsJson}.
+async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
+  //If options has headers attribute then headers should have type Record<string, string>.
+  //options.cache and options.headers may be modified.
   //Note that this function is for server-side use.
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
   } else {
     try {
-      let headers: Record<string, string> = {};
-      if (options.method === 'POST')
-        {headers['Content-Type'] = 'application/json';}
+      options.cache = 'no-store';
       const sessionidCookie = await (await cookies()).get('sessionid');
-      if (sessionidCookie !== undefined)
-        {headers['Cookie'] = 'sessionid='+sessionidCookie.value;}
+      if (sessionidCookie !== undefined) {
+        if (options.headers === undefined) {options.headers = {} as Record<string, string>;}
+        options.headers['Cookie'] = 'sessionid='+sessionidCookie.value;
+      }
 
-      const response = await fetch(process.env.BACKEND_ADDRESS + path,
-        {...options, cache: 'no-store', headers: headers});
+      const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
 
       //Thanks to https://stackoverflow.com/a/77446172 for the ideas on cookie handling.
       response.headers.forEach((headerValue, headerName) => {
@@ -47,4 +46,23 @@ export async function fetchWrapper({path, options}: {path: string, options: Requ
       return response;
     } catch (error) {throw new Error('Unable to fetch');}
   }
+}
+
+export async function get({path}: {path: string}) {
+  return await fetchWrapper({path: path, options: {}});
+}
+
+export async function postForm({path, formData}: {path: string, formData: FormData}) {
+  return await fetchWrapper({path: path, options: {method: 'POST', body: formData}});
+}
+
+export async function postJSON({path, data}: {path: string, data: string}) {
+  return await fetchWrapper({
+    path: path,
+    options: {
+      method: 'POST',
+      body: data,
+      headers: {'Content-Type': 'application/json'} as Record<string, string>,
+    },
+  });
 }

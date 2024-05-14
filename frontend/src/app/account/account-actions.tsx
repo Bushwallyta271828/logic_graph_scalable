@@ -17,14 +17,6 @@ export async function getUserData(): Promise<{username: string, email: string} |
   throw new Error('Invalid response');
 }
 
-function formDataToJSON(formData: FormData) {
-  let formDataObj: Record<string, string> = {};
-  formData.forEach((value, key) => {
-    formDataObj[key as string] = value as string;
-  });
-  return JSON.stringify(formDataObj);
-}
-
 export async function submitSignUpForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/sign-up', options: {method: 'POST', body: formDataToJSON(formData)}});
