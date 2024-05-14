@@ -79,7 +79,15 @@ export function AccountButton({authenticated}: {authenticated: boolean | null}) 
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          {signedOut ? <SignedOutMenuItems /> : <SignedInMenuItems />}
+          {(authenticated === null) ?
+            <Menu.Item disabled>
+              <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
+                An Error Occurred
+              </a>
+            </Menu.Item> : (authenticated === true) ?
+            <SignedInMenuItems /> :
+            <SignedOutMenuItems />
+          }
         </Menu.Items>
       </Menu>
     </div>
