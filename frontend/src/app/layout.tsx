@@ -3,7 +3,7 @@ import './globals.css';
 import Link from 'next/link';
 import { UserContextProvider } from '@/app/_user_context/user-context';
 import { Navbar } from '@/app/navbar';
-import { getUserData } from '@/app/account/account-actions';
+import { isAuthenticated } from '@/app/account/account-actions';
 import { AccountButton } from '@/app/account-button';
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
-  const signedOut = ('Signed out' === await getUserData());
+  const authenticated = await isAuthenticated();
 
   return (
     <UserContextProvider>
@@ -34,7 +34,7 @@ export default async function RootLayout({children}: Readonly<{children: React.R
               </p>
             </div>
             <div className="text-white text-lg font-bold flex gap-4">
-              <AccountButton signedOut={signedOut} />
+              <AccountButton authenticated={authenticated} />
               <Link href="/documentation">
                 <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                   Documentation
