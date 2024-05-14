@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { fetchWrapper } from '@/app/fetch-wrapper';
 
-async function formDataToJSON(formData: FormData) {
+function formDataToJSON(formData: FormData) {
   let formDataObj: Record<string, string> = {};
   formData.forEach((value, key) => {
     formDataObj[key as string] = value as string;
@@ -13,25 +13,16 @@ async function formDataToJSON(formData: FormData) {
   return JSON.stringify(formDataObj);
 }
 
-async function processAuthenticationForm({formData, path}: {formData: FormData, path: string}) {
-  const response = await fetchWrapper(
-    {path: path, options: {method: 'POST', body: await formDataToJSON(formData)}});
-  if (response.ok) {
-    const formUsername = formData.get('username');
-    if (typeof formUsername === 'string') {
-      await (await cookies()).set('username', formUsername, {httpOnly: false});
-    } else {throw new Error("formData.get('username') isn't a string");}
-  }
-}
-
 export async function submitSignUpForm(formData: FormData) {
-  await processAuthenticationForm({formData: formData, path: 'users/sign-up'});
+  const response = await fetchWrapper(
+    {path: 'users/sign-up', options: {method: 'POST', body: formDataToJSON(formData)}});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitSignInForm(formData: FormData) {
-  await processAuthenticationForm({formData: formData, path: 'users/sign-in'});
+  const response = await fetchWrapper(
+    {path: 'users/sign-in', options: {method: 'POST', body: formDataToJSON(formData)}});
   revalidatePath('/');
   redirect('/debates');
 }
@@ -61,8 +52,16 @@ export async function submitChangePasswordForm(formData: FormData) {
 }
 
 export async function logOut() {
-  if (cookies().has('sessionid')) {cookies().delete('sessionid');}
-  if (cookies().has('username')) {cookies().delete('username');}
+  //TODO: delete all cookies!
+  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
   revalidatePath('/');
   redirect('/');
+}
+
+export async function getUsername() {
+  return null;
+}
+
+export async function getEmail() {
+  return null;
 }
