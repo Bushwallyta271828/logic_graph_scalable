@@ -3,10 +3,10 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { get, postForm } from '@/app/api';
+import { get, postForm, postJSON } from '@/app/api';
 
 export async function getUserData(): Promise<{username: string, email: string} | 'Signed out'> {
-  const response = await get({path: 'users/get-username-email'});
+  const response = await get({path: 'users/get-username-email', displayErrors: false});
   if (response.ok) {
     const data = await response.json();
     if ('username' in data && 'email' in data) {
@@ -14,7 +14,7 @@ export async function getUserData(): Promise<{username: string, email: string} |
     }
   }
   if (response.status === 401) {return 'Signed out' as const;}
-  throw new Error('Invalid response');
+  //COME BACK!
 }
 
 export async function submitSignUpForm(formData: FormData) {
@@ -27,6 +27,13 @@ export async function submitSignInForm(formData: FormData) {
   const response = await postForm({path: 'users/sign-in', formData: formData});
   revalidatePath('/');
   redirect('/debates');
+}
+
+export async function signOut() {
+  await postJSON({path: 'users/sign-out', data: "{}", displayErrors: false});
+  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
+  revalidatePath('/');
+  redirect('/');
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
@@ -45,11 +52,4 @@ export async function submitChangePasswordForm(formData: FormData) {
   const response = await postForm({path: 'users/change-password', formData: formData});
   revalidatePath('/');
   redirect('/debates');
-}
-
-export async function logOut() {
-  //TODO: delete all cookies!
-  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
-  revalidatePath('/');
-  redirect('/');
 }
