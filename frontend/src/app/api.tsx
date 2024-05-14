@@ -5,7 +5,7 @@ import { parse, splitCookiesString } from 'set-cookie-parser';
 async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
   //If options has headers attribute then headers should have type Record<string, string>.
   //options.cache and options.headers may be modified.
-  //Note that this function is for server-side use.
+  //Note that this function is for server-side use only.
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
