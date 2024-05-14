@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { get, postForm, postJSON } from '@/app/api';
 
 export async function isAuthenticated(): Promise<boolean | null> {
-  const response = await get({path: 'users/is-authenticated'});
+  const response = await get({path: 'users/authenticated'});
   if (response.ok) {
     const data = await response.json();
     if ('authenticated' in data) {
@@ -16,15 +16,14 @@ export async function isAuthenticated(): Promise<boolean | null> {
   return null;
 }
 
-export async function getAccountData(): Promise<{username: string, email: string}> {
-  const response = await get({path: 'users/get-account-data'});
+export async function getAccountDetails(): Promise<{username: string, email: string}> {
+  const response = await get({path: 'users/account-details'});
   if (response.ok) {
     const data = await response.json();
     if ('username' in data && 'email' in data) {
       return {username: data.username, email: data.email};
     }
   }
-  throw new Error('Invalid response');
 }
 
 export async function submitSignInForm(formData: FormData) {
