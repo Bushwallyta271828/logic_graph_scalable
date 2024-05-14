@@ -5,15 +5,25 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { get, postForm, postJSON } from '@/app/api';
 
-export async function getUserData(): Promise<{username: string, email: string} | 'Signed out'> {
-  const response = await get({path: 'users/get-username-email'});
+export async function isAuthenticated(): Promise<boolean | null> {
+  const response = await get({path: 'users/is-authenticated'});
+  if (response.ok) {
+    const data = await response.json();
+    if ('authenticated' in data) {
+      return data.authenticated;
+    }
+  }
+  return null;
+}
+
+export async function getAccountData(): Promise<{username: string, email: string}> {
+  const response = await get({path: 'users/get-account-data'});
   if (response.ok) {
     const data = await response.json();
     if ('username' in data && 'email' in data) {
       return {username: data.username, email: data.email};
     }
   }
-  if (response.status === 401) {return 'Signed out' as const;}
   throw new Error('Invalid response');
 }
 
