@@ -2,10 +2,14 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
 
-async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
+async function fetchWrapper({path, options, displayErrors}:
+  {path: string, options: RequestInit, displayErrors: boolean}) {
   //If options has headers attribute then headers should have type Record<string, string>.
   //options.cache and options.headers may be modified.
-  //Note that this function is for server-side use.
+  //If displayErrors is true then any responses with an ok attribute of false
+  //will result in a pop-up error message.
+  //Note that this function is for server-side use only.
+  
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
@@ -48,15 +52,22 @@ async function fetchWrapper({path, options}: {path: string, options: RequestInit
   }
 }
 
-export async function get({path}: {path: string}) {
-  return await fetchWrapper({path: path, options: {}});
+export async function get({path, displayErrors = true}:
+  {path: string, displayErrors?: boolean}) {
+  return await fetchWrapper({path: path, options: {}, displayErrors: displayErrors});
 }
 
-export async function postForm({path, formData}: {path: string, formData: FormData}) {
-  return await fetchWrapper({path: path, options: {method: 'POST', body: formData}});
+export async function postForm({path, formData, displayErrors = true}:
+  {path: string, formData: FormData, displayErrors?: boolean}) {
+  return await fetchWrapper({
+    path: path,
+    options: {method: 'POST', body: formData},
+    displayErrors: displayErrors,
+  });
 }
 
-export async function postJSON({path, data}: {path: string, data: string}) {
+export async function postJSON({path, data, displayErrors = true}:
+  {path: string, data: string, displayErrors?: boolean}) {
   return await fetchWrapper({
     path: path,
     options: {
@@ -64,5 +75,6 @@ export async function postJSON({path, data}: {path: string, data: string}) {
       body: data,
       headers: {'Content-Type': 'application/json'} as Record<string, string>,
     },
+    displayErrors: displayErrors,
   });
 }
