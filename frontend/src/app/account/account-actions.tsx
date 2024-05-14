@@ -27,6 +27,18 @@ export async function submitSignInForm(formData: FormData) {
   redirect('/debates');
 }
 
+export async function getUsernameEmail(): Promise<{username: string, email: string} | 'Signed out'> {
+  const response = await fetchWrapper({path: 'users/get-username-email'});
+  if (response.ok) {
+    const data = await response.json();
+    if ('username' in data && 'email' in data) {
+      return {username: data.username, email: data.email};
+    }
+  }
+  if (response.status === 401) {return 'Signed out' as const;}
+  throw new Error('Invalid response');
+}
+
 export async function submitChangeUsernameForm(formData: FormData) {
   const response = await fetchWrapper(
     {path: 'users/change-username', options: {method: 'POST', body: await formDataToJSON(formData)}});
@@ -56,12 +68,4 @@ export async function logOut() {
   if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
   revalidatePath('/');
   redirect('/');
-}
-
-export async function getUsername() {
-  return null;
-}
-
-export async function getEmail() {
-  return null;
 }
