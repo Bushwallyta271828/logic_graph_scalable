@@ -1,8 +1,12 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+
+@api_view(['GET'])
+def authenticated_view(request):
+    return Response({'authenticated': request.user.is_authenticated})
 
 @api_view(['POST'])
 def sign_in_view(request):
@@ -16,7 +20,7 @@ def sign_in_view(request):
         return Response({"message": "Failed"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
-def sign_up_view(request):
+def create_account_view(request):
     username = request.data.get('username')
     email = request.data.get('email')
     password = request.data.get('password')
@@ -28,8 +32,23 @@ def sign_up_view(request):
         login(request, user)
         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
 
+@api_view(['POST'])
+def sign_out_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return Response({"message": "User successfully logged out"})
+
+@api_view(['POST'])
+def delete_account_view(request):
+    if request.user.is_authenticated:
+        user.delete()
+        logout(request)
+        return Response({"message": "User deleted successfully"})
+    else:
+        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
+
 @api_view(['GET'])
-def get_username_email_view(request):
+def account_details_view(request):
     if request.user.is_authenticated:
         username = request.user.username
         email = request.user.email
