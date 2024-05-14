@@ -3,10 +3,10 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { fetchWrapper } from '@/app/fetch-wrapper';
+import { get, postForm } from '@/app/api';
 
 export async function getUserData(): Promise<{username: string, email: string} | 'Signed out'> {
-  const response = await fetchWrapper({path: 'users/get-username-email', options: {}});
+  const response = await get({path: 'users/get-username-email'});
   if (response.ok) {
     const data = await response.json();
     if ('username' in data && 'email' in data) {
@@ -18,39 +18,31 @@ export async function getUserData(): Promise<{username: string, email: string} |
 }
 
 export async function submitSignUpForm(formData: FormData) {
-  const response = await fetchWrapper(
-    {path: 'users/sign-up', options: {method: 'POST', body: formDataToJSON(formData)}});
+  const response = await postForm({path: 'users/sign-up', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitSignInForm(formData: FormData) {
-  const response = await fetchWrapper(
-    {path: 'users/sign-in', options: {method: 'POST', body: formDataToJSON(formData)}});
+  const response = await postForm({path: 'users/sign-in', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
-  const response = await fetchWrapper(
-    {path: 'users/change-username', options: {method: 'POST', body: await formDataToJSON(formData)}});
-
+  const response = await postForm({path: 'users/change-username', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitChangeEmailForm(formData: FormData) {
-  const response = await fetchWrapper(
-    {path: 'users/change-email', options: {method: 'POST', body: await formDataToJSON(formData)}});
-
+  const response = await postForm({path: 'users/change-email', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitChangePasswordForm(formData: FormData) {
-  const response = await fetchWrapper(
-    {path: 'users/change-password', options: {method: 'POST', body: await formDataToJSON(formData)}});
-
+  const response = await postForm({path: 'users/change-password', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }

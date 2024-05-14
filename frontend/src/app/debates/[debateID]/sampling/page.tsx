@@ -1,9 +1,9 @@
-import { fetchWrapper } from '@/app/fetch-wrapper';
+import { get } from '@/app/api';
 import { Navbar } from '@/app/navbar';
 import { DebateLinks } from '@/app/debates/[debateID]/debate-links';
 
 export default async function Sampling() {
-  const responseText = await (await fetchWrapper({path: "debates/", options: {}})).text();
+  const responseText = await (await get({path: "debates/"})).text();
   console.log(responseText);
 
   return (
