@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { fetchWrapper } from '@/app/fetch-wrapper';
 
 export async function getUserData(): Promise<{username: string, email: string} | 'Signed out'> {
-  const response = await fetchWrapper({path: 'users/get-username-email'});
+  const response = await fetchWrapper({path: 'users/get-username-email', options: {}});
   if (response.ok) {
     const data = await response.json();
     if ('username' in data && 'email' in data) {
