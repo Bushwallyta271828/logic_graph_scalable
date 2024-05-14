@@ -3,7 +3,7 @@
 import { useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
-import { logOut } from '@/app/account/account-actions';
+import { signOut, deleteAccount } from '@/app/account/account-actions';
 
 function SignedOutMenuItems() {
   return (
@@ -19,9 +19,9 @@ function SignedOutMenuItems() {
       </Menu.Item>
       <Menu.Item>
         {({ active }) => (
-          <Link href="/account/sign-up">
+          <Link href="/account/create-account">
             <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
-              Sign Up
+              Create Account
             </a>
           </Link>
         )}
@@ -31,7 +31,8 @@ function SignedOutMenuItems() {
 }
 
 function SignedInMenuItems() {
-  const [isPending, startTransition] = useTransition();
+  const [isSigningOut, startSignOutTransition] = useTransition();
+  const [isDeletingAccount, startDeleteAccountTransition] = useTransition();
 
   return (
     <>
@@ -48,8 +49,17 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={() => {startTransition(logOut);}}>
-            Log Out
+            onClick={() => {startSignOutTransition(signOut);}}>
+            Sign Out
+          </a>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <a
+            className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
+            onClick={() => {startDeleteAccountTransition(deleteAccount);}}>
+            Delete Account
           </a>
         )}
       </Menu.Item>
@@ -57,7 +67,7 @@ function SignedInMenuItems() {
   );
 }
 
-export function AccountButton({signedOut}: {signedOut: boolean}) {
+export function AccountButton({authenticated}: {authenticated: boolean | null}) {
   return (
     <div className="text-white text-lg font-bold relative">
       <Menu>
