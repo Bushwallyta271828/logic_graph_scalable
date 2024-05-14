@@ -16,16 +16,6 @@ export async function isAuthenticated(): Promise<boolean | null> {
   return null;
 }
 
-export async function getAccountDetails(): Promise<{username: string, email: string}> {
-  const response = await get({path: 'users/account-details'});
-  if (response.ok) {
-    const data = await response.json();
-    if ('username' in data && 'email' in data) {
-      return {username: data.username, email: data.email};
-    }
-  }
-}
-
 export async function submitSignInForm(formData: FormData) {
   const response = await postForm({path: 'users/sign-in', formData: formData});
   revalidatePath('/');
@@ -50,6 +40,16 @@ export async function deleteAccount() {
   if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
   revalidatePath('/');
   redirect('/');
+}
+
+export async function getAccountDetails(): Promise<{username: string, email: string}> {
+  const response = await get({path: 'users/account-details'});
+  if (response.ok) {
+    const data = await response.json();
+    if ('username' in data && 'email' in data) {
+      return {username: data.username, email: data.email};
+    }
+  }
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
