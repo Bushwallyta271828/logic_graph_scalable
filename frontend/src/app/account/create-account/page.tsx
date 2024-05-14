@@ -1,8 +1,8 @@
-import { submitSignUpForm } from '@/app/account/account-actions';
+import { submitCreateAccountForm } from '@/app/account/account-actions';
 
-export default function SignUp() {
+export default function CreateAccount() {
   return (
-    <form action={submitSignUpForm}>
+    <form action={submitCreateAccountForm}>
       <div>
         <label htmlFor="username">Username:</label>
         <input type="text" id="username" name="username" required />
@@ -15,7 +15,7 @@ export default function SignUp() {
         <label htmlFor="password">Password:</label>
         <input type="password" id="password" name="password" required />
       </div>
-      <button type="submit">Sign Up</button>
+      <button type="submit">Create Account</button>
     </form>
   );
 }
