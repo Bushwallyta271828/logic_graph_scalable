@@ -3,7 +3,6 @@
 import { useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
-import { hasCookie } from 'cookies-next';
 import { logOut } from '@/app/account/account-actions';
 
 function SignedOutMenuItems() {
@@ -58,7 +57,7 @@ function SignedInMenuItems() {
   );
 }
 
-export function AccountButton() {
+export function AccountButton({signedOut}: {signedOut: boolean}) {
   return (
     <div className="text-white text-lg font-bold relative">
       <Menu>
@@ -70,7 +69,7 @@ export function AccountButton() {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          {hasCookie('username') ? <SignedInMenuItems /> : <SignedOutMenuItems />}
+          {signedOut ? <SignedOutMenuItems /> : <SignedInMenuItems />}
         </Menu.Items>
       </Menu>
     </div>
