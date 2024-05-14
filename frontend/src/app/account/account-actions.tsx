@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { get, postForm } from '@/app/api';
+import { get, postForm, postJSON } from '@/app/api';
 
 export async function getUserData(): Promise<{username: string, email: string} | 'Signed out'> {
   const response = await get({path: 'users/get-username-email'});
@@ -17,16 +17,30 @@ export async function getUserData(): Promise<{username: string, email: string} |
   throw new Error('Invalid response');
 }
 
-export async function submitSignUpForm(formData: FormData) {
-  const response = await postForm({path: 'users/sign-up', formData: formData});
-  revalidatePath('/');
-  redirect('/debates');
-}
-
 export async function submitSignInForm(formData: FormData) {
   const response = await postForm({path: 'users/sign-in', formData: formData});
   revalidatePath('/');
   redirect('/debates');
+}
+
+export async function submitCreateAccountForm(formData: FormData) {
+  const response = await postForm({path: 'users/create-account', formData: formData});
+  revalidatePath('/');
+  redirect('/debates');
+}
+
+export async function signOut() {
+  const response = await postJSON({path: 'users/sign-out', data: "{}"});
+  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
+  revalidatePath('/');
+  redirect('/');
+}
+
+export async function deleteAccount() {
+  const response = await postJSON({path: 'users/delete-account', data: "{}"});
+  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
+  revalidatePath('/');
+  redirect('/');
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
@@ -45,11 +59,4 @@ export async function submitChangePasswordForm(formData: FormData) {
   const response = await postForm({path: 'users/change-password', formData: formData});
   revalidatePath('/');
   redirect('/debates');
-}
-
-export async function logOut() {
-  //TODO: delete all cookies!
-  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
-  revalidatePath('/');
-  redirect('/');
 }
