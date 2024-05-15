@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -83,6 +83,7 @@ def change_password(request):
     if request.user.is_authenticated:
         request.user.set_password(request.data.get('new-password'))
         request.user.save()
+        update_session_auth_hash(request, request.user)
         return Response({"message": "Password changed successfully"})
     else:
         return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
