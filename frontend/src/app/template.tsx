@@ -1,16 +1,13 @@
-import type { Metadata } from 'next';
-import './globals.css';
+'use client';
+
 import Link from 'next/link';
 import { UserContextProvider } from '@/app/_user_context/user-context';
 import { Navbar } from '@/app/navbar';
 import { DebateName } from '@/app/debate-name';
 import { AccountButton } from '@/app/account-button';
 
-export const metadata: Metadata = {
-  title: 'Logic Graph',
-};
 
-export default async function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
+export default function RootTemplate({children}: Readonly<{children: React.ReactNode}>) {
   return (
     <UserContextProvider>
       <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
