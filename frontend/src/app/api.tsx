@@ -56,7 +56,7 @@ export async function postForm({path, formData}: {path: string, formData: FormDa
   return await fetchWrapper({path: path, options: {method: 'POST', body: formData}});
 }
 
-export async function postJSON({path, data}: {path: string, data: string}) {
+export async function postJSON({path, data = "{}"}: {path: string, data?: string}) {
   return await fetchWrapper({
     path: path,
     options: {
