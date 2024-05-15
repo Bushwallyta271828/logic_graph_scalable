@@ -28,18 +28,21 @@ export async function submitCreateAccountForm(formData: FormData) {
   redirect('/debates');
 }
 
+async function clearCookie(cookie: {name: string, value: string}) {
+  'use server';
+  await (await cookies()).delete(cookie.name);
+}
+
 export async function signOut() {
   await postJSON({path: 'users/sign-out'});
-  await (await (await cookies()).getAll()).map(async (cookie) =>
-    await (await cookies()).delete(cookie.name));
+  await (await (await cookies()).getAll()).map(clearCookie);
   revalidatePath('/');
   redirect('/');
 }
 
 export async function deleteAccount() {
   await postJSON({path: 'users/delete-account'});
-  await (await (await cookies()).getAll()).map(async (cookie) =>
-    await (await cookies()).delete(cookie.name));
+  await (await (await cookies()).getAll()).map(clearCookie);
   revalidatePath('/');
   redirect('/');
 }
