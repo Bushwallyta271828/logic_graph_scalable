@@ -1,13 +1,11 @@
-'use server';
-
 import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
 
 async function setHeaderCookies(headerValue: string, headerName: string) {
+  'use server'; //This shouldn't be needed but empirically it is?
   //Thanks to https://stackoverflow.com/a/77446172 for the ideas on cookie handling.
 
-  'use server'; //This shouldn't be needed but empirically is?
   if (headerName.toLowerCase() === 'set-cookie') {
     for (const cookieObject of parse(splitCookiesString(headerValue))) {
       //Note: I have to unpack everything manually for type checking reasons.
@@ -31,11 +29,11 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
 
 async function fetchWrapper({path, options = {}, headers = {}}:
   {path: string, options?: RequestInit, headers?: Record<string, string>}) {
+  'use server'; //This shouldn't be needed but empirically it is?
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
   //Note that this function is for server-side use only.
 
-  'use server'; //This shouldn't be needed but empirically is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
@@ -57,14 +55,17 @@ async function fetchWrapper({path, options = {}, headers = {}}:
 }
 
 export async function get({path}: {path: string}) {
+  'use server'; //This shouldn't be needed but empirically it is?
   return await fetchWrapper({path: path});
 }
 
 export async function postForm({path, formData}: {path: string, formData: FormData}) {
+  'use server'; //This shouldn't be needed but empirically it is?
   return await fetchWrapper({path: path, options: {method: 'POST', body: formData}});
 }
 
 export async function postJSON({path, data = "{}"}: {path: string, data?: string}) {
+  'use server'; //This shouldn't be needed but empirically it is?
   return await fetchWrapper({
     path: path,
     options: {
