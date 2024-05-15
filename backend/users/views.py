@@ -83,6 +83,6 @@ def change_password(request):
     if request.user.is_authenticated:
         request.user.set_password(request.data.get('new-password'))
         request.user.save()
-        return Response({"message": "Email changed successfully"})
+        return Response({"message": "Password changed successfully"})
     else:
         return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)

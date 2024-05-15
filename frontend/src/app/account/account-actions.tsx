@@ -56,20 +56,14 @@ export async function getAccountDetails(): Promise<{username: string, email: str
 export async function submitChangeUsernameForm(formData: FormData) {
   'use server';
   const response = await postForm({path: 'users/change-username', formData: formData});
-  revalidatePath('/');
-  redirect('/debates');
 }
 
 export async function submitChangeEmailForm(formData: FormData) {
   'use server';
   const response = await postForm({path: 'users/change-email', formData: formData});
-  revalidatePath('/');
-  redirect('/debates');
 }
 
 export async function submitChangePasswordForm(formData: FormData) {
   'use server';
   const response = await postForm({path: 'users/change-password', formData: formData});
-  revalidatePath('/');
-  redirect('/debates');
 }
