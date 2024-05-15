@@ -3,6 +3,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
+import { redirect } from 'next/navigation';
 
 async function setHeaderCookies(headerValue: string, headerName: string) {
   'use server'; //This shouldn't be needed but empirically it is?
@@ -51,15 +52,14 @@ async function fetchWrapper({path, options = {}, headers = {}}:
 
       response.headers.forEach(setHeaderCookies);
 
+      if (response.status === 401 && await (await cookies()).has('sessionid')) {
+        await (await cookies()).delete('sessionid');
+        redirect('/account/sign-in'); //Will refresh AccountButton
+      }
+
       return response;
     } catch (error) {
-      throw new Error(`path: ${path}, options: ${options}, headers: ${headers}`);
-      //console.log('\n');
-      //console.log(path);
-      //console.log(options);
-      //console.log(headers);
-      //console.log(error);
-      //throw error;
+      throw error;
     }
   }
 }
