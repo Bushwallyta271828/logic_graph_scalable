@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { get, postForm, postJSON } from '@/app/api';
 
 export async function isAuthenticated(): Promise<boolean | null> {
+  'use server';
   const response = await get({path: 'users/authenticated'});
   if (response.ok) {
     const data = await response.json();
@@ -17,12 +18,14 @@ export async function isAuthenticated(): Promise<boolean | null> {
 }
 
 export async function submitSignInForm(formData: FormData) {
+  'use server';
   const response = await postForm({path: 'users/sign-in', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitCreateAccountForm(formData: FormData) {
+  'use server';
   const response = await postForm({path: 'users/create-account', formData: formData});
   revalidatePath('/');
   redirect('/debates');
@@ -34,6 +37,7 @@ async function clearCookie(cookie: {name: string, value: string}) {
 }
 
 export async function signOut() {
+  'use server';
   await postJSON({path: 'users/sign-out'});
   await (await (await cookies()).getAll()).map(clearCookie);
   revalidatePath('/');
@@ -41,6 +45,7 @@ export async function signOut() {
 }
 
 export async function deleteAccount() {
+  'use server';
   await postJSON({path: 'users/delete-account'});
   await (await (await cookies()).getAll()).map(clearCookie);
   revalidatePath('/');
@@ -48,6 +53,7 @@ export async function deleteAccount() {
 }
 
 export async function getAccountDetails(): Promise<{username: string, email: string}> {
+  'use server';
   const response = await get({path: 'users/account-details'});
   if (response.ok) {
     const data = await response.json();
@@ -59,18 +65,21 @@ export async function getAccountDetails(): Promise<{username: string, email: str
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
+  'use server';
   const response = await postForm({path: 'users/change-username', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitChangeEmailForm(formData: FormData) {
+  'use server';
   const response = await postForm({path: 'users/change-email', formData: formData});
   revalidatePath('/');
   redirect('/debates');
 }
 
 export async function submitChangePasswordForm(formData: FormData) {
+  'use server';
   const response = await postForm({path: 'users/change-password', formData: formData});
   revalidatePath('/');
   redirect('/debates');

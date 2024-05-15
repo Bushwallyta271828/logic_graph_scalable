@@ -1,3 +1,5 @@
+'use server';
+
 import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
@@ -50,7 +52,15 @@ async function fetchWrapper({path, options = {}, headers = {}}:
       response.headers.forEach(setHeaderCookies);
 
       return response;
-    } catch (error) {throw error;}
+    } catch (error) {
+      throw new Error(`path: ${path}, options: ${options}, headers: ${headers}`);
+      //console.log('\n');
+      //console.log(path);
+      //console.log(options);
+      //console.log(headers);
+      //console.log(error);
+      //throw error;
+    }
   }
 }
 
