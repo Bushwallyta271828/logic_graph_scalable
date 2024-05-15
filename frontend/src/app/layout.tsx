@@ -3,6 +3,7 @@ import './globals.css';
 import Link from 'next/link';
 import { UserContextProvider } from '@/app/_user_context/user-context';
 import { Navbar } from '@/app/navbar';
+import { DebateName } from '@/app/debate-name';
 import { AccountButton } from '@/app/account-button';
 
 export const metadata: Metadata = {
@@ -26,9 +27,7 @@ export default async function RootLayout({children}: Readonly<{children: React.R
                   Debates
                 </button>
               </Link>
-              <p className="text-white px-2 py-1">
-                debate_name_goes_here
-              </p>
+              <DebateName />
             </div>
             <div className="text-white text-lg font-bold flex gap-4">
               <AccountButton />
