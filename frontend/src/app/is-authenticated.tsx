@@ -1,5 +1,6 @@
 'use server';
 
+import { cookies } from 'next/headers';
 import { get } from '@/app/api';
 
 export async function isAuthenticated(): Promise<boolean | null> {
@@ -11,7 +12,9 @@ export async function isAuthenticated(): Promise<boolean | null> {
   const response = await get({path: 'users/authenticated'});
   if (response.ok) {
     const data = await response.json();
-    if ('authenticated' in data) {
+    if ('authenticated' in data && typeof data.authenticated === 'boolean') {
+      if (data.authenticated === false && await (await cookies()).has('sessionid'))
+        {await (await cookies()).delete('sessionid');}
       return data.authenticated;
     }
   }
