@@ -21,14 +21,14 @@ export async function submitSignInForm(formData: FormData) {
   'use server';
   const response = await postForm({path: 'users/sign-in', formData: formData});
   revalidatePath('/');
-  redirect('/debates');
+  redirect('/debates'); //Will refresh AccountButton
 }
 
 export async function submitCreateAccountForm(formData: FormData) {
   'use server';
   const response = await postForm({path: 'users/create-account', formData: formData});
   revalidatePath('/');
-  redirect('/debates');
+  redirect('/debates'); //Will refresh AccountButton
 }
 
 async function clearCookie(cookie: {name: string, value: string}) {
@@ -41,7 +41,7 @@ export async function signOut() {
   await postJSON({path: 'users/sign-out'});
   await (await (await cookies()).getAll()).map(clearCookie);
   revalidatePath('/');
-  redirect('/');
+  redirect('/'); //Will refresh AccountButton
 }
 
 export async function deleteAccount() {
@@ -49,7 +49,7 @@ export async function deleteAccount() {
   await postJSON({path: 'users/delete-account'});
   await (await (await cookies()).getAll()).map(clearCookie);
   revalidatePath('/');
-  redirect('/');
+  redirect('/'); //Will refresh AccountButton
 }
 
 export async function getAccountDetails(): Promise<{username: string, email: string}> {
