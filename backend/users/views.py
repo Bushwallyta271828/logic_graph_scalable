@@ -6,6 +6,7 @@ from rest_framework import status
 
 @api_view(['GET'])
 def authenticated(request):
+    #DANGER: This view will not return 401 status for inauthenticated users!
     return Response({'authenticated': request.user.is_authenticated})
 
 @api_view(['POST'])

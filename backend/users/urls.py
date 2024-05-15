@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('authenticated', views.authenticated),
+    path('authenticated', views.authenticated), #DANGER: This view will not return 401 status for inauthenticated users!
     path('sign-in', views.sign_in),
     path('create-account', views.create_account),
     path('sign-out', views.sign_out),
