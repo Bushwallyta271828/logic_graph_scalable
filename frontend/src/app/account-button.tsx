@@ -1,9 +1,9 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
-import { signOut, deleteAccount } from '@/app/account/account-actions';
+import { isAuthenticated, signOut, deleteAccount } from '@/app/account/account-actions';
 
 function SignedOutMenuItems() {
   return (
@@ -67,7 +67,17 @@ function SignedInMenuItems() {
   );
 }
 
-export function AccountButton({authenticated}: {authenticated: boolean | null}) {
+export function AccountButton() {
+  const [authenticated, setAuthenticated] = useState<null | boolean>(null);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const auth = await isAuthenticated();
+      setAuthenticated(auth);
+    };
+    checkAuthentication();
+  }, []);
+
   return (
     <div className="text-white text-lg font-bold relative">
       <Menu>
