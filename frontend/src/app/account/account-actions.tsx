@@ -50,6 +50,7 @@ export async function getAccountDetails(): Promise<{username: string, email: str
       return {username: data.username, email: data.email};
     }
   }
+  return {username: 'Fix me', email: 'Fix me'};
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
