@@ -29,15 +29,17 @@ export async function submitCreateAccountForm(formData: FormData) {
 }
 
 export async function signOut() {
-  const response = await postJSON({path: 'users/sign-out'});
-  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
+  await postJSON({path: 'users/sign-out'});
+  (await cookies()).getAll().map((cookie) =>
+    await (await cookies()).delete(cookie.name));
   revalidatePath('/');
   redirect('/');
 }
 
 export async function deleteAccount() {
-  const response = await postJSON({path: 'users/delete-account'});
-  if (cookies().has('sessionid')) {await (await cookies()).delete('sessionid');}
+  await postJSON({path: 'users/delete-account'});
+  (await cookies()).getAll().map((cookie) =>
+    await (await cookies()).delete(cookie.name));
   revalidatePath('/');
   redirect('/');
 }
