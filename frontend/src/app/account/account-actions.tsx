@@ -30,7 +30,7 @@ export async function submitCreateAccountForm(formData: FormData) {
 
 export async function signOut() {
   await postJSON({path: 'users/sign-out'});
-  (await cookies()).getAll().map((cookie) =>
+  await (await (await cookies()).getAll()).map(async (cookie) =>
     await (await cookies()).delete(cookie.name));
   revalidatePath('/');
   redirect('/');
@@ -38,7 +38,7 @@ export async function signOut() {
 
 export async function deleteAccount() {
   await postJSON({path: 'users/delete-account'});
-  (await cookies()).getAll().map((cookie) =>
+  await (await (await cookies()).getAll()).map(async (cookie) =>
     await (await cookies()).delete(cookie.name));
   revalidatePath('/');
   redirect('/');
@@ -52,6 +52,7 @@ export async function getAccountDetails(): Promise<{username: string, email: str
       return {username: data.username, email: data.email};
     }
   }
+  return {username: 'Unable to find username', email: 'Unable to find email'};
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {

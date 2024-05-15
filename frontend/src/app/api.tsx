@@ -2,9 +2,10 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
 
-async function fetchWrapper({path, options}: {path: string, options: RequestInit}) {
-  //If options has headers attribute then headers should have type Record<string, string>.
-  //options.cache and options.headers may be modified.
+async function fetchWrapper({path, options = {}, headers = {}}:
+  {path: string, options?: RequestInit, headers?: Record<string, string>}) {
+  //options.headers and options.cache will be ignored.
+  //options and headers may both be modified.
   //Note that this function is for server-side use only.
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
@@ -14,9 +15,9 @@ async function fetchWrapper({path, options}: {path: string, options: RequestInit
       options.cache = 'no-store';
       const sessionidCookie = await (await cookies()).get('sessionid');
       if (sessionidCookie !== undefined) {
-        if (options.headers === undefined) {options.headers = {} as Record<string, string>;}
-        options.headers['Cookie'] = 'sessionid='+sessionidCookie.value;
+        headers['Cookie'] = 'sessionid='+sessionidCookie.value;
       }
+      options.headers = headers;
 
       const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
 
@@ -49,7 +50,7 @@ async function fetchWrapper({path, options}: {path: string, options: RequestInit
 }
 
 export async function get({path}: {path: string}) {
-  return await fetchWrapper({path: path, options: {}});
+  return await fetchWrapper({path: path});
 }
 
 export async function postForm({path, formData}: {path: string, formData: FormData}) {
@@ -62,7 +63,7 @@ export async function postJSON({path, data = "{}"}: {path: string, data?: string
     options: {
       method: 'POST',
       body: data,
-      headers: {'Content-Type': 'application/json'} as Record<string, string>,
     },
+    headers: {'Content-Type': 'application/json'},
   });
 }
