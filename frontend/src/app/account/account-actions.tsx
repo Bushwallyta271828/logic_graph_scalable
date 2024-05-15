@@ -5,17 +5,6 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { get, postForm, postJSON } from '@/app/api';
 
-export async function isAuthenticated(): Promise<boolean | null> {
-  'use server';
-  const response = await get({path: 'users/authenticated'});
-  if (response.ok) {
-    const data = await response.json();
-    if ('authenticated' in data) {
-      return data.authenticated;
-    }
-  }
-  return null;
-}
 
 export async function submitSignInForm(formData: FormData) {
   'use server';
@@ -61,7 +50,6 @@ export async function getAccountDetails(): Promise<{username: string, email: str
       return {username: data.username, email: data.email};
     }
   }
-  return {username: 'Unable to find username', email: 'Unable to find email'};
 }
 
 export async function submitChangeUsernameForm(formData: FormData) {
