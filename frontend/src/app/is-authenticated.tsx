@@ -1,5 +1,7 @@
 'use server';
 
+import { get } from '@/app/api';
+
 export async function isAuthenticated(): Promise<boolean | null> {
   //NOTE: This function should only ever be called from AccountButton!
   //If it were to be called in any other context, it would fail to update
