@@ -8,30 +8,24 @@ export async function submitSignInForm(formData: FormData) {
   const response = await postForm({path: 'users/sign-in', formData: formData});
   router = useRouter();
   router.push('/debates');
-  router.refresh(); //Will refresh AccountButton
 }
 
 export async function submitCreateAccountForm(formData: FormData) {
   const response = await postForm({path: 'users/create-account', formData: formData});
   router = useRouter();
   router.push('/debates');
-  router.refresh(); //Will refresh AccountButton
 }
 
 export async function signOut() {
-  await postJSON({path: 'users/sign-out'});
-  await (await (await cookies()).getAll()).map(clearCookie);
+  await postJSON({path: 'users/sign-out', deleteCookies: true, redirectSignIn: false});
   router = useRouter();
   router.push('/');
-  router.refresh(); //Will refresh AccountButton
 }
 
 export async function deleteAccount() {
-  await postJSON({path: 'users/delete-account'});
-  await (await (await cookies()).getAll()).map(clearCookie);
+  await postJSON({path: 'users/delete-account', deleteCookies: true, redirectSignIn: false});
   router = useRouter();
   router.push('/');
-  router.refresh(); //Will refresh AccountButton
 }
 
 export async function getAccountDetails(): Promise<{username: string, email: string}> {

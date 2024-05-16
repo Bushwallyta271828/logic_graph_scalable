@@ -4,7 +4,7 @@ import { useState, useEffect, useTransition } from 'react';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
 import { isAuthenticated } from '@/app/is-authenticated';
-import { signOut, deleteAccount } from '@/app/account/account-actions';
+import { signOut, deleteAccount } from '@/app/account/account-action-wrappers';
 
 function SignedOutMenuItems() {
   return (
