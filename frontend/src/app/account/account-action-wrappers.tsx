@@ -16,18 +16,6 @@ export async function submitCreateAccountForm(formData: FormData) {
   router.push('/debates');
 }
 
-export async function signOut() {
-  await postJSON({path: 'users/sign-out', deleteCookies: true, redirectSignIn: false});
-  router = useRouter();
-  router.push('/');
-}
-
-export async function deleteAccount() {
-  await postJSON({path: 'users/delete-account', deleteCookies: true, redirectSignIn: false});
-  router = useRouter();
-  router.push('/');
-}
-
 export async function getAccountDetails(): Promise<{username: string, email: string}> {
   const response = await get({path: 'users/account-details'});
   if (response.ok) {
