@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { postForm } from '@/app/_api/api';
 
 
-export function AccountForm({path, redirect, children}: 
-  {path: string, redirect: string | null, children: Readonly<{children: React.ReactNode}>}) {
+export function AccountForm({children, path, redirect}: 
+  {children: Readonly<{children: React.ReactNode}>, path: string, redirect?: string}) {
   //path is the path for the API call.
   //redirect is the path to redirect towards if the submission is successful.
   //children should contain the form contents.
@@ -23,7 +23,7 @@ export function AccountForm({path, redirect, children}:
     if ('error' in response) {
       setError(response.error);
     } else {
-      if (redirect !== null) {
+      if (redirect !== undefined) {
         router.push(redirect);
       }
       setError(null);
