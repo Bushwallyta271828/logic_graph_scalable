@@ -29,6 +29,10 @@ export function ManageAccount() {
     <>
       <AccountForm path="users/change-username">
         <div>
+          {(accountDetails === 'loading') ? <p className="italic">Loading username...</p> :
+            ('error' in accountDetails) ? <p className="text-bright-danger">Error: {accountDetails.error}</p> :
+            <p>Current username: {accountDetails.username}</p>
+          }
           <label htmlFor="new-username">New Username:</label>
           <input type="text" id="new-username" name="new-username" required />
         </div>
