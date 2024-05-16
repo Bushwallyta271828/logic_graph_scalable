@@ -20,12 +20,11 @@ export async function isAuthenticated(): Promise<boolean | null> {
     deleteCookies: false,
     redirectSignIn: false,
   });
-  if (response.ok) {
-    const data = await response.json();
-    if ('authenticated' in data && typeof data.authenticated === 'boolean') {
-      if (data.authenticated === false)
+  if ('data' in response) {
+    if ('authenticated' in response.data && typeof response.data.authenticated === 'boolean') {
+      if (response.data.authenticated === false)
         {await (await (await cookies()).getAll()).map(clearCookie);}
-      return data.authenticated;
+      return response.data.authenticated;
     }
   }
   return null;
