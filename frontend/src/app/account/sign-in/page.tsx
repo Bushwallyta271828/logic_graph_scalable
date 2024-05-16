@@ -1,17 +1,5 @@
-import { submitSignInForm } from '@/app/account/account-actions';
+import { SignIn } from '@/app/account/sign-in/sign-in';
 
-export default function SignIn() {
-  return (
-    <form action={submitSignInForm}>
-      <div>
-        <label htmlFor="username">Username:</label>
-        <input type="text" id="username" name="username" required />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" required />
-      </div>
-      <button type="submit">Sign In</button>
-    </form>
-  );
+export default function SignInPage() {
+  return (<SignIn />); //For client-side rendering
 }
