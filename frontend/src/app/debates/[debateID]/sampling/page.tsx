@@ -1,11 +1,7 @@
-import { get } from '@/app/_api/api';
 import { Navbar } from '@/app/navbar';
 import { DebateLinks } from '@/app/debates/[debateID]/debate-links';
 
 export default async function Sampling() {
-  const responseText = await get({path: "debates/"});
-  console.log(responseText);
-
   return (
     <>
       <Navbar border={true}>

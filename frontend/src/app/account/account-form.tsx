@@ -6,7 +6,7 @@ import { postForm } from '@/app/_api/api';
 
 
 export function AccountForm({children, path, redirect}: 
-  {children: Readonly<{children: React.ReactNode}>, path: string, redirect?: string}) {
+  {children: React.ReactNode, path: string, redirect?: string}) {
   //path is the path for the API call.
   //redirect is the path to redirect towards if the submission is successful.
   //children should contain the form contents.
