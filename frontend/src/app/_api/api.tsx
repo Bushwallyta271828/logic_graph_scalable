@@ -1,11 +1,10 @@
 'use client';
 
-import { NextRouter } from 'next/router';
 import { fetchWrapper } from '@/app/_api/fetch-wrapper';
 
 
 function potentialRefresh({response, router}:
-  {response: {error: string, status: number | null} | {data: any, status: number}, router: NextRouter}) {
+  {response: {error: string, status: number | null} | {data: any, status: number}, router: {refresh: () => void}}) {
   //Resets AccountButton
   if (response.status === 401) {
     router.refresh();
@@ -13,7 +12,7 @@ function potentialRefresh({response, router}:
 }
 
 export async function get({path, router, deleteCookies = false, redirectSignIn = true}:
-  {path: string, router: NextRouter, deleteCookies?: boolean, redirectSignIn?: boolean}) {
+  {path: string, router: {refresh: () => void}, deleteCookies?: boolean, redirectSignIn?: boolean}) {
   const response = await fetchWrapper({
     path: path,
     deleteCookies: deleteCookies,
@@ -24,7 +23,7 @@ export async function get({path, router, deleteCookies = false, redirectSignIn =
 }
 
 export async function postForm({path, formData, router, deleteCookies = false, redirectSignIn = true}:
-  {path: string, formData: FormData, router: NextRouter, deleteCookies?: boolean, redirectSignIn?: boolean}) {
+  {path: string, formData: FormData, router: {refresh: () => void}, deleteCookies?: boolean, redirectSignIn?: boolean}) {
   const response = await fetchWrapper({
     path: path,
     options: {method: 'POST', body: formData},
@@ -36,7 +35,7 @@ export async function postForm({path, formData, router, deleteCookies = false, r
 }
 
 export async function postJSON({path, data, router, deleteCookies = false, redirectSignIn = true}:
-  {path: string, data: string, router: NextRouter, deleteCookies?: boolean, redirectSignIn?: boolean}) {
+  {path: string, data: string, router: {refresh: () => void}, deleteCookies?: boolean, redirectSignIn?: boolean}) {
   const response = await fetchWrapper({
     path: path,
     options: {method: 'POST', body: data},
