@@ -4,10 +4,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
+
 @api_view(['GET'])
-def authenticated(request):
-    #DANGER: This view will not return 401 status for inauthenticated users!
-    return Response({'authenticated': request.user.is_authenticated})
+def account_details(request):
+    if request.user.is_authenticated:
+        return Response({"authenticated": True, "username": request.user.username})
+    else:
+        return Response({"authenticated": False})
 
 @api_view(['POST'])
 def sign_in(request):
@@ -45,15 +48,6 @@ def delete_account(request):
         user.delete()
         logout(request)
         return Response({"message": "User deleted successfully"})
-    else:
-        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
-
-@api_view(['GET'])
-def account_details(request):
-    if request.user.is_authenticated:
-        username = request.user.username
-        email = request.user.email
-        return Response({'username': username, 'email': email})
     else:
         return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
 
