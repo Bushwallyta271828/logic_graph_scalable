@@ -43,6 +43,9 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
   //options and headers may both be modified.
   //If deleteCookies === true then all cookies will be deleted after the fetch.
   //If redirectSignIn === true then a 401 status response will automatically redirect to the sign-in page.
+  //Be extremely careful calling this function directly as opposed to through the dedicated API functions!
+  //This function on its own will not refresh the page in the event of a 401 response, so AccountButton
+  //could fail to update!
 
   'use server'; //This command shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.

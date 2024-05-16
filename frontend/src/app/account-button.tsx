@@ -34,9 +34,21 @@ function SignedOutMenuItems() {
 }
 
 function SignedInMenuItems() {
-  router = useRouter();
+  const router = useRouter();
   const [isSigningOut, startSignOutTransition] = useTransition();
   const [isDeletingAccount, startDeleteAccountTransition] = useTransition();
+
+  const signOutOrDeleteAccount = async (path: string) => {
+    await postJSON({
+      path: path,
+      data: "{}",
+      router: router,
+      deleteCookies: true,
+      redirectSignIn: false,
+    });
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <>
@@ -54,10 +66,7 @@ function SignedInMenuItems() {
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
             onClick={() => {
-              startSignOutTransition(async () => {
-                await postJSON({path: 'users/sign-out', deleteCookies: true, redirectSignIn: false});
-                router.push('/');
-              });
+              startSignOutTransition(async () => {await signOutOrDeleteAccount("users/sign-out");});
             }}>
             Sign Out
           </a>
@@ -68,10 +77,7 @@ function SignedInMenuItems() {
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
             onClick={() => {
-              startDeleteAccountTransition(async () => {
-                await postJSON({path: 'users/delete-account', deleteCookies: true, redirectSignIn: false});
-                router.push('/');
-              });
+              startSignOutTransition(async () => {await signOutOrDeleteAccount("users/delete-account");});
             }}>
             Delete Account
           </a>
