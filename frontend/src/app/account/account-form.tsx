@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import { postForm } from '@/app/_api/api';
 
 
-export function AccountForm({children, path, redirect}: 
-  {children: React.ReactNode, path: string, redirect?: string}) {
+export function AccountForm({children, path, redirect, refresh = false}: 
+  {children: React.ReactNode, path: string, redirect?: string, refresh?: boolean}) {
   //path is the path for the API call.
   //redirect is the path to redirect towards if the submission is successful.
+  //If refresh === true, then the router refreshes (after a potential redirect)
+  //if the submission is successful.
   //children should contain the form contents.
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -23,9 +25,10 @@ export function AccountForm({children, path, redirect}:
     if ('error' in response) {
       setError(response.error);
     } else {
-      if (redirect !== undefined) {
-        router.push(redirect);
-      }
+      if (redirect !== undefined)
+        {router.push(redirect);}
+      if (refresh === true)
+        {router.refresh();}
       setError(null);
     }
   }
