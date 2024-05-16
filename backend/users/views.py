@@ -44,7 +44,7 @@ def sign_out(request):
 @api_view(['POST'])
 def delete_account(request):
     if request.user.is_authenticated:
-        user.delete()
+        request.user.delete()
         logout(request)
         return Response({"message": "User deleted successfully"})
     else:
