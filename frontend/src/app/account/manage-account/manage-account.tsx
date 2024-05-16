@@ -40,6 +40,10 @@ export function ManageAccount() {
       </AccountForm>
       <AccountForm path="users/change-email" redirectOrRefresh={true}>
         <div>
+          {(accountDetails === 'loading') ? <p className="italic">Loading email...</p> :
+            ('error' in accountDetails) ? <p className="text-bright-danger">Error: {accountDetails.error}</p> :
+            <p>Current email: {accountDetails.email}</p>
+          }
           <label htmlFor="new-email">New Email:</label>
           <input type="text" id="new-email" name="new-email" required />
         </div>
