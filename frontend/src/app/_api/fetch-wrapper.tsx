@@ -5,8 +5,14 @@ import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
 import { redirect } from 'next/navigation';
 
+
+async function clearCookie(cookie: {name: string, value: string}) {
+  'use server'; //This command shouldn't be needed but empirically it is?
+  await (await cookies()).delete(cookie.name);
+}
+
 async function setHeaderCookies(headerValue: string, headerName: string) {
-  'use server'; //This shouldn't be needed but empirically it is?
+  'use server'; //This command shouldn't be needed but empirically it is?
   //Thanks to https://stackoverflow.com/a/77446172 for the ideas on cookie handling.
 
   if (headerName.toLowerCase() === 'set-cookie') {
@@ -36,7 +42,7 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
   //options and headers may both be modified.
   //if deleteCookies === true then all cookies will be deleted after the fetch.
 
-  'use server'; //This shouldn't be needed but empirically it is?
+  'use server'; //This command shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
@@ -53,9 +59,7 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
       response.headers.forEach(setHeaderCookies);
 
       if (response.status === 401 || deleteCookies) {
-        if (await (await cookies()).has('sessionid')) {
-          await (await cookies()).delete('sessionid');
-        }
+        await (await (await cookies()).getAll()).map(clearCookie);
       } else {
         response.headers.forEach(setHeaderCookies);
       }
