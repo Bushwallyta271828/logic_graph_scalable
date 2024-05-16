@@ -5,9 +5,10 @@
 import { createContext, useContext, useState } from 'react';
 
 export type Account = null | {username: string};
+export type SetAccount = (newAccount: Account) => void;
 
 export const AccountContext =
-  createContext<{account: Account, setAccount: (newAccount: Account) => void} | null>(null);
+  createContext<{account: Account, setAccount: SetAccount} | null>(null);
 
 export function AccountContextProvider({ children }: { children: React.ReactNode }) {
   const [account, setAccount] = useState<Account>(null);
