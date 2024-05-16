@@ -36,16 +36,18 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
   }
 }
 
-export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies = false}:
-  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies?: boolean}) {
+export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies = false, redirectSignIn = true}:
+  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies?: boolean, redirectSignIn?: boolean}):
+  Promise<{error: string} | {data: any}> {
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
-  //if deleteCookies === true then all cookies will be deleted after the fetch.
+  //If deleteCookies === true then all cookies will be deleted after the fetch.
+  //If redirectSignIn === true then a 401 status response will automatically redirect to the sign-in page.
 
   'use server'; //This command shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
-    throw new Error('BACKEND_ADDRESS undefined');
+    return {error: 'BACKEND_ADDRESS undefined'};
   } else {
     try {
       options.cache = 'no-store';
@@ -57,19 +59,17 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
 
       const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
 
-      if (response.status === 401 || deleteCookies) {
-        await (await (await cookies()).getAll()).map(clearCookie);
-      } else {
-        response.headers.forEach(setHeaderCookies);
-      }
+      if (response.status === 401 || deleteCookies)
+        {await (await (await cookies()).getAll()).map(clearCookie);}
+      else {response.headers.forEach(setHeaderCookies);}
 
-      if (response.status === 401) {
-        redirect('/account/sign-in');
-      }
+      if (response.status === 401 && redirectSignIn === true)
+        {redirect('/account/sign-in');}
 
-      return response;
+      if (response.ok) {return {data: await response.json()};}
+      else {return {error: await response.text()};}
     } catch (error) {
-      throw error;
+      return {error: 'Error while fetching'};
     }
   }
 }
