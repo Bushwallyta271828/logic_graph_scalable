@@ -54,9 +54,8 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
         headers['Cookie'] = 'sessionid='+sessionidCookie.value;
       }
       options.headers = headers;
-      const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
 
-      response.headers.forEach(setHeaderCookies);
+      const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
 
       if (response.status === 401 || deleteCookies) {
         await (await (await cookies()).getAll()).map(clearCookie);
