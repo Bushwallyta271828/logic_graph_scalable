@@ -1,19 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { NextRouter } from 'next/router';
 import { get, postForm, postJSON } from '@/app/_api/api';
 
 
-export async function submitSignInForm(formData: FormData) {
-  const response = await postForm({path: 'users/sign-in', formData: formData});
+export async function submitSignInForm({formData, router}: {formData: FormData, router: NextRouter}) {
+  const response = await postForm({path: 'users/sign-in', router: router, formData: formData});
   if (!('error' in response)) {
     router = useRouter();
     router.push('/debates');
   }
 }
 
-export async function submitCreateAccountForm(formData: FormData) {
-  const response = await postForm({path: 'users/create-account', formData: formData});
+export async function submitCreateAccountForm({formData, router}: {formData: FormData, router: NextRouter}) {
+  const response = await postForm({path: 'users/create-account', router: router, formData: formData});
   if (!('error' in response)) {
     router = useRouter();
     router.push('/debates');

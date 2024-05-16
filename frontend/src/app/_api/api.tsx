@@ -1,6 +1,6 @@
 'use client';
 
-import { NextRouter } from 'react/router';
+import { NextRouter } from 'next/router';
 import { fetchWrapper } from '@/app/_api/fetch-wrapper';
 
 
@@ -23,8 +23,8 @@ export async function get({path, router, deleteCookies = false, redirectSignIn =
   return response;
 }
 
-export async function postForm({path, router, formData, deleteCookies = false, redirectSignIn = true}:
-  {path: string, router: NextRouter, formData: FormData, deleteCookies?: boolean, redirectSignIn?: boolean}) {
+export async function postForm({path, formData, router, deleteCookies = false, redirectSignIn = true}:
+  {path: string, formData: FormData, router: NextRouter, deleteCookies?: boolean, redirectSignIn?: boolean}) {
   const response = await fetchWrapper({
     path: path,
     options: {method: 'POST', body: formData},
@@ -35,8 +35,8 @@ export async function postForm({path, router, formData, deleteCookies = false, r
   return response;
 }
 
-export async function postJSON({path, router, data = "{}", deleteCookies = false, redirectSignIn = true}:
-  {path: string, router: NextRouter, data?: string, deleteCookies?: boolean, redirectSignIn?: boolean}) {
+export async function postJSON({path, data, router, deleteCookies = false, redirectSignIn = true}:
+  {path: string, data: string, router: NextRouter, deleteCookies?: boolean, redirectSignIn?: boolean}) {
   const response = await fetchWrapper({
     path: path,
     options: {method: 'POST', body: data},
