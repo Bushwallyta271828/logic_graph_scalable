@@ -3,7 +3,6 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
-import { redirect } from 'next/navigation';
 
 
 async function clearCookie(cookie: {name: string, value: string}) {
@@ -36,16 +35,20 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
   }
 }
 
-export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies = false}:
-  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies?: boolean}) {
+export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies}:
+  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies: boolean}):
+  Promise<{error: string, status: number | null} | {data: any, status: number}> {
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
-  //if deleteCookies === true then all cookies will be deleted after the fetch.
+  //If deleteCookies === true then all cookies will be deleted after the fetch.
+  //Be extremely careful calling this function directly as opposed to through the dedicated API functions!
+  //This function on its own will not refresh the page in the event of a 401 response, so AccountButton
+  //could fail to update!
 
   'use server'; //This command shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
-    throw new Error('BACKEND_ADDRESS undefined');
+    return {error: 'BACKEND_ADDRESS undefined', status: null};
   } else {
     try {
       options.cache = 'no-store';
@@ -54,23 +57,17 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
         headers['Cookie'] = 'sessionid='+sessionidCookie.value;
       }
       options.headers = headers;
+
       const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
 
-      response.headers.forEach(setHeaderCookies);
+      if (response.status === 401 || deleteCookies)
+        {await (await (await cookies()).getAll()).map(clearCookie);}
+      else {response.headers.forEach(setHeaderCookies);}
 
-      if (response.status === 401 || deleteCookies) {
-        await (await (await cookies()).getAll()).map(clearCookie);
-      } else {
-        response.headers.forEach(setHeaderCookies);
-      }
-
-      if (response.status === 401) {
-        redirect('/account/sign-in');
-      }
-
-      return response;
+      if (response.ok) {return {data: await response.json(), status: response.status};}
+      else {return {error: await response.text(), status: response.status};}
     } catch (error) {
-      throw error;
+      return {error: 'Error while fetching', status: null};
     }
   }
 }

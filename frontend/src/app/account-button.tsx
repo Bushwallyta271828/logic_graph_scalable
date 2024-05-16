@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
+import { postJSON } from '@/app/_api/api';
 import { isAuthenticated } from '@/app/is-authenticated';
-import { signOut, deleteAccount } from '@/app/account/account-actions';
+
 
 function SignedOutMenuItems() {
   return (
@@ -32,8 +34,21 @@ function SignedOutMenuItems() {
 }
 
 function SignedInMenuItems() {
+  const router = useRouter();
   const [isSigningOut, startSignOutTransition] = useTransition();
   const [isDeletingAccount, startDeleteAccountTransition] = useTransition();
+
+  const signOutOrDeleteAccount = async (path: string) => {
+    await postJSON({
+      path: path,
+      data: "{}",
+      router: router,
+      deleteCookies: true,
+      redirectSignIn: false,
+    });
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <>
@@ -50,7 +65,9 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={() => {startSignOutTransition(signOut);}}>
+            onClick={() => {
+              startSignOutTransition(async () => {await signOutOrDeleteAccount("users/sign-out");});
+            }}>
             Sign Out
           </a>
         )}
@@ -59,7 +76,9 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-            onClick={() => {startDeleteAccountTransition(deleteAccount);}}>
+            onClick={() => {
+              startSignOutTransition(async () => {await signOutOrDeleteAccount("users/delete-account");});
+            }}>
             Delete Account
           </a>
         )}

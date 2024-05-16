@@ -1,8 +1,11 @@
-import { submitCreateAccountForm } from '@/app/account/account-actions';
+import { AccountForm } from '@/app/account/account-form';
 
 export default function CreateAccount() {
+  //AccountForm is client-side
+  //redirect="/debates" ensures that AccountButton gets refreshed
+  //if the account creation is successful.
   return (
-    <form action={submitCreateAccountForm}>
+    <AccountForm path="users/create-account" redirect="/debates">
       <div>
         <label htmlFor="username">Username:</label>
         <input type="text" id="username" name="username" required />
@@ -16,6 +19,6 @@ export default function CreateAccount() {
         <input type="password" id="password" name="password" required />
       </div>
       <button type="submit">Create Account</button>
-    </form>
+    </AccountForm>
   );
 }
