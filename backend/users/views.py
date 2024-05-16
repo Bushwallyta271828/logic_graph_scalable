@@ -26,13 +26,12 @@ def sign_in(request):
 @api_view(['POST'])
 def create_account(request):
     username = request.data.get('username')
-    email = request.data.get('email')
     password = request.data.get('password')
     
     if User.objects.filter(username=username).exists():
         return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        user = User.objects.create_user(username, email, password)
+        user = User.objects.create_user(username=username, password=password)
         login(request, user)
         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
 
@@ -60,15 +59,6 @@ def change_username(request):
         request.user.username = new_username
         request.user.save()
         return Response({"message": "Username changed successfully"})
-    else:
-        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
-
-@api_view(['POST'])
-def change_email(request):
-    if request.user.is_authenticated:
-        request.user.email = request.data.get('new-email')
-        request.user.save()
-        return Response({"message": "Email changed successfully"})
     else:
         return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
 
