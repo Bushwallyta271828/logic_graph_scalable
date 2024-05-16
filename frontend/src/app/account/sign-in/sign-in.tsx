@@ -2,6 +2,17 @@
 
 import { submitSignInForm } from '@/app/account/account-action-wrappers';
 
+
+export async function submitSignInForm({formData, router}: {formData: FormData, router: NextRouter}) {
+  const response = await postForm({path: 'users/sign-in', formData: formData, router: router});
+  if (!('error' in response)) {
+    router = useRouter();
+    router.push('/debates');
+  }
+}
+
+
+
 export function SignIn() {
   return (
     <form action={submitSignInForm}>
