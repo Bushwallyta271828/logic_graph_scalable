@@ -12,7 +12,7 @@ function handleUnauthorized({response, router, redirectSignIn}: {
 }) {
   //Resets AccountButton
   if (response.status === 401) {
-    if (redirectSignIn === true) {router.push('account/sign-in');}
+    if (redirectSignIn === true) {router.push('/account/sign-in');}
     router.refresh();
   }
 }
