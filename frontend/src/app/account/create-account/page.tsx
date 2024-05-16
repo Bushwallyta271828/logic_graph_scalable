@@ -5,7 +5,7 @@ export default function CreateAccount() {
   //redirect="/debates" ensures that AccountButton gets refreshed
   //if the account creation is successful.
   return (
-    <AccountForm path="users/create-account" redirect="/debates">
+    <AccountForm path="users/create-account" redirectOrRefresh="/debates">
       <div>
         <label htmlFor="username">Username:</label>
         <input type="text" id="username" name="username" required />

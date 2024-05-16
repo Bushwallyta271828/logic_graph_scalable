@@ -27,7 +27,7 @@ export function ManageAccount() {
 
   return (
     <>
-      <AccountForm path="users/change-username" refresh={true}>
+      <AccountForm path="users/change-username" redirectOrRefresh={true}>
         <div>
           {(accountDetails === 'loading') ? <p className="italic">Loading username...</p> :
             ('error' in accountDetails) ? <p className="text-bright-danger">Error: {accountDetails.error}</p> :
@@ -38,14 +38,14 @@ export function ManageAccount() {
         </div>
         <button type="submit">Update Username</button>
       </AccountForm>
-      <AccountForm path="users/change-email" refresh={true}>
+      <AccountForm path="users/change-email" redirectOrRefresh={true}>
         <div>
           <label htmlFor="new-email">New Email:</label>
           <input type="text" id="new-email" name="new-email" required />
         </div>
         <button type="submit">Update Email</button>
       </AccountForm>
-      <AccountForm path="users/change-password" redirect="/debates">
+      <AccountForm path="users/change-password" redirectOrRefresh="/debates">
         <div>
           <label htmlFor="new-password">New Password:</label>
           <input type="password" id="new-password" name="new-password" required />

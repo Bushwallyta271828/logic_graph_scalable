@@ -5,7 +5,7 @@ export default function SignIn() {
   //redirect="/debates" ensures that AccountButton gets refreshed
   //if the sign in is successful.
   return (
-    <AccountForm path="users/sign-in" redirect="/debates">
+    <AccountForm path="users/sign-in" redirectOrRefresh="/debates">
       <div>
         <label htmlFor="username">Username:</label>
         <input type="text" id="username" name="username" required />
