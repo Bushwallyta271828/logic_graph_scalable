@@ -36,9 +36,9 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
   }
 }
 
-export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies = false, redirectSignIn = true}:
-  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies?: boolean, redirectSignIn?: boolean}):
-  Promise<{error: string} | {data: any}> {
+export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies, redirectSignIn}:
+  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies: boolean, redirectSignIn: boolean}):
+  Promise<{error: string, status: number | null} | {data: any}> {
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
   //If deleteCookies === true then all cookies will be deleted after the fetch.
@@ -47,7 +47,7 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
   'use server'; //This command shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
-    return {error: 'BACKEND_ADDRESS undefined'};
+    return {error: 'BACKEND_ADDRESS undefined', status: null};
   } else {
     try {
       options.cache = 'no-store';
@@ -67,9 +67,9 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
         {redirect('/account/sign-in');}
 
       if (response.ok) {return {data: await response.json()};}
-      else {return {error: await response.text()};}
+      else {return {error: await response.text(), status: response.status};}
     } catch (error) {
-      return {error: 'Error while fetching'};
+      return {error: 'Error while fetching', status: null};
     }
   }
 }
