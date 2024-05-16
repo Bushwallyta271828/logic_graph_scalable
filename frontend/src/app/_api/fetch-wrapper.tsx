@@ -30,7 +30,7 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
   }
 }
 
-async function fetchWrapper({path, options = {}, headers = {}}:
+export async function fetchWrapper({path, options = {}, headers = {}}:
   {path: string, options?: RequestInit, headers?: Record<string, string>}) {
   'use server'; //This shouldn't be needed but empirically it is?
   //options.headers and options.cache will be ignored.
@@ -62,26 +62,4 @@ async function fetchWrapper({path, options = {}, headers = {}}:
       throw error;
     }
   }
-}
-
-export async function get({path}: {path: string}) {
-  'use server'; //This shouldn't be needed but empirically it is?
-  return await fetchWrapper({path: path});
-}
-
-export async function postForm({path, formData}: {path: string, formData: FormData}) {
-  'use server'; //This shouldn't be needed but empirically it is?
-  return await fetchWrapper({path: path, options: {method: 'POST', body: formData}});
-}
-
-export async function postJSON({path, data = "{}"}: {path: string, data?: string}) {
-  'use server'; //This shouldn't be needed but empirically it is?
-  return await fetchWrapper({
-    path: path,
-    options: {
-      method: 'POST',
-      body: data,
-    },
-    headers: {'Content-Type': 'application/json'},
-  });
 }
