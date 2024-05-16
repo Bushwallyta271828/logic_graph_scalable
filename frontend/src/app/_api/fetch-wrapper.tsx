@@ -38,7 +38,7 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
 
 export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies, redirectSignIn}:
   {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies: boolean, redirectSignIn: boolean}):
-  Promise<{error: string, status: number | null} | {data: any}> {
+  Promise<{error: string, status: number | null} | {data: any, status: number}> {
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
   //If deleteCookies === true then all cookies will be deleted after the fetch.
@@ -66,7 +66,7 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
       if (response.status === 401 && redirectSignIn === true)
         {redirect('/account/sign-in');}
 
-      if (response.ok) {return {data: await response.json()};}
+      if (response.ok) {return {data: await response.json(), status: response.status};}
       else {return {error: await response.text(), status: response.status};}
     } catch (error) {
       return {error: 'Error while fetching', status: null};
