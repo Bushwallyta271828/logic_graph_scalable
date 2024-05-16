@@ -22,7 +22,6 @@ export async function get({path, router, deleteCookies = false, redirectSignIn =
   const response = await fetchWrapper({
     path: path,
     deleteCookies: deleteCookies,
-    redirectSignIn: redirectSignIn,
   });
   handleUnauthorized({response: response, router: router, redirectSignIn: redirectSignIn});
   return response;
@@ -34,7 +33,6 @@ export async function postForm({path, formData, router, deleteCookies = false, r
     path: path,
     options: {method: 'POST', body: formData},
     deleteCookies: deleteCookies,
-    redirectSignIn: redirectSignIn,
   });
   handleUnauthorized({response: response, router: router, redirectSignIn: redirectSignIn});
   return response;
@@ -47,7 +45,6 @@ export async function postJSON({path, data, router, deleteCookies = false, redir
     options: {method: 'POST', body: data},
     headers: {'Content-Type': 'application/json'},
     deleteCookies: deleteCookies,
-    redirectSignIn: redirectSignIn,
   });
   handleUnauthorized({response: response, router: router, redirectSignIn: redirectSignIn});
   return response;

@@ -18,7 +18,6 @@ export async function isAuthenticated(): Promise<boolean | null> {
   const response = await fetchWrapper({
     path: 'users/authenticated', //This path should only ever be accessed here!
     deleteCookies: false,
-    redirectSignIn: false,
   });
   if ('data' in response) {
     if ('authenticated' in response.data && typeof response.data.authenticated === 'boolean') {
