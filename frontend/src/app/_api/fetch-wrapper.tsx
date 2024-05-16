@@ -30,13 +30,13 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
   }
 }
 
-export async function fetchWrapper({path, options = {}, headers = {}}:
-  {path: string, options?: RequestInit, headers?: Record<string, string>}) {
-  'use server'; //This shouldn't be needed but empirically it is?
+export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies = false}:
+  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies?: boolean}) {
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
-  //Note that this function is for server-side use only.
+  //if deleteCookies === true then all cookies will be deleted after the fetch.
 
+  'use server'; //This shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
     throw new Error('BACKEND_ADDRESS undefined');
@@ -52,9 +52,16 @@ export async function fetchWrapper({path, options = {}, headers = {}}:
 
       response.headers.forEach(setHeaderCookies);
 
-      if (response.status === 401 && await (await cookies()).has('sessionid')) {
-        await (await cookies()).delete('sessionid');
-        redirect('/account/sign-in'); //Will refresh AccountButton
+      if (response.status === 401 || deleteCookies) {
+        if (await (await cookies()).has('sessionid')) {
+          await (await cookies()).delete('sessionid');
+        }
+      } else {
+        response.headers.forEach(setHeaderCookies);
+      }
+
+      if (response.status === 401) {
+        redirect('/account/sign-in');
       }
 
       return response;
