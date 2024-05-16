@@ -6,7 +6,7 @@ import { get, postForm, postJSON } from '@/app/_api/api';
 
 export async function submitSignInForm(formData: FormData) {
   const response = await postForm({path: 'users/sign-in', formData: formData});
-  if ('error' not in response) {
+  if (!('error' in response)) {
     router = useRouter();
     router.push('/debates');
   }
@@ -14,7 +14,7 @@ export async function submitSignInForm(formData: FormData) {
 
 export async function submitCreateAccountForm(formData: FormData) {
   const response = await postForm({path: 'users/create-account', formData: formData});
-  if ('error' not in response) {
+  if (!('error' in response)) {
     router = useRouter();
     router.push('/debates');
   }
