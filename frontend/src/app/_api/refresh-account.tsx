@@ -1,6 +1,6 @@
 'use client';
 
-import { getAccountDetailsAction } from '@/app/_api/get-account-details-action';
+import { getAccountAction } from '@/app/_api/get-account-action';
 import { Account, SetAccount } from '@/app/_account_context/account-context';
 
 
