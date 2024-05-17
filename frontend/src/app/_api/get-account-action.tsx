@@ -16,15 +16,17 @@ export async function getAccountAction(): Promise<Account> {
   const response = await fetchWrapper({path: 'users/account-details'});
   if ('data' in response) {
     if ('authenticated' in response.data && typeof response.data.authenticated === 'boolean') {
-      if (response.data.authenticated === false) {
-        await (await (await cookies()).getAll()).map(clearCookie);
-        return {account: null};
-      } else {
+      if (response.data.authenticated === true) {
         if ('username' in response.data && typeof response.data.username === 'string') {
-          return {account: {username: response.data.username}};
+          return {username: response.data.username};
         }
+      } else {
+        await (await (await cookies()).getAll()).map(clearCookie);
+        return 'signed out' as const;
       }
     }
+    return {loadingError: 'Unrecognized API return format'};
+  } else {
+    return {loadingError: response.error};
   }
-  return null;
 }
