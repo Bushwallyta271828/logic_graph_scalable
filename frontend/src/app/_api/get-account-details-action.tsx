@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { fetchWrapper } from '@/app/_api/fetch-wrapper';
+import { Account } from '@/app/_account_context/account-context';
 
 
 async function clearCookie(cookie: {name: string, value: string}) {
@@ -9,21 +10,22 @@ async function clearCookie(cookie: {name: string, value: string}) {
   await (await cookies()).delete(cookie.name);
 }
 
-export async function isAuthenticated(): Promise<boolean | null> {
-  //NOTE: This function should only ever be called from AccountButton!
-  //If it were to be called in any other context, it would fail to update
-  //the state of the AccountButton menu which could create an inconsistent
-  //user interface!
+export async function getAccountDetailsAction(): Promise<{account: Account} | null> {
   'use server'; //This command shouldn't be needed but empirically it is?
   const response = await fetchWrapper({
-    path: 'users/authenticated', //This path should only ever be accessed here!
+    path: 'users/account-details', //This path should only ever be accessed here!
     deleteCookies: false,
   });
   if ('data' in response) {
     if ('authenticated' in response.data && typeof response.data.authenticated === 'boolean') {
-      if (response.data.authenticated === false)
-        {await (await (await cookies()).getAll()).map(clearCookie);}
-      return response.data.authenticated;
+      if (response.data.authenticated === false) {
+        await (await (await cookies()).getAll()).map(clearCookie);
+        return {account: null};
+      } else {
+        if ('username' in response.data && typeof response.data.username === 'string') {
+          return {account: {username: response.data.username}};
+        }
+      }
     }
   }
   return null;
