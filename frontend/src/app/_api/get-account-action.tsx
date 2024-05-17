@@ -10,12 +10,10 @@ async function clearCookie(cookie: {name: string, value: string}) {
   await (await cookies()).delete(cookie.name);
 }
 
-export async function getAccountAction(): Promise<{account: Account} | null> {
+export async function getAccountAction(): Promise<Account> {
+  //Note: this function should only ever be called from refreshAccount!
   'use server'; //This command shouldn't be needed but empirically it is?
-  const response = await fetchWrapper({
-    path: 'users/account-details', //This path should only ever be accessed here!
-    deleteCookies: false,
-  });
+  const response = await fetchWrapper({path: 'users/account-details'});
   if ('data' in response) {
     if ('authenticated' in response.data && typeof response.data.authenticated === 'boolean') {
       if (response.data.authenticated === false) {
