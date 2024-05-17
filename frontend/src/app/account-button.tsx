@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
+import { useAccountContext } from '@/app/_account_context/account-context';
 import { postJSON } from '@/app/_api/api';
 import { refreshAccount } from '@/app/_api/refresh-account';
 
@@ -88,14 +89,10 @@ function SignedInMenuItems() {
 }
 
 export function AccountButton() {
-  const [authenticated, setAuthenticated] = useState<null | boolean>(null);
+  const { account, setAccount } = useAccountContext();
 
   useEffect(() => {
-    const checkAuthentication = async () => {
-      const auth = await isAuthenticated();
-      setAuthenticated(auth);
-    };
-    checkAuthentication();
+    refreshAccount({setAccount: setAccount});
   }, []);
 
   return (
