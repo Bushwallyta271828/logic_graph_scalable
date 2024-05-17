@@ -21,7 +21,7 @@ export async function get({path, setAccount, router, deleteCookies = false}:
   });
   if (response.status === 401) {
     if (router !== undefined) {router.push('/account/sign-in');}
-    setAccount(null);
+    setAccount('signed out' as const);
   }
   return response;
 }
@@ -35,7 +35,7 @@ export async function postForm({path, formData, setAccount, router, deleteCookie
   });
   if (response.status === 401) {
     if (router !== undefined) {router.push('/account/sign-in');}
-    setAccount(null);
+    setAccount('signed out' as const);
   }
   return response;
 }
@@ -50,7 +50,7 @@ export async function postJSON({path, data, setAccount, router, deleteCookies = 
   });
   if (response.status === 401) {
     if (router !== undefined) {router.push('/account/sign-in');}
-    setAccount(null);
+    setAccount('signed out' as const);
   }
   return response;
 }

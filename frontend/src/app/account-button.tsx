@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
 import { postJSON } from '@/app/_api/api';
-import { isAuthenticated } from '@/app/is-authenticated';
+import { refreshAccount } from '@/app/_api/refresh-account';
 
 
 function SignedOutMenuItems() {
