@@ -11,7 +11,7 @@ export default function CreateAccount() {
       </div>
       <div>
         <label htmlFor="password">Password:</label>
-	<PasswordInput name="password" autocomplete={false}>
+	<PasswordInput name="password" autocomplete={false} />
       </div>
       <button type="submit">Create Account</button>
     </AccountForm>

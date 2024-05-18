@@ -10,7 +10,7 @@ export default function SignIn() {
       </div>
       <div>
         <label htmlFor="password">Password:</label>
-	<PasswordInput name="password" autocomplete={true}>
+	<PasswordInput name="password" autocomplete={true} />
       </div>
       <button type="submit">Sign In</button>
     </AccountForm>

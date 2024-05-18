@@ -25,7 +25,7 @@ export function ManageAccount() {
       <AccountForm path="users/change-password" redirectSignIn={true}>
         <div>
           <label htmlFor="new-password">New Password:</label>
-	  <PasswordInput name="new-password" autocomplete={false}>
+	  <PasswordInput name="new-password" autocomplete={false} />
         </div>
         <button type="submit">Update Password</button>
       </AccountForm>
