@@ -45,7 +45,7 @@ function SignedInMenuItems() {
       path: path,
       data: "{}",
       setAccount: setAccount,
-      deleteCookies: true,
+      forceSignOut: true,
     });
     router.push("/");
   };
@@ -105,14 +105,19 @@ export function AccountButton() {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          {(authenticated === null) ?
+          {(account === 'loading') ?
             <Menu.Item disabled>
               <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
-                An Error Occurred
+                Loading...
               </a>
-            </Menu.Item> : (authenticated === true) ?
-            <SignedInMenuItems /> :
-            <SignedOutMenuItems />
+            </Menu.Item> : ('loadingError' in account) ?
+            <Menu.Item disabled>
+              <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
+                Loading Error: {account.loadingError}
+              </a>
+            </Menu.Item> : (account === 'signed out') ?
+            <SignedOutMenuItems /> :
+            <SignedInMenuItems />
           }
         </Menu.Items>
       </Menu>
