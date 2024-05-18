@@ -35,16 +35,14 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
   }
 }
 
-export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies}:
-  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies: boolean}):
+export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies = false}:
+  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies?: boolean}):
   Promise<{error: string, status: number | null} | {data: any, status: number}> {
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
   //If deleteCookies === true then all cookies will be deleted after the fetch.
   //Be extremely careful calling this function directly as opposed to through the dedicated API functions!
-  //This function on its own will not refresh the page in the event of a 401 response, so AccountButton
-  //could fail to update!
-
+  //Account information will not automatically refresh!
   'use server'; //This command shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {

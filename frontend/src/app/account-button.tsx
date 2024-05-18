@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
+import { useAccountContext } from '@/app/_account_context/account-context';
 import { postJSON } from '@/app/_api/api';
-import { isAuthenticated } from '@/app/is-authenticated';
+import { refreshAccount } from '@/app/_api/refresh-account';
 
 
 function SignedOutMenuItems() {
@@ -35,6 +36,7 @@ function SignedOutMenuItems() {
 
 function SignedInMenuItems() {
   const router = useRouter();
+  const { setAccount } = useAccountContext();
   const [isSigningOut, startSignOutTransition] = useTransition();
   const [isDeletingAccount, startDeleteAccountTransition] = useTransition();
 
@@ -42,12 +44,10 @@ function SignedInMenuItems() {
     await postJSON({
       path: path,
       data: "{}",
-      router: router,
-      deleteCookies: true,
-      redirectSignIn: false,
+      setAccount: setAccount,
+      forceSignOut: true,
     });
     router.push("/");
-    router.refresh();
   };
 
   return (
@@ -88,15 +88,11 @@ function SignedInMenuItems() {
 }
 
 export function AccountButton() {
-  const [authenticated, setAuthenticated] = useState<null | boolean>(null);
+  const { account, setAccount } = useAccountContext();
 
   useEffect(() => {
-    const checkAuthentication = async () => {
-      const auth = await isAuthenticated();
-      setAuthenticated(auth);
-    };
-    checkAuthentication();
-  }, []);
+    refreshAccount({setAccount: setAccount});
+  }, [setAccount]);
 
   return (
     <div className="text-white text-lg font-bold relative">
@@ -109,14 +105,19 @@ export function AccountButton() {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          {(authenticated === null) ?
+          {(account.status === 'loading') ?
             <Menu.Item disabled>
               <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
-                An Error Occurred
+                Loading...
               </a>
-            </Menu.Item> : (authenticated === true) ?
-            <SignedInMenuItems /> :
-            <SignedOutMenuItems />
+            </Menu.Item> : (account.status === 'error') ?
+            <Menu.Item disabled>
+              <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
+                Loading Error: {account.error}
+              </a>
+            </Menu.Item> : (account.status === 'signed out') ?
+            <SignedOutMenuItems /> :
+            <SignedInMenuItems />
           }
         </Menu.Items>
       </Menu>

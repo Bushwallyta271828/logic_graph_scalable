@@ -1,11 +1,8 @@
 import { AccountForm } from '@/app/account/account-form';
 
 export default function SignIn() {
-  //AccountForm is client-side
-  //redirect="/debates" ensures that AccountButton gets refreshed
-  //if the sign in is successful.
   return (
-    <AccountForm path="users/sign-in" redirectOrRefresh="/debates">
+    <AccountForm path="users/sign-in" redirectSignIn={false} usernameField="username" redirectOnSuccess="/debates">
       <div>
         <label htmlFor="username">Username:</label>
         <input type="text" id="username" name="username" required />
