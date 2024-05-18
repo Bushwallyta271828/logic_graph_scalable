@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useTransition } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
@@ -37,8 +37,6 @@ function SignedOutMenuItems() {
 function SignedInMenuItems() {
   const router = useRouter();
   const { setAccount } = useAccountContext();
-  const [isSigningOut, startSignOutTransition] = useTransition();
-  const [isDeletingAccount, startDeleteAccountTransition] = useTransition();
 
   const signOutOrDeleteAccount = async (path: string) => {
     await postJSON({
@@ -65,9 +63,7 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={() => {
-              startSignOutTransition(async () => {await signOutOrDeleteAccount("users/sign-out");});
-            }}>
+            onClick={async () => {await signOutOrDeleteAccount("users/sign-out");}}>
             Sign Out
           </a>
         )}
@@ -76,9 +72,7 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-            onClick={() => {
-              startSignOutTransition(async () => {await signOutOrDeleteAccount("users/delete-account");});
-            }}>
+            onClick={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
             Delete Account
           </a>
         )}
