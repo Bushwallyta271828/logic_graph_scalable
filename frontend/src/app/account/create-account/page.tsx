@@ -1,4 +1,5 @@
 import { AccountForm } from '@/app/account/account-form';
+import { PasswordInput } from '@/app/account/password-input';
 
 
 export default function CreateAccount() {
@@ -10,7 +11,7 @@ export default function CreateAccount() {
       </div>
       <div>
         <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" autoComplete="new-password" required />
+	<PasswordInput name="password" autocomplete={false}>
       </div>
       <button type="submit">Create Account</button>
     </AccountForm>

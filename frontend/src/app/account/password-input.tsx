@@ -6,7 +6,7 @@ export function PasswordInput({name, autocomplete}: {name: string, autocomplete:
       type="password"
       id={name}
       name={name}
-      autoComplete={(autocomplete === true) ? "current-password" : "new-password"}
+      autoComplete={autocomplete ? "current-password" : "new-password"}
       required
     />
   );

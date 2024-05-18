@@ -1,4 +1,5 @@
 import { AccountForm } from '@/app/account/account-form';
+import { PasswordInput } from '@/app/account/password-input';
 
 export default function SignIn() {
   return (
@@ -9,7 +10,7 @@ export default function SignIn() {
       </div>
       <div>
         <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" autoComplete="current-password" required />
+	<PasswordInput name="password" autocomplete={true}>
       </div>
       <button type="submit">Sign In</button>
     </AccountForm>
