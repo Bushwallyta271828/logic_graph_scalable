@@ -11,7 +11,7 @@ export const AccountContext =
   createContext<{account: Account, setAccount: SetAccount} | null>(null);
 
 export function AccountContextProvider({ children }: { children: React.ReactNode }) {
-  const [account, setAccount] = useState<Account>({status: 'signed out' as const});
+  const [account, setAccount] = useState<Account>({status: 'loading' as const});
   return (<AccountContext.Provider value={{account,setAccount}}>{children}</AccountContext.Provider>);
 }
 

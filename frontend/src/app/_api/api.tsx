@@ -21,7 +21,7 @@ export async function get({path, setAccount, router}:
   const response = await fetchWrapper({path: path});
   if (response.status === 401) {
     if (router !== undefined) {router.push('/account/sign-in');}
-    setAccount('signed out' as const);
+    setAccount({status: 'signed out' as const});
   }
   return response;
 }
@@ -36,7 +36,7 @@ export async function postForm({path, formData, setAccount, router, forceSignOut
   if (response.status === 401 && router !== undefined)
     {router.push('/account/sign-in');}
   if (response.status === 401 || forceSignOut)
-    {setAccount('signed out' as const);}
+    {setAccount({status: 'signed out' as const});}
   return response;
 }
 
@@ -51,6 +51,6 @@ export async function postJSON({path, data, setAccount, router, forceSignOut = f
   if (response.status === 401 && router !== undefined)
     {router.push('/account/sign-in');}
   if (response.status === 401 || forceSignOut)
-    {setAccount('signed out' as const);}
+    {setAccount({status: 'signed out' as const});}
   return response;
 }

@@ -23,7 +23,7 @@ export async function getAccountAction(): Promise<Account> {
         }
       } else {
         await (await (await cookies()).getAll()).map(clearCookie);
-        return 'signed out' as const;
+        return {status: 'signed out' as const};
       }
     }
     return {loadingError: 'Unrecognized API return format'};
