@@ -4,14 +4,14 @@
 
 import { createContext, useContext, useState } from 'react';
 
-export type Account = {username: string} | 'signed out' | 'loading' | {loadingError: string};
+export type Account = {username: string} | {status: 'signed out' | 'loading'} | {loadingError: string};
 export type SetAccount = (newAccount: Account) => void;
 
 export const AccountContext =
   createContext<{account: Account, setAccount: SetAccount} | null>(null);
 
 export function AccountContextProvider({ children }: { children: React.ReactNode }) {
-  const [account, setAccount] = useState<Account>('signed out' as const);
+  const [account, setAccount] = useState<Account>({status: 'signed out' as const});
   return (<AccountContext.Provider value={{account,setAccount}}>{children}</AccountContext.Provider>);
 }
 
