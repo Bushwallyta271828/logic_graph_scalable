@@ -6,12 +6,18 @@ import { useAccountContext } from '@/app/_account_context/account-context';
 import { postForm } from '@/app/_api/api';
 
 
-export function AccountForm({children, path, redirect, afterSuccess}: 
-  {children: React.ReactNode, path: string, redirect?: string, afterSuccess?: () => void}) {
+export function AccountForm({children, path, redirectOnSuccess, afterSuccess, redirectSignIn = true}: {
+  children: React.ReactNode,
+  path: string,
+  redirectOnSuccess?: string,
+  afterSuccess?: () => void,
+  redirectSignIn?: boolean
+}) {
+  //children is for the form contents.
   //path is the path for the API call.
-  //If redirect is supplied then AccountForm redirects there upon successful form submission.
+  //If redirectOnSuccess is supplied then AccountForm redirects there upon successful form submission.
   //If afterSuccess is supplied then AccountForm calls that function upon successful form submission.
-  //children should contain the form contents.
+  //If redirectSignIn is true then AccountForm redirects to the sign-in page if a 401 status occurs. 
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { setAccout } = useAccountContext();
@@ -21,13 +27,14 @@ export function AccountForm({children, path, redirect, afterSuccess}:
     const response = await postForm({
       path: path,
       formData: new FormData(event.currentTarget),
-      router: router,
+      setAccount: setAccount,
+      router: (redirectSignIn === true) ? router : undefined,
     });
     if ('error' in response) {
       setError(response.error);
     } else {
       setError(null);
-      if (redirect !== undefined) {router.push(redirect);}
+      if (redirectOnSuccess !== undefined) {router.push(redirectOnSuccess);}
       if (afterSuccess !== undefined) {afterSuccess();}
     }
   }
