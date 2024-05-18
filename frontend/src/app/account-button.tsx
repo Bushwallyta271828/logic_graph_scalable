@@ -36,6 +36,7 @@ function SignedOutMenuItems() {
 
 function SignedInMenuItems() {
   const router = useRouter();
+  const { setAccount } = useAccountContext();
   const [isSigningOut, startSignOutTransition] = useTransition();
   const [isDeletingAccount, startDeleteAccountTransition] = useTransition();
 
@@ -43,12 +44,10 @@ function SignedInMenuItems() {
     await postJSON({
       path: path,
       data: "{}",
-      router: router,
+      setAccount: setAccount,
       deleteCookies: true,
-      redirectSignIn: false,
     });
     router.push("/");
-    router.refresh();
   };
 
   return (

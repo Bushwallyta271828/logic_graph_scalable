@@ -12,6 +12,7 @@ async function clearCookie(cookie: {name: string, value: string}) {
 
 export async function getAccountAction(): Promise<Account> {
   //Note: this function should only ever be called from refreshAccount!
+  //Otherwise, the account context could get out of sync!
   'use server'; //This command shouldn't be needed but empirically it is?
   const response = await fetchWrapper({path: 'users/account-details'});
   if ('data' in response) {
