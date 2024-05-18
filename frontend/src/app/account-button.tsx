@@ -92,7 +92,7 @@ export function AccountButton() {
 
   useEffect(() => {
     refreshAccount({setAccount: setAccount});
-  }, []);
+  }, [setAccount]);
 
   return (
     <div className="text-white text-lg font-bold relative">

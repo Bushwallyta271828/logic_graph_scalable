@@ -23,7 +23,7 @@ export function ManageAccount() {
       } else {setAccountDetails({error: response.error});}
     };
     checkAccountDetails();
-  }, []);
+  }, [router]);
 
   return (
     <>
