@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
-import { isAuthenticated } from '@/app/is-authenticated';
-import { signOut, deleteAccount } from '@/app/account/account-actions';
+import { useAccountContext } from '@/app/_account_context/account-context';
+import { postJSON } from '@/app/_api/api';
+import { refreshAccount } from '@/app/_api/refresh-account';
+
 
 function SignedOutMenuItems() {
   return (
@@ -32,8 +35,18 @@ function SignedOutMenuItems() {
 }
 
 function SignedInMenuItems() {
-  const [isSigningOut, startSignOutTransition] = useTransition();
-  const [isDeletingAccount, startDeleteAccountTransition] = useTransition();
+  const router = useRouter();
+  const { setAccount } = useAccountContext();
+
+  const signOutOrDeleteAccount = async (path: string) => {
+    await postJSON({
+      path: path,
+      data: "{}",
+      setAccount: setAccount,
+      forceSignOut: true,
+    });
+    router.push("/");
+  };
 
   return (
     <>
@@ -50,7 +63,7 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={() => {startSignOutTransition(signOut);}}>
+            onClick={async () => {await signOutOrDeleteAccount("users/sign-out");}}>
             Sign Out
           </a>
         )}
@@ -59,7 +72,7 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-            onClick={() => {startDeleteAccountTransition(deleteAccount);}}>
+            onClick={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
             Delete Account
           </a>
         )}
@@ -69,15 +82,11 @@ function SignedInMenuItems() {
 }
 
 export function AccountButton() {
-  const [authenticated, setAuthenticated] = useState<null | boolean>(null);
+  const { account, setAccount } = useAccountContext();
 
   useEffect(() => {
-    const checkAuthentication = async () => {
-      const auth = await isAuthenticated();
-      setAuthenticated(auth);
-    };
-    checkAuthentication();
-  }, []);
+    refreshAccount({setAccount: setAccount});
+  }, [setAccount]);
 
   return (
     <div className="text-white text-lg font-bold relative">
@@ -90,14 +99,19 @@ export function AccountButton() {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          {(authenticated === null) ?
+          {(account.status === 'loading') ?
             <Menu.Item disabled>
               <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
-                An Error Occurred
+                Loading...
               </a>
-            </Menu.Item> : (authenticated === true) ?
-            <SignedInMenuItems /> :
-            <SignedOutMenuItems />
+            </Menu.Item> : (account.status === 'error') ?
+            <Menu.Item disabled>
+              <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
+                Loading Error: {account.error}
+              </a>
+            </Menu.Item> : (account.status === 'signed out') ?
+            <SignedOutMenuItems /> :
+            <SignedInMenuItems />
           }
         </Menu.Items>
       </Menu>

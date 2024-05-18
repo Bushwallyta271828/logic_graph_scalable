@@ -3,10 +3,15 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { cookies } from 'next/headers';
 import { parse, splitCookiesString } from 'set-cookie-parser';
-import { redirect } from 'next/navigation';
+
+
+async function clearCookie(cookie: {name: string, value: string}) {
+  'use server'; //This command shouldn't be needed but empirically it is?
+  await (await cookies()).delete(cookie.name);
+}
 
 async function setHeaderCookies(headerValue: string, headerName: string) {
-  'use server'; //This shouldn't be needed but empirically it is?
+  'use server'; //This command shouldn't be needed but empirically it is?
   //Thanks to https://stackoverflow.com/a/77446172 for the ideas on cookie handling.
 
   if (headerName.toLowerCase() === 'set-cookie') {
@@ -30,16 +35,18 @@ async function setHeaderCookies(headerValue: string, headerName: string) {
   }
 }
 
-async function fetchWrapper({path, options = {}, headers = {}}:
-  {path: string, options?: RequestInit, headers?: Record<string, string>}) {
-  'use server'; //This shouldn't be needed but empirically it is?
+export async function fetchWrapper({path, options = {}, headers = {}, deleteCookies = false}:
+  {path: string, options?: RequestInit, headers?: Record<string, string>, deleteCookies?: boolean}):
+  Promise<{error: string, status: number | null} | {data: any, status: number}> {
   //options.headers and options.cache will be ignored.
   //options and headers may both be modified.
-  //Note that this function is for server-side use only.
-
+  //If deleteCookies === true then all cookies will be deleted after the fetch.
+  //Be extremely careful calling this function directly as opposed to through the dedicated API functions!
+  //Account information will not automatically refresh!
+  'use server'; //This command shouldn't be needed but empirically it is?
   noStore(); //Don't store process.env.BACKEND_ADDRESS.
   if (typeof process.env.BACKEND_ADDRESS === 'undefined') {
-    throw new Error('BACKEND_ADDRESS undefined');
+    return {error: 'BACKEND_ADDRESS undefined', status: null};
   } else {
     try {
       options.cache = 'no-store';
@@ -48,40 +55,17 @@ async function fetchWrapper({path, options = {}, headers = {}}:
         headers['Cookie'] = 'sessionid='+sessionidCookie.value;
       }
       options.headers = headers;
+
       const response = await fetch(process.env.BACKEND_ADDRESS + path, options);
 
-      response.headers.forEach(setHeaderCookies);
+      if (response.status === 401 || deleteCookies)
+        {await (await (await cookies()).getAll()).map(clearCookie);}
+      else {response.headers.forEach(setHeaderCookies);}
 
-      if (response.status === 401 && await (await cookies()).has('sessionid')) {
-        await (await cookies()).delete('sessionid');
-        redirect('/account/sign-in'); //Will refresh AccountButton
-      }
-
-      return response;
+      if (response.ok) {return {data: await response.json(), status: response.status};}
+      else {return {error: await response.text(), status: response.status};}
     } catch (error) {
-      throw error;
+      return {error: 'Error while fetching', status: null};
     }
   }
-}
-
-export async function get({path}: {path: string}) {
-  'use server'; //This shouldn't be needed but empirically it is?
-  return await fetchWrapper({path: path});
-}
-
-export async function postForm({path, formData}: {path: string, formData: FormData}) {
-  'use server'; //This shouldn't be needed but empirically it is?
-  return await fetchWrapper({path: path, options: {method: 'POST', body: formData}});
-}
-
-export async function postJSON({path, data = "{}"}: {path: string, data?: string}) {
-  'use server'; //This shouldn't be needed but empirically it is?
-  return await fetchWrapper({
-    path: path,
-    options: {
-      method: 'POST',
-      body: data,
-    },
-    headers: {'Content-Type': 'application/json'},
-  });
 }
