@@ -10,20 +10,19 @@ interface PartialRouter {push: (href: string) => void;}
  * path is the path of the API to call.
  * setAccount should update the account state in case of an authentication error.
  * If a router is provided, then authentication errors will re-direct to the sign-in page.
+ *
+ * For postForm and postJSON:
  * If forceSignOut === true then all cookies will be deleted and the user will be signed out,
  * regardless of request outcome.
  */
 
-export async function get({path, setAccount, router, forceSignOut = false}:
-  {path: string, setAccount: SetAccount, router?: PartialRouter, forceSignOut?: boolean}) {
-  const response = await fetchWrapper({
-    path: path,
-    deleteCookies: deleteCookies,
-  });
-  if (response.status === 401 && router !== undefined)
-    {router.push('/account/sign-in');}
-  if (response.status === 401 || forceSignOut)
-    {setAccount('signed out' as const);}
+export async function get({path, setAccount, router}:
+  {path: string, setAccount: SetAccount, router?: PartialRouter}) {
+  const response = await fetchWrapper({path: path});
+  if (response.status === 401) {
+    if (router !== undefined) {router.push('/account/sign-in');}
+    setAccount('signed out' as const);
+  }
   return response;
 }
 
@@ -32,7 +31,7 @@ export async function postForm({path, formData, setAccount, router, forceSignOut
   const response = await fetchWrapper({
     path: path,
     options: {method: 'POST', body: formData},
-    deleteCookies: deleteCookies,
+    deleteCookies: forceSignOut,
   });
   if (response.status === 401 && router !== undefined)
     {router.push('/account/sign-in');}
@@ -47,7 +46,7 @@ export async function postJSON({path, data, setAccount, router, forceSignOut = f
     path: path,
     options: {method: 'POST', body: data},
     headers: {'Content-Type': 'application/json'},
-    deleteCookies: deleteCookies,
+    deleteCookies: forceSignOut,
   });
   if (response.status === 401 && router !== undefined)
     {router.push('/account/sign-in');}
