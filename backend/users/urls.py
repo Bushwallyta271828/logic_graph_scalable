@@ -10,6 +10,5 @@ urlpatterns = [
     path('delete-account', views.delete_account),
     ### END DANGER ###
     path('change-username', views.change_username),
-    path('change-email', views.change_email),
     path('change-password', views.change_password),
 ]

@@ -21,7 +21,7 @@ export function AccountForm({children, path, redirectSignIn, usernameField, redi
   //If redirectOnSuccess is supplied then AccountForm redirects there upon successful form submission.
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { setAccout } = useAccountContext();
+  const { setAccount } = useAccountContext();
  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
