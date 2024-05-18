@@ -10,13 +10,13 @@ export function AccountForm({children, path, redirectOnSuccess, afterSuccess, re
   children: React.ReactNode,
   path: string,
   redirectOnSuccess?: string,
-  afterSuccess?: () => void,
+  afterSuccess?: (formData: FormData) => void,
   redirectSignIn?: boolean
 }) {
   //children is for the form contents.
   //path is the path for the API call.
   //If redirectOnSuccess is supplied then AccountForm redirects there upon successful form submission.
-  //If afterSuccess is supplied then AccountForm calls that function upon successful form submission.
+  //If afterSuccess is supplied then AccountForm calls that function with the form data upon successful form submission.
   //If redirectSignIn is true then AccountForm redirects to the sign-in page if a 401 status occurs. 
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -24,9 +24,10 @@ export function AccountForm({children, path, redirectOnSuccess, afterSuccess, re
  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     const response = await postForm({
       path: path,
-      formData: new FormData(event.currentTarget),
+      formData: formData,
       setAccount: setAccount,
       router: (redirectSignIn === true) ? router : undefined,
     });
@@ -35,7 +36,7 @@ export function AccountForm({children, path, redirectOnSuccess, afterSuccess, re
     } else {
       setError(null);
       if (redirectOnSuccess !== undefined) {router.push(redirectOnSuccess);}
-      if (afterSuccess !== undefined) {afterSuccess();}
+      if (afterSuccess !== undefined) {afterSuccess(formData);}
     }
   }
 
