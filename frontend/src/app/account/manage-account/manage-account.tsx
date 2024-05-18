@@ -17,14 +17,14 @@ export function ManageAccount() {
             <p>Current username: {account.username}</p>
           }
           <label htmlFor="new-username">New Username:</label>
-          <input type="text" id="new-username" name="new-username" required />
+          <input type="text" id="new-username" name="new-username" autoComplete="off" required />
         </div>
         <button type="submit">Update Username</button>
       </AccountForm>
       <AccountForm path="users/change-password" redirectSignIn={true}>
         <div>
           <label htmlFor="new-password">New Password:</label>
-          <input type="password" id="new-password" name="new-password" required />
+          <input type="password" id="new-password" name="new-password" autoComplete="new-password" required />
         </div>
         <button type="submit">Update Password</button>
       </AccountForm>

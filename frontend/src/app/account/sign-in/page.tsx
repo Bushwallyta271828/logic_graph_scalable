@@ -5,11 +5,11 @@ export default function SignIn() {
     <AccountForm path="users/sign-in" redirectSignIn={false} usernameField="username" redirectOnSuccess="/debates">
       <div>
         <label htmlFor="username">Username:</label>
-        <input type="text" id="username" name="username" required />
+        <input type="text" id="username" name="username" autoComplete="username" required />
       </div>
       <div>
         <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+        <input type="password" id="password" name="password" autoComplete="current-password" required />
       </div>
       <button type="submit">Sign In</button>
     </AccountForm>
