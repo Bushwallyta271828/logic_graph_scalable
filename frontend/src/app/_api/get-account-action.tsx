@@ -26,8 +26,8 @@ export async function getAccountAction(): Promise<Account> {
         return {status: 'signed out' as const};
       }
     }
-    return {status: 'loading error' as const, loadingError: 'Unrecognized API return format'};
+    return {status: 'error' as const, error: 'Unrecognized API return format'};
   } else {
-    return {status: 'loading error' as const, loadingError: response.error};
+    return {status: 'error' as const, error: response.error};
   }
 }

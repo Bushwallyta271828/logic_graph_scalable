@@ -110,10 +110,10 @@ export function AccountButton() {
               <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
                 Loading...
               </a>
-            </Menu.Item> : (account.status === 'loading error') ?
+            </Menu.Item> : (account.status === 'error') ?
             <Menu.Item disabled>
               <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
-                Loading Error: {account.loadingError}
+                Loading Error: {account.error}
               </a>
             </Menu.Item> : (account.status === 'signed out') ?
             <SignedOutMenuItems /> :
