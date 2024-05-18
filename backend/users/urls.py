@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    ### DANGER: These views my provide authentication information other than by returning 401 status! ###
+    ### DANGER: These views may provide authentication information other than by returning 401 status! ###
     path('account-details', views.account_details),
     path('sign-in', views.sign_in),
     path('create-account', views.create_account),
