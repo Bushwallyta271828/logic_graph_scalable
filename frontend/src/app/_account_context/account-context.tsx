@@ -4,7 +4,11 @@
 
 import { createContext, useContext, useState } from 'react';
 
-export type Account = {username: string} | {status: 'signed out' | 'loading'} | {loadingError: string};
+export type Account =
+  | {status: 'signed in', username: string}
+  | {status: 'signed out'}
+  | {status: 'loading'}
+  | {status: 'loading error', loadingError: string};
 export type SetAccount = (newAccount: Account) => void;
 
 export const AccountContext =

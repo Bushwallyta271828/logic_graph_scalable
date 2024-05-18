@@ -19,15 +19,15 @@ export async function getAccountAction(): Promise<Account> {
     if ('authenticated' in response.data && typeof response.data.authenticated === 'boolean') {
       if (response.data.authenticated === true) {
         if ('username' in response.data && typeof response.data.username === 'string') {
-          return {username: response.data.username};
+          return {status: 'signed in' as const, username: response.data.username};
         }
       } else {
         await (await (await cookies()).getAll()).map(clearCookie);
         return {status: 'signed out' as const};
       }
     }
-    return {loadingError: 'Unrecognized API return format'};
+    return {status: 'loading error' as const, loadingError: 'Unrecognized API return format'};
   } else {
-    return {loadingError: response.error};
+    return {status: 'loading error' as const, loadingError: response.error};
   }
 }
