@@ -105,17 +105,17 @@ export function AccountButton() {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          {(account === 'loading') ?
+          {(account.status === 'loading') ?
             <Menu.Item disabled>
               <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
                 Loading...
               </a>
-            </Menu.Item> : ('loadingError' in account) ?
+            </Menu.Item> : (account.status === 'loading error') ?
             <Menu.Item disabled>
               <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
                 Loading Error: {account.loadingError}
               </a>
-            </Menu.Item> : (account === 'signed out') ?
+            </Menu.Item> : (account.status === 'signed out') ?
             <SignedOutMenuItems /> :
             <SignedInMenuItems />
           }
