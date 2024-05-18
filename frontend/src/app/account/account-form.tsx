@@ -6,17 +6,18 @@ import { useAccountContext } from '@/app/_account_context/account-context';
 import { postForm } from '@/app/_api/api';
 
 
-export function AccountForm({children, path, redirectSignIn, afterSuccess, redirectOnSuccess}: {
+export function AccountForm({children, path, redirectSignIn, usernameField, redirectOnSuccess}: {
   children: React.ReactNode,
   path: string,
   redirectSignIn: boolean
-  afterSuccess?: (formData: FormData) => void,
+  usernameField?: string,
   redirectOnSuccess?: string,
 }) {
   //children is for the form contents.
   //path is the path for the API call.
   //If redirectSignIn is true then AccountForm redirects to the sign-in page if a 401 status occurs. 
-  //If afterSuccess is supplied then AccountForm calls that function with the form data upon successful form submission.
+  //If usernameField is supplied then upon successful form submission AccountForm will set
+  //the account username to the value of that field.
   //If redirectOnSuccess is supplied then AccountForm redirects there upon successful form submission.
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -35,7 +36,13 @@ export function AccountForm({children, path, redirectSignIn, afterSuccess, redir
       setError(response.error);
     } else {
       setError(null);
-      if (afterSuccess !== undefined) {afterSuccess(formData);}
+      if (usernameField !== undefined) {
+        const username = formData.get(usernameField);
+        if (typeof username === 'string')
+          {setAccount({status: 'signed in' as const, username: username});}
+        else //Should never happen
+          {setAccount({status: 'error' as const, error: 'Form usernameField specified incorrectly'});}
+      }
       if (redirectOnSuccess !== undefined) {router.push(redirectOnSuccess);}
     }
   }

@@ -8,7 +8,7 @@ export type Account =
   | {status: 'signed in', username: string}
   | {status: 'signed out'}
   | {status: 'loading'}
-  | {status: 'loading error', loadingError: string};
+  | {status: 'error', error: string};
 export type SetAccount = (newAccount: Account) => void;
 
 export const AccountContext =
