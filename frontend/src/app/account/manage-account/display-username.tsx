@@ -13,5 +13,5 @@ export function DisplayUsername() {
   else if (account.status === 'signed out')
     {return (<p className="text-sm text-white">You currently appear to be signed out.</p>);}
   else
-    {return (<p className="text-sm text-white">Your current username is {account.username}</p>);}
+    {return (<p className="text-sm text-white">Your current username is {account.username}.</p>);}
 }
