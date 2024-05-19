@@ -6,20 +6,22 @@ import { useAccountContext } from '@/app/_account_context/account-context';
 import { postForm } from '@/app/_api/api';
 
 
-export function AccountForm({children, path, redirectSignIn, usernameField, redirectOnSuccess}: {
+export function AccountForm({children, path, redirectSignIn, displaySuccess, usernameField, redirectOnSuccess}: {
   children: React.ReactNode,
   path: string,
-  redirectSignIn: boolean
+  redirectSignIn: boolean,
+  displaySuccess: boolean,
   usernameField?: string,
   redirectOnSuccess?: string,
 }) {
   //children is for the form contents.
   //path is the path for the API call.
   //If redirectSignIn is true then AccountForm redirects to the sign-in page if a 401 status occurs. 
+  //If displaySuccess is true then AccountForm will display backend messages on success.
   //If usernameField is supplied then upon successful form submission AccountForm will set
   //the account username to the value of that field.
   //If redirectOnSuccess is supplied then AccountForm redirects there upon successful form submission.
-  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<null | {message: string, error: boolean}>(null);
   const router = useRouter();
   const { setAccount } = useAccountContext();
  
@@ -33,9 +35,11 @@ export function AccountForm({children, path, redirectSignIn, usernameField, redi
       router: (redirectSignIn === true) ? router : undefined,
     });
     if ('error' in response) {
-      setError(response.error);
+      setResult({message: response.error, error: true});
     } else {
-      setError(null);
+      const message = ('message' in response.data && typeof response.data.message === 'string') ?
+        response.data.message : 'No message provided';
+      setResult({message: message, error: false});
       if (usernameField !== undefined) {
         const username = formData.get(usernameField);
         if (typeof username === 'string')
@@ -50,9 +54,13 @@ export function AccountForm({children, path, redirectSignIn, usernameField, redi
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">{children}</form>
-      {(error === null) ? null :
-        <p className="bg-dark-danger w-full px-4 py-2 mt-4 rounded-md text-white text-sm">
-          {error}
+      {(result === null) ? null :
+        (result.error === true) ?
+        <p className="bg-dark-danger w-full px-4 py-2 rounded-md text-white text-sm">
+          Error: {result.message}
+        </p> :
+        <p className="bg-medium-neutral w-full px-4 py-2 rounded-md text-white text-sm">
+          {result.message}
         </p>
       }
     </>
