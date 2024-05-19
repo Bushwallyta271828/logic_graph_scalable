@@ -11,17 +11,16 @@ export function PasswordInput({name, autocomplete}: {name: string, autocomplete:
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-40">
       <input
         type={passwordVisible ? 'text' : 'password'}
         className="w-full p-2 border rounded"
-        placeholder="Enter your password"
       />
       <div
         className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
         onClick={togglePasswordVisibility}
       >
-        {passwordVisible ? <IoEyeOff size={24} /> : <IoEye size={24} />}
+        {passwordVisible ? <IoEyeOff size={16} /> : <IoEye size={16} />}
       </div>
     </div>
   );
