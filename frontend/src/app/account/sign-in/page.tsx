@@ -1,5 +1,5 @@
 import { AccountForm } from '@/app/account/account-form';
-import { UsernameInput, PasswordInput } from '@/app/account/forms-input';
+import { UsernameInput, PasswordInput } from '@/app/account/form-inputs';
 
 export default function SignIn() {
   return (
