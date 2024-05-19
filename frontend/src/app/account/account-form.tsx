@@ -57,11 +57,11 @@ export function AccountForm({children, path, redirectSignIn, afterSuccess, usern
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">{children}</form>
       {(result.returned === true && result.error === true) ? 
-        <p className="bg-dark-danger w-full px-4 py-2 rounded-md text-white text-sm">
+        <p className="bg-dark-danger w-full px-4 py-2 rounded-md text-white text-sm text-center">
           Error: {result.message}
         </p>
         : (result.returned === true && result.error === false && afterSuccess === true) ?
-        <p className="bg-medium-neutral w-full px-4 py-2 rounded-md text-white text-sm">
+        <p className="bg-bright-neutral w-full px-4 py-2 rounded-md text-white text-sm text-center">
           {result.message}
         </p>
         : null
