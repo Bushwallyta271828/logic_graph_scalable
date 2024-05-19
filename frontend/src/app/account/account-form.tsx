@@ -20,7 +20,10 @@ export function AccountForm({children, path, redirectSignIn, afterSuccess, usern
   //If afterSuccess is true then upon success AccountForm will display the response message from the backend.
   //If afterSuccess is a string then upon success AccountForm will redirect to that path.
   //If usernameField is supplied then upon success AccountForm will set the username to the value of that field.
-  const [result, setResult] = useState<null | {message: string, error: boolean}>(null);
+  const [result, setResult] = useState<
+    {returned: false} |
+    {returned: true, message: string, error: boolean}
+  >({returned: false as const});
   const router = useRouter();
   const { setAccount } = useAccountContext();
  
@@ -34,11 +37,11 @@ export function AccountForm({children, path, redirectSignIn, afterSuccess, usern
       router: (redirectSignIn === true) ? router : undefined,
     });
     if ('error' in response) {
-      setResult({message: response.error, error: true});
+      setResult({returned: true as const, message: response.error, error: true});
     } else {
       const message = ('message' in response.data && typeof response.data.message === 'string') ?
         response.data.message : 'No message provided';
-      setResult({message: message, error: false});
+      setResult({returned: true as const, message: message, error: false});
       if (usernameField !== undefined) {
         const username = formData.get(usernameField);
         if (typeof username === 'string')
@@ -53,11 +56,11 @@ export function AccountForm({children, path, redirectSignIn, afterSuccess, usern
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">{children}</form>
-      {('error' in result && result.error === true) ? 
+      {(result.returned === true && result.error === true) ? 
         <p className="bg-dark-danger w-full px-4 py-2 rounded-md text-white text-sm">
           Error: {result.message}
         </p>
-        : ('error' in result && result.error === false && afterSuccess === true) ?
+        : (result.returned === true && result.error === false && afterSuccess === true) ?
         <p className="bg-medium-neutral w-full px-4 py-2 rounded-md text-white text-sm">
           {result.message}
         </p>
