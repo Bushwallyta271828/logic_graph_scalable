@@ -16,7 +16,9 @@ export async function getAccountAction(): Promise<Account> {
   'use server'; //This command shouldn't be needed but empirically it is?
   const response = await fetchWrapper({path: 'users/account-details'});
   if ('data' in response) {
-    if ('authenticated' in response.data && typeof response.data.authenticated === 'boolean') {
+    if (typeof response.data === 'object'
+      && 'authenticated' in response.data
+      && typeof response.data.authenticated === 'boolean') {
       if (response.data.authenticated === true) {
         if ('username' in response.data && typeof response.data.username === 'string') {
           return {status: 'signed in' as const, username: response.data.username};

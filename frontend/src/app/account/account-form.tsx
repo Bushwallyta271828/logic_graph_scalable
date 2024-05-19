@@ -39,8 +39,11 @@ export function AccountForm({children, path, redirectSignIn, afterSuccess, usern
     if ('error' in response) {
       setResult({returned: true as const, message: response.error, error: true});
     } else {
-      const message = ('message' in response.data && typeof response.data.message === 'string') ?
-        response.data.message : 'No message provided';
+      const message =
+        (typeof response.data === 'object'
+          && 'message' in response.data
+          && typeof response.data.message === 'string'
+        ) ? response.data.message : 'No message provided';
       setResult({returned: true as const, message: message, error: false});
       if (usernameField !== undefined) {
         const username = formData.get(usernameField);
