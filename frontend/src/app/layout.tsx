@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
   return (
-    <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
-      <body className="bg-medium-neutral min-h-screen">
-        <AccountContextProvider>
+    <AccountContextProvider>
+      <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
+        <body className="bg-medium-neutral grid grid-rows-[auto_1fr] min-h-screen">
           <Navbar border={false}>
             <div className="flex gap-4 items-baseline">
               <Link href="/">
@@ -39,9 +39,11 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
               </Link>
             </div>
           </Navbar>
-          {children}
-        </AccountContextProvider>
-      </body>
-    </html>
+          <div>
+            {children}
+          </div>
+        </body>
+      </html>
+    </AccountContextProvider>
   );
 }
