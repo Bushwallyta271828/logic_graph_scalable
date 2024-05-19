@@ -2,27 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The following styles control the autofill behavior for the account pages. */
+
 input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px #303030 inset !important;
+  -webkit-box-shadow: 0 0 0 100px #303030 inset !important;
   -webkit-text-fill-color: #ffffff !important;
   caret-color: white !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #303030 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  caret-color: white !important;
-}
-
-input:-webkit-autofill:hover {
-  -webkit-box-shadow: 0 0 0 1000px #303030 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  caret-color: white !important;
-}
-
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #303030 inset !important;
+  -webkit-box-shadow: 0 0 0 100px #404040 inset !important;
   -webkit-text-fill-color: #ffffff !important;
   caret-color: white !important;
 }
