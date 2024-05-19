@@ -27,8 +27,11 @@ def sign_in(request):
 def create_account(request):
     username = request.data.get('username')
     password = request.data.get('password')
-    
-    if User.objects.filter(username=username).exists():
+    confirm_password = request.data.get('confirm-password')
+   
+    if password != confirm_password:
+        return Response({"message": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
+    elif User.objects.filter(username=username).exists():
         return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
     else:
         user = User.objects.create_user(username=username, password=password)
@@ -65,9 +68,15 @@ def change_username(request):
 @api_view(['POST'])
 def change_password(request):
     if request.user.is_authenticated:
-        request.user.set_password(request.data.get('new-password'))
-        request.user.save()
-        update_session_auth_hash(request, request.user)
-        return Response({"message": "Password changed successfully"})
+        new_password = request.data.get('new-password')
+        confirm_new_password = request.data.get('confirm-new-password')
+        
+        if new_password != confirm_new_password:
+            return Response({"message": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            request.user.set_password(new_password)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            return Response({"message": "Password changed successfully"})
     else:
         return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
