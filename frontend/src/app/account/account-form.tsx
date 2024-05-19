@@ -6,21 +6,20 @@ import { useAccountContext } from '@/app/_account_context/account-context';
 import { postForm } from '@/app/_api/api';
 
 
-export function AccountForm({children, path, redirectSignIn, displaySuccess, usernameField, redirectOnSuccess}: {
+export function AccountForm({children, path, redirectSignIn, onSuccess, usernameField}: {
   children: React.ReactNode,
   path: string,
   redirectSignIn: boolean,
-  displaySuccess: boolean,
+  onSuccess: boolean | string,
   usernameField?: string,
-  redirectOnSuccess?: string,
 }) {
   //children is for the form contents.
   //path is the path for the API call.
   //If redirectSignIn is true then AccountForm redirects to the sign-in page if a 401 status occurs. 
-  //If displaySuccess is true then AccountForm will display backend messages on success.
-  //If usernameField is supplied then upon successful form submission AccountForm will set
-  //the account username to the value of that field.
-  //If redirectOnSuccess is supplied then AccountForm redirects there upon successful form submission.
+  //If onSuccess is false then upon success AccountForm will do nothing.
+  //If onSuccess is true then upon success AccountForm will display the response message from the backend.
+  //If onSuccess is a string then upon success AccountForm will redirect to that path.
+  //If usernameField is supplied then upon success AccountForm will set the username to the value of that field.
   const [result, setResult] = useState<null | {message: string, error: boolean}>(null);
   const router = useRouter();
   const { setAccount } = useAccountContext();
@@ -47,21 +46,22 @@ export function AccountForm({children, path, redirectSignIn, displaySuccess, use
         else //Should never happen
           {setAccount({status: 'error' as const, error: 'Form usernameField specified incorrectly'});}
       }
-      if (redirectOnSuccess !== undefined) {router.push(redirectOnSuccess);}
+      if (typeof onSuccess === 'string') {router.push(onSuccess);}
     }
   };
 
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">{children}</form>
-      {(result === null) ? null :
-        (result.error === true) ?
+      {('error' in result && result.error === true) ? 
         <p className="bg-dark-danger w-full px-4 py-2 rounded-md text-white text-sm">
           Error: {result.message}
-        </p> :
+        </p>
+        : ('error' in result && result.error === false && onSuccess === true) ?
         <p className="bg-medium-neutral w-full px-4 py-2 rounded-md text-white text-sm">
           {result.message}
         </p>
+        : null
       }
     </>
   );
