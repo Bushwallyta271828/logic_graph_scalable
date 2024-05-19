@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
 	'bright-neutral': '#404040',
-	'medium-neutral': '#303030',
+	'medium-neutral': '#303030', //Value used without reference in globals.css!
 	'dark-neutral': '#202020',
         'bright-text': '#000080',
         'medium-text': '#000060',
