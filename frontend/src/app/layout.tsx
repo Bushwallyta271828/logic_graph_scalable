@@ -15,7 +15,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
   return (
     <AccountContextProvider>
       <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
-        <body className="bg-medium-neutral min-h-screen">
+        <body className="bg-medium-neutral grid grid-rows-[auto_1fr] min-h-screen">
           <Navbar border={false}>
             <div className="flex gap-4 items-baseline">
               <Link href="/">
@@ -39,7 +39,9 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
               </Link>
             </div>
           </Navbar>
-          {children}
+          <div>
+            {children}
+          </div>
         </body>
       </html>
     </AccountContextProvider>
