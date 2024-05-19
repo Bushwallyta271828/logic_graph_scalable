@@ -62,8 +62,15 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
         {await (await (await cookies()).getAll()).map(clearCookie);}
       else {response.headers.forEach(setHeaderCookies);}
 
-      if (response.ok) {return {data: await response.json(), status: response.status};}
-      else {return {error: await response.text(), status: response.status};}
+      const data = await response.json();
+      if (response.ok) {return {data: data, status: response.status};}
+      else {
+        return {
+          error: (typeof data === 'object' && 'message' in data && typeof data.message === 'string')
+            ? data.message : await response.text(),
+          status: response.status,
+        };
+      }
     } catch (error) {
       return {error: 'Error while fetching', status: null};
     }
