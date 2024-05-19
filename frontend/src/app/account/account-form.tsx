@@ -50,7 +50,11 @@ export function AccountForm({children, path, redirectSignIn, usernameField, redi
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">{children}</form>
-      {(error === null) ? null : <p className="bg-dark-danger w-full px-4 py-2 mt-4 text-white text-sm">{error}</p>}
+      {(error === null) ? null :
+        <p className="bg-dark-danger w-full px-4 py-2 mt-4 rounded-md text-white text-sm">
+          {error}
+        </p>
+      }
     </>
   );
 }
