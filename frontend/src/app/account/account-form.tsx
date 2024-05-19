@@ -6,19 +6,19 @@ import { useAccountContext } from '@/app/_account_context/account-context';
 import { postForm } from '@/app/_api/api';
 
 
-export function AccountForm({children, path, redirectSignIn, onSuccess, usernameField}: {
+export function AccountForm({children, path, redirectSignIn, afterSuccess, usernameField}: {
   children: React.ReactNode,
   path: string,
   redirectSignIn: boolean,
-  onSuccess: boolean | string,
+  afterSuccess: boolean | string,
   usernameField?: string,
 }) {
   //children is for the form contents.
   //path is the path for the API call.
   //If redirectSignIn is true then AccountForm redirects to the sign-in page if a 401 status occurs. 
-  //If onSuccess is false then upon success AccountForm will do nothing.
-  //If onSuccess is true then upon success AccountForm will display the response message from the backend.
-  //If onSuccess is a string then upon success AccountForm will redirect to that path.
+  //If afterSuccess is false then upon success AccountForm will do nothing.
+  //If afterSuccess is true then upon success AccountForm will display the response message from the backend.
+  //If afterSuccess is a string then upon success AccountForm will redirect to that path.
   //If usernameField is supplied then upon success AccountForm will set the username to the value of that field.
   const [result, setResult] = useState<null | {message: string, error: boolean}>(null);
   const router = useRouter();
@@ -46,7 +46,7 @@ export function AccountForm({children, path, redirectSignIn, onSuccess, username
         else //Should never happen
           {setAccount({status: 'error' as const, error: 'Form usernameField specified incorrectly'});}
       }
-      if (typeof onSuccess === 'string') {router.push(onSuccess);}
+      if (typeof afterSuccess === 'string') {router.push(afterSuccess);}
     }
   };
 
@@ -57,7 +57,7 @@ export function AccountForm({children, path, redirectSignIn, onSuccess, username
         <p className="bg-dark-danger w-full px-4 py-2 rounded-md text-white text-sm">
           Error: {result.message}
         </p>
-        : ('error' in result && result.error === false && onSuccess === true) ?
+        : ('error' in result && result.error === false && afterSuccess === true) ?
         <p className="bg-medium-neutral w-full px-4 py-2 rounded-md text-white text-sm">
           {result.message}
         </p>

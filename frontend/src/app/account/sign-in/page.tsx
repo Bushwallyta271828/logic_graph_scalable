@@ -7,7 +7,7 @@ export default function SignIn() {
   return (
     <FormCard>
       <p className="text-white text-lg font-bold text-center">Welcome Back!</p>
-      <AccountForm path="users/sign-in" redirectSignIn={false} onSuccess="/debates" usernameField="username">
+      <AccountForm path="users/sign-in" redirectSignIn={false} afterSuccess="/debates" usernameField="username">
         <label htmlFor="username" className="text-white text-sm">Username:</label>
         <UsernameInput name="username" autocomplete={true} />
         <label htmlFor="password" className="text-white text-sm">Password:</label>
