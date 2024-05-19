@@ -11,7 +11,7 @@ export function UsernameInput({name, autocomplete}: {name: string, autocomplete:
       name={name}
       autoComplete={autocomplete? 'username' : 'off'}
       required
-      className="w-full p-2 bg-bright-neutral text-white text-sm rounded-md outline-none"
+      className="w-full p-2 bg-medium-neutral focus:bg-bright-neutral text-white text-sm rounded-md outline-none"
     />
   );
 }
@@ -27,7 +27,7 @@ export function PasswordInput({name, autocomplete}: {name: string, autocomplete:
         name={name}
         autoComplete={autocomplete ? 'current-password' : 'new-password'}
         required
-        className="w-full p-2 pr-8 bg-bright-neutral text-white text-sm rounded-md outline-none"
+        className="w-full p-2 pr-8 bg-medium-neutral focus:bg-bright-neutral text-white text-sm rounded-md outline-none"
       />
       <div
         className="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer"
