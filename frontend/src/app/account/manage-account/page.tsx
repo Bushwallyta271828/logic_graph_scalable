@@ -7,7 +7,6 @@ import { DisplayUsername } from '@/app/account/manage-account/display-username';
 export default function ManageAccount() {
   return (
     <FormCard>
-      <p className="text-white text-lg font-bold mb-4 text-center">Username</p>
       <DisplayUsername />
       <p className="text-white text-lg font-bold mb-4 text-center">Change Username</p>
       <AccountForm path="users/change-username" redirectSignIn={true} usernameField="new-username">
