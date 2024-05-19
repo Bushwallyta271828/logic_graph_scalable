@@ -6,7 +6,7 @@ import { UsernameInput, PasswordInput } from '@/app/account/form-inputs';
 export default function CreateAccount() {
   return (
     <FormCard>
-      <p className="text-white text-lg font-bold mb-4 text-center">Welcome to LogicGraph!</p>
+      <p className="text-white text-lg font-bold text-center">Welcome to LogicGraph!</p>
       <AccountForm path="users/create-account" redirectSignIn={false} usernameField="username" redirectOnSuccess="/debates">
         <label htmlFor="username" className="text-white text-sm">Username:</label>
         <UsernameInput name="username" autocomplete={false} />

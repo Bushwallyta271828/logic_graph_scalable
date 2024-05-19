@@ -6,7 +6,7 @@ import { UsernameInput, PasswordInput } from '@/app/account/form-inputs';
 export default function SignIn() {
   return (
     <FormCard>
-      <p className="text-white text-lg font-bold mb-4 text-center">Welcome Back!</p>
+      <p className="text-white text-lg font-bold text-center">Welcome Back!</p>
       <AccountForm path="users/sign-in" redirectSignIn={false} usernameField="username" redirectOnSuccess="/debates">
         <label htmlFor="username" className="text-white text-sm">Username:</label>
         <UsernameInput name="username" autocomplete={true} />
