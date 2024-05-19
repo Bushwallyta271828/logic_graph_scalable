@@ -20,6 +20,8 @@ export default function ManageAccount() {
       <AccountForm path="users/change-password" redirectSignIn={true}>
         <label htmlFor="new-password" className="text-white text-sm">Change Password:</label>
         <PasswordInput name="new-password" autocomplete={false} />
+        <label htmlFor="confirm-new-password" className="text-white text-sm">Confirm New Password:</label>
+        <PasswordInput name="confirm-new-password" autocomplete={false} />
         <button type="submit" className="bg-medium-neutral hover:bg-bright-neutral text-white text-sm px-4 py-2 rounded-md w-full">
           Update Password
         </button>

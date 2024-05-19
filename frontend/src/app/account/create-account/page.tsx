@@ -12,6 +12,8 @@ export default function CreateAccount() {
         <UsernameInput name="username" autocomplete={false} />
         <label htmlFor="password" className="text-white text-sm">Password:</label>
         <PasswordInput name="password" autocomplete={false} />
+        <label htmlFor="confirm-password" className="text-white text-sm">Confirm Password:</label>
+        <PasswordInput name="confirm-password" autocomplete={false} />
         <button type="submit" className="bg-medium-neutral hover:bg-bright-neutral text-white text-sm px-4 py-2 rounded-md w-full">
           Create Account
         </button>
