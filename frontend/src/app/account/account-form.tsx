@@ -45,7 +45,7 @@ export function AccountForm({children, path, redirectSignIn, usernameField, redi
       }
       if (redirectOnSuccess !== undefined) {router.push(redirectOnSuccess);}
     }
-  }
+  };
 
   return (
     <>
