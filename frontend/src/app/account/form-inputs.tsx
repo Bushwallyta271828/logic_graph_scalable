@@ -11,7 +11,7 @@ export function UsernameInput({name, autocomplete}: {name: string, autocomplete:
       name={name}
       autoComplete={autocomplete? 'username' : 'off'}
       required
-      className="w-80 p-1 bg-bright-neutral text-white text-sm rounded-md outline-none"
+      className="w-full p-2 bg-bright-neutral text-white text-sm rounded-md outline-none"
     />
   );
 }
@@ -20,14 +20,14 @@ export function PasswordInput({name, autocomplete}: {name: string, autocomplete:
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
-    <div className="relative w-80">
+    <div className="relative w-full">
       <input
         type={passwordVisible ? 'text' : 'password'}
         id={name}
         name={name}
         autoComplete={autocomplete ? 'current-password' : 'new-password'}
         required
-        className="w-full p-1 pr-8 bg-bright-neutral text-white text-sm rounded-md outline-none"
+        className="w-full p-2 pr-8 bg-bright-neutral text-white text-sm rounded-md outline-none"
       />
       <div
         className="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer"
