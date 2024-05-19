@@ -1,6 +1,6 @@
 import { AccountForm } from '@/app/account/account-form';
 import { DisplayUsername } from '@/app/account/manage-account/display-username';
-import { PasswordInput } from '@/app/account/password-input';
+import { UsernameInput, PasswordInput } from '@/app/account/form-inputs';
 
 
 export default function ManageAccount() {
@@ -10,7 +10,7 @@ export default function ManageAccount() {
         <DisplayUsername />
         <div>
           <label htmlFor="new-username">New Username:</label>
-          <input type="text" id="new-username" name="new-username" autoComplete="off" required />
+          <UsernameInput name="new-username" autocomplete={false} />
         </div>
         <button type="submit">Update Username</button>
       </AccountForm>

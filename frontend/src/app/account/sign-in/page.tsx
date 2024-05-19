@@ -1,5 +1,5 @@
 import { AccountForm } from '@/app/account/account-form';
-import { PasswordInput } from '@/app/account/password-input';
+import { UsernameInput, PasswordInput } from '@/app/account/forms-input';
 
 export default function SignIn() {
   return (
@@ -8,7 +8,7 @@ export default function SignIn() {
       <AccountForm path="users/sign-in" redirectSignIn={false} usernameField="username" redirectOnSuccess="/debates">
         <div>
           <label htmlFor="username">Username:</label>
-          <input type="text" id="username" name="username" autoComplete="username" required />
+          <UsernameInput name="username" autocomplete={true} />
         </div>
         <div>
           <label htmlFor="password">Password:</label>
