@@ -64,7 +64,7 @@ function SignedInMenuItems() {
       <Menu.Item>
         {({ active }) => (
           <a
-            className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
+            className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
             onClick={async () => {await signOutOrDeleteAccount("users/sign-out");}}>
             Sign Out
           </a>
