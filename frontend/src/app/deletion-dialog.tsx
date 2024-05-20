@@ -3,12 +3,12 @@
 import { Dialog } from '@headlessui/react';
 
 
-export function DeletionDialog({title, dialogOpen, setDialogOpen, onDelete, children, dataNoDnd}: {
+export function DeletionDialog({children, title, dialogOpen, setDialogOpen, onDelete, dataNoDnd}: {
+  children: React.ReactNode,
   title: string,
   dialogOpen: boolean,
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
   onDelete: () => void,
-  children: React.ReactNode,
   dataNoDnd?: string
 }) {
   //dataNoDnd is for claim deletion where dragging the dialog shouldn't drag its claim.
