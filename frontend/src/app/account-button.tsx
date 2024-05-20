@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
 import { useAccountContext } from '@/app/_account_context/account-context';
 import { postJSON } from '@/app/_api/api';
 import { refreshAccount } from '@/app/_api/refresh-account';
+import { DeletionDialog } from '@/app/deletion-dialog';
 
 
 function SignedOutMenuItems() {
@@ -34,20 +35,8 @@ function SignedOutMenuItems() {
   );
 }
 
-function SignedInMenuItems() {
-  const router = useRouter();
-  const { setAccount } = useAccountContext();
-
-  const signOutOrDeleteAccount = async (path: string) => {
-    await postJSON({
-      path: path,
-      data: "{}",
-      setAccount: setAccount,
-      forceSignOut: true,
-    });
-    router.push("/");
-  };
-
+function SignedInMenuItems({signOut, setDialogOpen}:
+  {signOut: () => void, setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   return (
     <>
       <Menu.Item>
@@ -62,8 +51,8 @@ function SignedInMenuItems() {
       <Menu.Item>
         {({ active }) => (
           <a
-            className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={async () => {await signOutOrDeleteAccount("users/sign-out");}}>
+            className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
+            onClick={signOut}>
             Sign Out
           </a>
         )}
@@ -72,7 +61,7 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-            onClick={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
+            onClick={() => setDialogOpen(true)}>
             Delete Account
           </a>
         )}
@@ -83,10 +72,22 @@ function SignedInMenuItems() {
 
 export function AccountButton() {
   const { account, setAccount } = useAccountContext();
+  const router = useRouter();
+  const [ dialogOpen, setDialogOpen ] = useState(false);
 
   useEffect(() => {
     refreshAccount({setAccount: setAccount});
   }, [setAccount]);
+
+  const signOutOrDeleteAccount = async (path: string) => {
+    await postJSON({
+      path: path,
+      data: "{}",
+      setAccount: setAccount,
+      forceSignOut: true,
+    });
+    router.push("/");
+  };
 
   return (
     <div className="text-white text-lg font-bold relative">
@@ -111,10 +112,20 @@ export function AccountButton() {
               </a>
             </Menu.Item> : (account.status === 'signed out') ?
             <SignedOutMenuItems /> :
-            <SignedInMenuItems />
+            <SignedInMenuItems
+              signOut={async () => {await signOutOrDeleteAccount("users/sign-out");}}
+              setDialogOpen={setDialogOpen}
+            />
           }
         </Menu.Items>
       </Menu>
+      <DeletionDialog
+        title="Delete Account"
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        onDelete={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
+        <p>Deleting your account will permanently delete all of your debates.</p>
+      </DeletionDialog>
     </div>
   );
 }
