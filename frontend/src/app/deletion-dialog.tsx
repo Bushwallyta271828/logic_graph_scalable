@@ -20,11 +20,11 @@ export function DeletionDialog({children, title, dialogOpen, setDialogOpen, onDe
       className="relative z-50">
       <div className="fixed inset-0 backdrop-brightness-50 backdrop-blur" aria-hidden="true" />
       <div className="fixed inset-0 flex w-screen items-center justify-center">
-        <Dialog.Panel className="mx-auto max-w-lg rounded-md outline outline-2 outline-white bg-dark-neutral text-white p-2">
-          <Dialog.Title className="text-center text-lg font-bold">{title}</Dialog.Title>
+        <Dialog.Panel className="mx-auto max-w-lg rounded-md outline outline-2 outline-white bg-dark-neutral text-white p-4">
+          <Dialog.Title className="text-center text-lg font-bold mb-2">{title}</Dialog.Title>
           {children}
           <p>Are you sure you wish to proceed?</p>
-          <div className="container mx-auto flex justify-between items-center p-2">
+          <div className="container mx-auto flex justify-between items-center mt-2">
             <button
               className="bg-medium-neutral hover:bg-bright-neutral text-lg font-bold px-2 py-1 rounded-md"
               onClick={() => setDialogOpen(false)}>
