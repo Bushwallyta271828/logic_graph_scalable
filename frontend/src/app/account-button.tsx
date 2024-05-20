@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
 import { useAccountContext } from '@/app/_account_context/account-context';
 import { postJSON } from '@/app/_api/api';
 import { refreshAccount } from '@/app/_api/refresh-account';
+import { DeletionDialog } from '@/app/deletion-dialog';
 
 
 function SignedOutMenuItems() {
@@ -37,6 +38,7 @@ function SignedOutMenuItems() {
 function SignedInMenuItems() {
   const router = useRouter();
   const { setAccount } = useAccountContext();
+  const [ dialogOpen, setDialogOpen ] = useState(false);
 
   const signOutOrDeleteAccount = async (path: string) => {
     await postJSON({
@@ -72,11 +74,18 @@ function SignedInMenuItems() {
         {({ active }) => (
           <a
             className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
-            onClick={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
+            onClick={() => setDialogOpen(true)}>
             Delete Account
           </a>
         )}
       </Menu.Item>
+      <DeletionDialog
+        title="Delete Account"
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        onDelete={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
+        <p>Deleting your account will permanently delete all of your debates.</p>
+      </DeletionDialog>
     </>
   );
 }
