@@ -5,7 +5,7 @@ import { Claim } from '@/app/debates/[debateID]/_debate_context/claim-types';
 import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
 
 
-export function DeletionDialog({dialogOpen, setDialogOpen, claim, additionalClaims}: {
+export function ClaimDeletionDialog({dialogOpen, setDialogOpen, claim, additionalClaims}: {
   dialogOpen: boolean,
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
   claim: Claim,
