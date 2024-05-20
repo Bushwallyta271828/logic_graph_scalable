@@ -35,7 +35,8 @@ function SignedOutMenuItems() {
   );
 }
 
-function SignedInMenuItems({setDialogOpen}: {setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+function SignedInMenuItems({signOut, setDialogOpen}:
+  {signOut: () => void, setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   return (
     <>
       <Menu.Item>
@@ -51,7 +52,7 @@ function SignedInMenuItems({setDialogOpen}: {setDialogOpen: React.Dispatch<React
         {({ active }) => (
           <a
             className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={async () => {await signOutOrDeleteAccount("users/sign-out");}}>
+            onClick={signOut}>
             Sign Out
           </a>
         )}
@@ -111,7 +112,10 @@ export function AccountButton() {
               </a>
             </Menu.Item> : (account.status === 'signed out') ?
             <SignedOutMenuItems /> :
-            <SignedInMenuItems setDialogOpen={setDialogOpen} />
+            <SignedInMenuItems
+              signOut={async () => {await signOutOrDeleteAccount("users/sign-out");}}
+              setDialogOpen={setDialogOpen}
+            />
           }
         </Menu.Items>
       </Menu>
