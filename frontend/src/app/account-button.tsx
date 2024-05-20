@@ -35,21 +35,7 @@ function SignedOutMenuItems() {
   );
 }
 
-function SignedInMenuItems() {
-  const router = useRouter();
-  const { setAccount } = useAccountContext();
-  const [ dialogOpen, setDialogOpen ] = useState(false);
-
-  const signOutOrDeleteAccount = async (path: string) => {
-    await postJSON({
-      path: path,
-      data: "{}",
-      setAccount: setAccount,
-      forceSignOut: true,
-    });
-    router.push("/");
-  };
-
+function SignedInMenuItems({setDialogOpen}: {setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   return (
     <>
       <Menu.Item>
@@ -79,23 +65,28 @@ function SignedInMenuItems() {
           </a>
         )}
       </Menu.Item>
-      <DeletionDialog
-        title="Delete Account"
-        dialogOpen={dialogOpen}
-        setDialogOpen={setDialogOpen}
-        onDelete={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
-        <p>Deleting your account will permanently delete all of your debates.</p>
-      </DeletionDialog>
     </>
   );
 }
 
 export function AccountButton() {
   const { account, setAccount } = useAccountContext();
+  const router = useRouter();
+  const [ dialogOpen, setDialogOpen ] = useState(false);
 
   useEffect(() => {
     refreshAccount({setAccount: setAccount});
   }, [setAccount]);
+
+  const signOutOrDeleteAccount = async (path: string) => {
+    await postJSON({
+      path: path,
+      data: "{}",
+      setAccount: setAccount,
+      forceSignOut: true,
+    });
+    router.push("/");
+  };
 
   return (
     <div className="text-white text-lg font-bold relative">
@@ -120,10 +111,17 @@ export function AccountButton() {
               </a>
             </Menu.Item> : (account.status === 'signed out') ?
             <SignedOutMenuItems /> :
-            <SignedInMenuItems />
+            <SignedInMenuItems setDialogOpen={setDialogOpen} />
           }
         </Menu.Items>
       </Menu>
+      <DeletionDialog
+        title="Delete Account"
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        onDelete={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
+        <p>Deleting your account will permanently delete all of your debates.</p>
+      </DeletionDialog>
     </div>
   );
 }
