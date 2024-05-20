@@ -29,7 +29,7 @@ export function DeletionDialog({title, dialogOpen, setDialogOpen, onDelete, chil
             </button>
             <button
               className="bg-medium-danger hover:bg-bright-danger text-lg font-bold px-2 py-1 rounded-md"
-              onClick={onDelete}>
+              onClick={async () => {await onDelete(); setDialogOpen(false);}}>
               Delete
             </button>
           </div>
