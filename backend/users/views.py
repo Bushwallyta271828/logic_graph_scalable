@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+from .decorators import require_authentication
 
 
 @api_view(['GET'])
@@ -45,38 +46,32 @@ def sign_out(request):
     return Response({"message": "User successfully logged out"})
 
 @api_view(['POST'])
+@require_authentication
 def delete_account(request):
-    if request.user.is_authenticated:
-        request.user.delete()
-        logout(request)
-        return Response({"message": "User deleted successfully"})
-    else:
-        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
+    request.user.delete()
+    logout(request)
+    return Response({"message": "User deleted successfully"})
 
 @api_view(['POST'])
+@require_authentication
 def change_username(request):
-    if request.user.is_authenticated:
-        new_username = request.data.get('new-username')
-        if User.objects.filter(username=new_username).exists():
-            return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
-        request.user.username = new_username
-        request.user.save()
-        return Response({"message": "Username changed successfully"})
-    else:
-        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
+    new_username = request.data.get('new-username')
+    if User.objects.filter(username=new_username).exists():
+        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    request.user.username = new_username
+    request.user.save()
+    return Response({"message": "Username changed successfully"})
 
 @api_view(['POST'])
+@require_authentication
 def change_password(request):
-    if request.user.is_authenticated:
-        new_password = request.data.get('new-password')
-        confirm_new_password = request.data.get('confirm-new-password')
-        
-        if new_password != confirm_new_password:
-            return Response({"message": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            request.user.set_password(new_password)
-            request.user.save()
-            update_session_auth_hash(request, request.user)
-            return Response({"message": "Password changed successfully"})
+    new_password = request.data.get('new-password')
+    confirm_new_password = request.data.get('confirm-new-password')
+    
+    if new_password != confirm_new_password:
+        return Response({"message": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({"message": "Not signed in"}, status=status.HTTP_401_UNAUTHORIZED)
+        request.user.set_password(new_password)
+        request.user.save()
+        update_session_auth_hash(request, request.user)
+        return Response({"message": "Password changed successfully"})
