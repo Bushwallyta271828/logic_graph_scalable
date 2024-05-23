@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Popover } from '@headlessui/react';
 import { Claim } from '@/app/debates/[debateID]/_debate_context/claim-types';
 import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
-import { DeletionDialog } from '@/app/debates/[debateID]/deletion-dialog';
+import { ClaimDeletionDialog } from '@/app/debates/[debateID]/claim-deletion-dialog';
 
 
 export function ClaimTab({claim} : {claim: Claim}) {
@@ -74,7 +74,7 @@ export function ClaimTab({claim} : {claim: Claim}) {
           </Popover.Panel>
         </Popover>
       </div>
-      <DeletionDialog
+      <ClaimDeletionDialog
         dialogOpen={dialogOpen}
         setDialogOpen={setDialogOpen}
         claim={claim}

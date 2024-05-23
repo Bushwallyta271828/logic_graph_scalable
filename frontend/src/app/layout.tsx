@@ -1,24 +1,21 @@
-import type { Metadata } from 'next';
 import './globals.css';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
-import { UserContextProvider } from '@/app/_user_context/user-context';
+import { AccountContextProvider } from '@/app/_account_context/account-context';
 import { Navbar } from '@/app/navbar';
+import { DebateName } from '@/app/debate-name';
 import { AccountButton } from '@/app/account-button';
 
 export const metadata: Metadata = {
   title: 'Logic Graph',
 };
 
-export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
-  const usernameCookie = cookies().get('username');
-  const username = (usernameCookie !== undefined && typeof usernameCookie.value === 'string')
-    ? usernameCookie.value : null;
 
+export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
   return (
-    <UserContextProvider>
+    <AccountContextProvider>
       <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
-        <body className="bg-medium-neutral min-h-screen">
+        <body className="bg-medium-neutral grid grid-rows-[auto_1fr] min-h-screen">
           <Navbar border={false}>
             <div className="flex gap-4 items-baseline">
               <Link href="/">
@@ -31,12 +28,10 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
                   Debates
                 </button>
               </Link>
-              <p className="text-white px-2 py-1">
-                debate_name_goes_here
-              </p>
+              <DebateName />
             </div>
             <div className="text-white text-lg font-bold flex gap-4">
-              <AccountButton username={username} />
+              <AccountButton />
               <Link href="/documentation">
                 <button className="bg-transparent hover:bg-medium-neutral px-2 py-1 rounded-md">
                   Documentation
@@ -44,9 +39,11 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
               </Link>
             </div>
           </Navbar>
-          {children}
+          <div>
+            {children}
+          </div>
         </body>
       </html>
-    </UserContextProvider>
+    </AccountContextProvider>
   );
 }

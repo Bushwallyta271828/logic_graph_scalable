@@ -1,11 +1,16 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
-import { logOut } from '@/app/account/account-actions';
+import { useAccountContext } from '@/app/_account_context/account-context';
+import { postJSON } from '@/app/_api/api';
+import { refreshAccount } from '@/app/_api/refresh-account';
+import { DeletionDialog } from '@/app/deletion-dialog';
 
-function NoUsernameMenuItems() {
+
+function SignedOutMenuItems() {
   return (
     <>
       <Menu.Item>
@@ -19,9 +24,9 @@ function NoUsernameMenuItems() {
       </Menu.Item>
       <Menu.Item>
         {({ active }) => (
-          <Link href="/account/sign-up">
+          <Link href="/account/create-account">
             <a className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
-              Sign Up
+              Create Account
             </a>
           </Link>
         )}
@@ -30,16 +35,15 @@ function NoUsernameMenuItems() {
   );
 }
 
-function UsernameMenuItems({username}: {username: string}) {
-  const [isPending, startTransition] = useTransition();
-
+function SignedInMenuItems({signOut, setDialogOpen}:
+  {signOut: () => void, setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
   return (
     <>
       <Menu.Item>
         {({ active }) => (
-          <Link href="/account/change-password">
+          <Link href="/account/manage-account">
             <a className={`block px-4 py-2 rounded-t-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}>
-              Change Password
+              Manage Account
             </a>
           </Link>
         )}
@@ -47,9 +51,18 @@ function UsernameMenuItems({username}: {username: string}) {
       <Menu.Item>
         {({ active }) => (
           <a
-            className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
-            onClick={() => {startTransition(logOut);}}>
-            Log Out {username}
+            className={`block px-4 py-2 ${active ? 'bg-bright-neutral' : 'bg-medium-neutral'}`}
+            onClick={signOut}>
+            Sign Out
+          </a>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <a
+            className={`block px-4 py-2 rounded-b-md ${active ? 'bg-bright-danger' : 'bg-medium-danger'}`}
+            onClick={() => setDialogOpen(true)}>
+            Delete Account
           </a>
         )}
       </Menu.Item>
@@ -57,7 +70,25 @@ function UsernameMenuItems({username}: {username: string}) {
   );
 }
 
-export function AccountButton({username}: {username: string | null}) {
+export function AccountButton() {
+  const { account, setAccount } = useAccountContext();
+  const router = useRouter();
+  const [ dialogOpen, setDialogOpen ] = useState(false);
+
+  useEffect(() => {
+    refreshAccount({setAccount: setAccount});
+  }, [setAccount]);
+
+  const signOutOrDeleteAccount = async (path: string) => {
+    await postJSON({
+      path: path,
+      data: "{}",
+      setAccount: setAccount,
+      forceSignOut: true,
+    });
+    router.push("/");
+  };
+
   return (
     <div className="text-white text-lg font-bold relative">
       <Menu>
@@ -69,12 +100,32 @@ export function AccountButton({username}: {username: string | null}) {
           }
         </Menu.Button>
         <Menu.Items className="absolute w-36 origin-top-right z-30 bg-transparent outline outline-1 outline-white rounded-md shadow-xl text-sm font-normal">
-          { (username === null) ?
-            <NoUsernameMenuItems /> :
-            <UsernameMenuItems username={username} />
+          {(account.status === 'loading') ?
+            <Menu.Item disabled>
+              <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
+                Loading...
+              </a>
+            </Menu.Item> : (account.status === 'error') ?
+            <Menu.Item disabled>
+              <a className={`block px-4 py-2 rounded-b-md bg-medium-neutral`}>
+                Loading Error: {account.error}
+              </a>
+            </Menu.Item> : (account.status === 'signed out') ?
+            <SignedOutMenuItems /> :
+            <SignedInMenuItems
+              signOut={async () => {await signOutOrDeleteAccount("users/sign-out");}}
+              setDialogOpen={setDialogOpen}
+            />
           }
         </Menu.Items>
       </Menu>
+      <DeletionDialog
+        title="Delete Account"
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        onDelete={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
+        <p>Deleting your account will permanently delete all of your debates.</p>
+      </DeletionDialog>
     </div>
   );
 }

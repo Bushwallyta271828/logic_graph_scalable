@@ -1,11 +1,7 @@
-import { fetchWrapper } from '@/app/_lib/api';
 import { Navbar } from '@/app/navbar';
 import { DebateLinks } from '@/app/debates/[debateID]/debate-links';
 
-export default async function Sampling() {
-  const responseText = await (await fetchWrapper({path: "debates/", options: {}})).text();
-  console.log(responseText);
-
+export default function Sampling() {
   return (
     <>
       <Navbar border={true}>
