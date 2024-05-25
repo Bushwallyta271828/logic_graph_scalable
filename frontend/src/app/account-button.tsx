@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu } from '@headlessui/react';
 import { useAccountContext } from '@/app/_account_context/account-context';
-import { postJSON } from '@/app/_api/api';
+import { sendJSON } from '@/app/_api/api';
 import { refreshAccount } from '@/app/_api/refresh-account';
 import { DeletionDialog } from '@/app/deletion-dialog';
 
@@ -79,8 +79,9 @@ export function AccountButton() {
     refreshAccount({setAccount: setAccount});
   }, [setAccount]);
 
-  const signOutOrDeleteAccount = async (path: string) => {
-    await postJSON({
+  const signOutOrDeleteAccount = async ({method, path}: {method: string, path: string}) => {
+    await sendJSON({
+      method: method,
       path: path,
       data: "{}",
       setAccount: setAccount,
@@ -113,7 +114,7 @@ export function AccountButton() {
             </Menu.Item> : (account.status === 'signed out') ?
             <SignedOutMenuItems /> :
             <SignedInMenuItems
-              signOut={async () => {await signOutOrDeleteAccount("users/sign-out");}}
+              signOut={async () => {await signOutOrDeleteAccount({method: "POST", path: "users/sign-out"});}}
               setDialogOpen={setDialogOpen}
             />
           }
@@ -123,7 +124,7 @@ export function AccountButton() {
         title="Delete Account"
         dialogOpen={dialogOpen}
         setDialogOpen={setDialogOpen}
-        onDelete={async () => {await signOutOrDeleteAccount("users/delete-account");}}>
+        onDelete={async () => {await signOutOrDeleteAccount({method: "DELETE", path: "users/delete-account"});}}>
         <p>Deleting your account will permanently delete all of your debates.</p>
       </DeletionDialog>
     </div>
