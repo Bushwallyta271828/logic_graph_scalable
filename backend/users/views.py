@@ -45,14 +45,14 @@ def sign_out(request):
         logout(request)
     return Response({"message": "User successfully logged out"})
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 @require_authentication
 def delete_account(request):
     request.user.delete()
     logout(request)
     return Response({"message": "User deleted successfully"})
 
-@api_view(['POST'])
+@api_view(['PATCH'])
 @require_authentication
 def change_username(request):
     new_username = request.data.get('new-username')
@@ -62,7 +62,7 @@ def change_username(request):
     request.user.save()
     return Response({"message": "Username changed successfully"})
 
-@api_view(['POST'])
+@api_view(['PATCH'])
 @require_authentication
 def change_password(request):
     new_password = request.data.get('new-password')
