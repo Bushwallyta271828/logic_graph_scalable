@@ -1,6 +1,10 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import DebateViewSet
+
+router = DefaultRouter()
+router.register(r'debates', DebateViewSet)
 
 urlpatterns = [
-    path('get-debate/<int:debate_id>/', views.getDebate),
+    path('', include(router.urls)),
 ]
