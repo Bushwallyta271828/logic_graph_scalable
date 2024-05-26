@@ -22,7 +22,7 @@ def sign_in(request):
         login(request, user)
         return Response({"message": "Logged in"})
     else:
-        return Response({"message": "Failed"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"detail": "Failed"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 def create_account(request):
@@ -31,9 +31,9 @@ def create_account(request):
     confirm_password = request.data.get('confirm-password')
    
     if password != confirm_password:
-        return Response({"message": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
     elif User.objects.filter(username=username).exists():
-        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
     else:
         user = User.objects.create_user(username=username, password=password)
         login(request, user)
@@ -57,7 +57,7 @@ def delete_account(request):
 def change_username(request):
     new_username = request.data.get('new-username')
     if User.objects.filter(username=new_username).exists():
-        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
     request.user.username = new_username
     request.user.save()
     return Response({"message": "Username changed successfully"})
@@ -69,7 +69,7 @@ def change_password(request):
     confirm_new_password = request.data.get('confirm-new-password')
     
     if new_password != confirm_new_password:
-        return Response({"message": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "The provided passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
     else:
         request.user.set_password(new_password)
         request.user.save()

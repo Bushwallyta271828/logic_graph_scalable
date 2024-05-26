@@ -66,8 +66,8 @@ export async function fetchWrapper({path, options = {}, headers = {}, deleteCook
       if (response.ok) {return {data: data, status: response.status};}
       else {
         return {
-          error: (typeof data === 'object' && 'message' in data && typeof data.message === 'string')
-            ? data.message : await response.text(),
+          error: (typeof data === 'object' && 'detail' in data && typeof data.detail === 'string')
+            ? data.detail : await response.text(),
           status: response.status,
         };
       }
