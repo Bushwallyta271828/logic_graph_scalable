@@ -46,19 +46,22 @@ export function DebateList() {
   );
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragEnd={handleDragEnd}>
-      <SortableContext
-        items={claimIDs}
-        strategy={verticalListSortingStrategy}>
-        <div className="flex flex-col p-1 gap-1">
-          {claimIDs.map((claimID: string) => (
-            <ClaimBox claimID={claimID} key={claimID} />
-          ))}
-        </div>
-      </SortableContext>
-    </DndContext>
+    <div className="flex flex-col gap-1">
+      <p className="text-white text-sm">New Debate</p>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={claimIDs}
+          strategy={verticalListSortingStrategy}>
+          <div className="flex flex-col p-1 gap-1">
+            {claimIDs.map((claimID: string) => (
+              <ClaimBox claimID={claimID} key={claimID} />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </div>
   );
 }
