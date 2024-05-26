@@ -3,17 +3,19 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAccountContext } from '@/app/_account_context/account-context';
-import { postForm } from '@/app/_api/api';
+import { sendForm } from '@/app/_api/api';
 
 
-export function AccountForm({children, path, redirectSignIn, afterSuccess, usernameField}: {
+export function AccountForm({children, method, path, redirectSignIn, afterSuccess, usernameField}: {
   children: React.ReactNode,
+  method: string,
   path: string,
   redirectSignIn: boolean,
   afterSuccess: boolean | string,
   usernameField?: string,
 }) {
   //children is for the form contents.
+  //method is the HTTP request method of the API call.
   //path is the path for the API call.
   //If redirectSignIn is true then AccountForm redirects to the sign-in page if a 401 status occurs. 
   //If afterSuccess is false then upon success AccountForm will do nothing.
@@ -30,7 +32,8 @@ export function AccountForm({children, path, redirectSignIn, afterSuccess, usern
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const response = await postForm({
+    const response = await sendForm({
+      method: method,
       path: path,
       formData: formData,
       setAccount: setAccount,
