@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import DebateViewSet
 
 router = DefaultRouter()
-router.register(r'debates', DebateViewSet)
+router.register('debates', DebateViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
