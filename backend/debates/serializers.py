@@ -4,4 +4,4 @@ from .models import Debate
 class DebateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Debate
-        fields = ['id', 'title', 'user']
+        fields = '__all__'

@@ -1,9 +1,8 @@
 'use client';
 
-import { PointerEvent } from 'react';
+import { PointerEvent, useState } from 'react';
 import { useSensors, useSensor, PointerSensor, DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useDebateContext } from '@/app/debates/[debateID]/_debate_context/debate-context';
 import { ClaimBox } from '@/app/debates/[debateID]/claim-box';
 
 
@@ -24,9 +23,10 @@ class OptionalPointerSensor extends PointerSensor {
   static activators = [{ eventName: 'onPointerDown', handler }] as typeof PointerSensor['activators'];
 }
 
-export function ClaimList() {
+export function DebateList() {
   //Credit to https://www.youtube.com/watch?v=dL5SOdgMbRY for helping to create some starter code!
-  const { claimIDs, moveClaim } = useDebateContext();
+  const [debateLookup, setDebateLookup] = useState<{ [debateID: string]: {title: string} }>({});
+  const [debateIDs, setDebateIDs] = useState<string[]>([]);
 
   function handleDragEnd(event : DragEndEvent) {
     const {active, over} = event;
