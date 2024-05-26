@@ -11,8 +11,6 @@ export function DebateBox({claimID} : {claimID: string}) {
     throw new Error("claimID not present in claimLookup");
   }
 
-  const hasDefinitions = false;
-
   const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: claimID});
 
   const style = {transition, transform: CSS.Translate.toString(transform)};
@@ -21,14 +19,11 @@ export function DebateBox({claimID} : {claimID: string}) {
     <div
       ref={setNodeRef}
       {...attributes}
+      {...listeners}
       style={style}
-      className={`flex flex-col ${isDragging ? 'z-40' : ''}`}>
-      <div
-        className={`flex ${hasDefinitions ? 'rounded-tr-md rounded-tl-md rounded-bl-md' : 'rounded-md'} shadow-xl`}
-        {...listeners}>
-        <ClaimTab claim={claim} />
-        <ClaimContentBox claim={claim} hasDefinitions={hasDefinitions} />
-      </div>
+      className={`flex flex-row rounded-md shadow-xl ${isDragging ? 'z-40' : ''}`}>
+      <ClaimTab claim={claim} />
+      <ClaimContentBox claim={claim} hasDefinitions={hasDefinitions} />
     </div>
   );
 }
