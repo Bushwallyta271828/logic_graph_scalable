@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-	'bright-neutral': '#404040',
-	'medium-neutral': '#303030',
+	'bright-neutral': '#404040', //This value is used without reference in globals.css!
+	'medium-neutral': '#303030', //This value is used without reference in globals.css!
 	'dark-neutral': '#202020',
         'bright-text': '#000080',
         'medium-text': '#000060',

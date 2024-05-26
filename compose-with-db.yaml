@@ -4,8 +4,8 @@ services:
       context: ./frontend
     restart: always
     environment:
-      - BACKEND_ADDRESS=http://backend:9000/
       - FRONTEND_PORT=3000
+      - BACKEND_ADDRESS=http://backend:9000/
     depends_on:
       - backend
     ports:
@@ -17,15 +17,28 @@ services:
     restart: always
     environment:
       - BACKEND_PORT=9000
+      - REDIS_HOST=redis
+      - REDIS_PORT=7000
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
+      - DB_REBUILD=${DB_REBUILD}
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
+      - redis
       - db
-  
+
+  redis:
+    image: redis:7.2.4-alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    command: >
+      sh -c "echo \"port 7000\" > /usr/local/bin/redis.conf
+             redis-server /usr/local/bin/redis.conf"
+ 
   db:
     image: postgres:16-alpine
     restart: always
@@ -37,4 +50,5 @@ services:
       - POSTGRES_PASSWORD=${DB_PASS}
 
 volumes:
+  redis-data:
   postgres-data:

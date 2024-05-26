@@ -7,7 +7,8 @@ RUN npx next telemetry disable && \
 
 COPY . /
 
-RUN npm run build && \
+RUN npx next telemetry disable && \
+    npm run build && \
     chmod -R +x /scripts
 
 ENV PATH="/scripts:$PATH"
