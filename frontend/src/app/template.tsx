@@ -1,21 +1,12 @@
-import './globals.css';
-import type { Metadata } from 'next';
 import Link from 'next/link';
-import { AccountContextProvider } from '@/app/_account_context/account-context';
 import { Navbar } from '@/app/navbar';
 import { DebateName } from '@/app/debate-name';
 import { AccountButton } from '@/app/account-button';
 
-export const metadata: Metadata = {
-  title: 'Logic Graph',
-};
 
-
-export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
+export default function RootTemplate({children}: Readonly<{children: React.ReactNode}>) {
   return (
-    <AccountContextProvider>
-      <html lang="en" className="scrollbar-thin scrollbar-track-dark-neutral scrollbar-thumb-medium-neutral">
-        <body className="bg-medium-neutral grid grid-rows-[auto_1fr] min-h-screen">
+        <div className="grid grid-rows-[auto_1fr] min-h-screen">
           <Navbar border={false}>
             <div className="flex gap-4 items-baseline">
               <Link href="/">
@@ -42,8 +33,6 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
           <div>
             {children}
           </div>
-        </body>
-      </html>
-    </AccountContextProvider>
+        </div>
   );
 }
